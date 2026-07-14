@@ -1,0 +1,8 @@
+# Fichiers techniques / locaux (inutiles à sauvegarder)
+.claude/
+site-tri-hent.zip
+
+# Fichiers système Windows / macOS
+Thumbs.db
+desktop.ini
+.DS_Store

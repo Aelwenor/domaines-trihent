@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Domaines de Tri Hent — Conciergerie haut de gamme en Bretagne</title>
+<meta name="description" content="Conciergerie premium de location courte durée en Bretagne — Paimpol & Côtes-d'Armor. Prise en charge complète de votre bien : valorisation, accueil, ménage hôtelier, réservations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ==================== NAVIGATION ==================== -->
+<header id="entete">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-nom">Les Domaines de Tri Hent</span>
+      <span class="logo-sous">Conciergerie &middot; Bretagne</span>
+    </a>
+    <nav class="desktop" aria-label="Navigation principale">
+      <a class="lien" href="index.html">Accueil</a>
+      <a class="lien" href="index.html#apropos">À propos</a>
+      <a class="lien" href="index.html#services">Services</a>
+      <a class="lien" href="nos-biens.html">Nos biens</a>
+      <a class="lien" href="index.html#temoignages">Témoignages</a>
+      <a class="lien" href="contact.html">Contact</a>
+      <a class="btn btn-or nav-cta" href="contact.html">Nous contacter</a>
+    </nav>
+    <button class="burger" aria-label="Ouvrir le menu" onclick="basculerMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="menu-mobile" aria-label="Navigation mobile">
+      <a href="index.html" onclick="basculerMenu()">Accueil</a>
+      <a href="index.html#apropos" onclick="basculerMenu()">À propos</a>
+      <a href="index.html#services" onclick="basculerMenu()">Services</a>
+      <a href="nos-biens.html">Nos biens</a>
+      <a href="index.html#temoignages" onclick="basculerMenu()">Témoignages</a>
+      <a href="contact.html">Contact</a>
+      <a class="btn btn-or" href="contact.html">Nous contacter</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="accueil">
+  <div class="hero-contenu">
+    <p class="hero-sur">Paimpol &middot; Côtes-d'Armor &middot; Bretagne</p>
+    <h1>Les Domaines <em>de Tri Hent</em></h1>
+    <p class="accroche">Votre bien mérite une attention d'exception</p>
+    <p class="sous-accroche">Conciergerie premium en location courte durée — Bretagne &amp; Côtes-d'Armor</p>
+    <div class="hero-boutons">
+      <a href="contact.html" class="btn btn-or">Nous contacter</a>
+    </div>
+  </div>
+  <a href="#apropos" class="hero-fleche" aria-label="Défiler vers le bas">&#8595;</a>
+</section>
+
+<!-- ==================== DOUBLE AUDIENCE ==================== -->
+<section class="audiences" id="apropos">
+  <div class="audiences-grille">
+    <div class="audience audience-proprietaire">
+      <div class="fond" role="img" aria-label="Manoir breton en pierre"></div>
+      <div class="audience-texte reveal">
+        <span class="etiquette">Propriétaires</span>
+        <h3>Vous êtes propriétaire</h3>
+        <p>Déléguez le quotidien de votre bien en toute sérénité. Nous valorisons votre propriété, optimisons vos revenus locatifs et vous libérons du temps — pendant que votre demeure vit et rapporte.</p>
+        <a href="contact.html" class="btn btn-ligne-clair">Confier mon bien</a>
+      </div>
+    </div>
+    <div class="audience audience-voyageur">
+      <div class="fond" role="img" aria-label="Côte bretonne au coucher du soleil"></div>
+      <div class="audience-texte reveal">
+        <span class="etiquette">Voyageurs</span>
+        <h3>Vous êtes voyageur</h3>
+        <p>Séjournez dans des propriétés d'exception au cœur de la Bretagne : manoirs de caractère, longères restaurées et demeures face à la mer, avec un accueil digne des plus belles maisons.</p>
+        <a href="nos-biens.html" class="btn btn-ligne-clair">Découvrir nos demeures</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SERVICES ==================== -->
+<section class="services" id="services">
+  <div class="container">
+    <span class="kicker">Nos services</span>
+    <h2 class="section-title">Un accompagnement d'exception,<br>de A à Z</h2>
+    <p class="section-intro">Chaque bien est unique. Nous lui offrons le soin, la visibilité et l'exigence hôtelière qu'il mérite — pour des voyageurs conquis et des propriétaires sereins.</p>
+
+    <div class="services-grille">
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><path d="M12 3l2.1 4.9L19 9.2l-4 3.6.9 5.2L12 15.6 8.1 18l.9-5.2-4-3.6 4.9-1.3z"/></svg>
+        </div>
+        <h3>Valorisation &amp; mise en lumière</h3>
+        <p>Photographies professionnelles, annonces soignées et tarification dynamique : votre bien révèle tout son potentiel et se distingue sur le marché.</p>
+      </div>
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/></svg>
+        </div>
+        <h3>Accueil personnalisé</h3>
+        <p>Remise des clés en main propre, présentation des lieux et attentions locales : chaque voyageur est reçu comme un hôte de marque.</p>
+      </div>
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><path d="M4 19h16M6 19V9a6 6 0 0 1 12 0v10M9 13h6"/></svg>
+        </div>
+        <h3>Ménage hôtelier &amp; linge premium</h3>
+        <p>Prestations de ménage aux standards hôteliers, linge de maison haut de gamme et contrôle qualité systématique avant chaque arrivée.</p>
+      </div>
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 13h4M8 16h8"/></svg>
+        </div>
+        <h3>Réservations multi-plateformes</h3>
+        <p>Diffusion et synchronisation de vos annonces sur Airbnb, Booking et Abritel. Calendriers, messages et voyageurs suivis au quotidien.</p>
+      </div>
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 1 3 6.8l-7.2 7.2-3.5-3.5 7.2-7.2M6 3l1 2.2L9.2 6 7 7 6 9.2 5 7l-2.2-1L5 5.2z"/></svg>
+        </div>
+        <h3>Suivi &amp; maintenance</h3>
+        <p>Visites régulières, petites réparations et coordination d'artisans locaux de confiance : votre propriété reste impeccable, saison après saison.</p>
+      </div>
+      <div class="service reveal">
+        <div class="icone">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.2-9A5.3 5.3 0 0 1 12 6.4 5.3 5.3 0 0 1 21.2 12C19 16.4 12 21 12 21z"/></svg>
+        </div>
+        <h3>Accompagnement sur-mesure</h3>
+        <p>Un interlocuteur unique, des reportings clairs et des conseils personnalisés. Nous adaptons chaque prestation à votre bien et à vos objectifs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHIFFRES CLÉS ==================== -->
+<section class="chiffres">
+  <div class="container">
+    <div class="chiffres-grille">
+      <div class="chiffre reveal">
+        <div class="valeur"><span class="compteur" data-cible="35">0</span><sup>+</sup></div>
+        <div class="legende">Biens accompagnés</div>
+      </div>
+      <div class="chiffre reveal">
+        <div class="valeur"><span class="compteur" data-cible="87">0</span><sup>%</sup></div>
+        <div class="legende">Taux d'occupation moyen</div>
+      </div>
+      <div class="chiffre reveal">
+        <div class="valeur">7<span style="font-size:.55em">j</span>/7</div>
+        <div class="legende">Disponibilité &amp; réactivité</div>
+      </div>
+      <div class="chiffre reveal">
+        <div class="valeur"><span class="compteur" data-cible="4.9" data-decimale="1">0</span><sup>★</sup></div>
+        <div class="legende">Note moyenne voyageurs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TÉMOIGNAGES ==================== -->
+<section id="temoignages">
+  <div class="container">
+    <span class="kicker">Témoignages</span>
+    <h2 class="section-title">Ils nous font confiance</h2>
+    <p class="section-intro">La plus belle des récompenses : la sérénité de nos propriétaires et le sourire de nos voyageurs.</p>
+
+    <div class="temoignages-grille">
+      <div class="temoignage reveal">
+        <div class="etoiles">★★★★★</div>
+        <p class="avis">« Depuis que Les Domaines de Tri Hent s'occupent de notre longère près de Paimpol, tout est fluide. Les revenus ont dépassé nos attentes et nous n'avons plus aucune contrainte. Une équipe rare. »</p>
+        <div class="auteur">
+          <div class="nom">Marie-Hélène L.</div>
+          <div class="role">Propriétaire — Paimpol</div>
+        </div>
+      </div>
+      <div class="temoignage reveal">
+        <div class="etoiles">★★★★★</div>
+        <p class="avis">« Un accueil chaleureux, une maison impeccable et de précieux conseils pour découvrir la côte de Granit Rose. On se sent attendu, pas simplement logé. Nous reviendrons. »</p>
+        <div class="auteur">
+          <div class="nom">Julien &amp; Camille R.</div>
+          <div class="role">Voyageurs — Séjour à Ploubazlanec</div>
+        </div>
+      </div>
+      <div class="temoignage reveal">
+        <div class="etoiles">★★★★★</div>
+        <p class="avis">« Vivant à Paris, je cherchais un partenaire de confiance pour notre maison de famille. Professionnalisme, transparence et vraie connaissance du territoire breton : je recommande sans réserve. »</p>
+        <div class="auteur">
+          <div class="nom">François T.</div>
+          <div class="role">Propriétaire — Île-de-Bréhat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TARIFS / FORMULES ==================== -->
+<section class="tarifs" id="formules">
+  <div class="container">
+    <div style="text-align:center;">
+      <span class="kicker">Nos formules</span>
+      <h2 class="section-title">Un accompagnement intégral,<br>une commission transparente</h2>
+    </div>
+    <p class="tarifs-citation">« Notre commission évolue avec les revenus que vous percevez, grâce à un barème progressif. Nos intérêts sont donc <em>alignés</em> : maximiser votre rentabilité, en garantissant un service de haute qualité. »</p>
+
+    <div class="tarifs-grille">
+      <div class="offre reveal">
+        <h3>Barème progressif</h3>
+        <div class="taux">à partir de 14&nbsp;%</div>
+        <div class="taux-detail">Maisons, longères, manoirs &amp; villas</div>
+        <ul>
+          <li>Création de l'annonce</li>
+          <li>Optimisation des prix</li>
+          <li>Assistance voyageurs</li>
+          <li>Réponses aux voyageurs</li>
+          <li>Arrivées / départs</li>
+          <li>Nettoyage professionnel</li>
+          <li>Analyses et optimisation</li>
+        </ul>
+        <a href="contact.html" class="btn btn-vert">Nous contacter</a>
+      </div>
+      <div class="offre reveal">
+        <h3>Commission fixe</h3>
+        <div class="taux">23&nbsp;%</div>
+        <div class="taux-detail">Studios, mobile homes &amp; chalets</div>
+        <ul>
+          <li>Création de l'annonce</li>
+          <li>Optimisation des prix</li>
+          <li>Assistance voyageurs</li>
+          <li>Réponses aux voyageurs</li>
+          <li>Arrivées / départs</li>
+          <li>Nettoyage professionnel</li>
+          <li>Analyses et optimisation</li>
+        </ul>
+        <a href="contact.html" class="btn btn-vert">Nous contacter</a>
+      </div>
+    </div>
+    <p class="tarifs-note">Accompagnement intégral de votre bien — sans frais cachés, sans engagement de durée.</p>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section class="faq" id="faq">
+  <div class="container">
+    <span class="kicker">Questions fréquentes</span>
+    <h2 class="section-title">Vous vous demandez peut-être…</h2>
+    <p class="section-intro">Les réponses aux questions que nos propriétaires nous posent le plus souvent.</p>
+
+    <div class="faq-liste">
+      <div class="faq-item">
+        <button class="faq-question" onclick="basculerFaq(this)">
+          Quelle zone géographique couvrez-vous ?
+          <span class="signe">+</span>
+        </button>
+        <div class="faq-reponse"><p>Nous intervenons principalement autour de Paimpol et dans les Côtes-d'Armor : Ploubazlanec, Île-de-Bréhat, Plouha, Lézardrieux, la côte de Granit Rose… Pour un bien situé ailleurs en Bretagne, contactez-nous : nous étudions chaque demande avec attention.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="basculerFaq(this)">
+          Combien mon bien peut-il me rapporter en location courte durée ?
+          <span class="signe">+</span>
+        </button>
+        <div class="faq-reponse"><p>Cela dépend de la localisation, du charme et de la capacité de votre bien. Nous réalisons gratuitement une estimation personnalisée de vos revenus potentiels, basée sur les données réelles du marché local et notre tarification dynamique.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="basculerFaq(this)">
+          Puis-je continuer à profiter de ma maison ?
+          <span class="signe">+</span>
+        </button>
+        <div class="faq-reponse"><p>Bien sûr. Vous restez maître de votre calendrier : bloquez les dates de votre choix pour vos séjours en famille, nous optimisons la location sur le reste de l'année. Votre maison reste avant tout la vôtre.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="basculerFaq(this)">
+          Comment sont assurés le ménage et le linge ?
+          <span class="signe">+</span>
+        </button>
+        <div class="faq-reponse"><p>Nos équipes assurent un ménage aux standards hôteliers après chaque départ, avec un contrôle qualité systématique. Le linge de lit et de toilette haut de gamme est fourni, blanchi et repassé par nos soins.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="basculerFaq(this)">
+          Quel est le coût de vos services ?
+          <span class="signe">+</span>
+        </button>
+        <div class="faq-reponse"><p>Nos formules fonctionnent à la commission sur les revenus locatifs : nous ne gagnons que si vous gagnez. Barème progressif à partir de 14 % pour les maisons de caractère, commission fixe de 23 % pour les studios, mobile homes et chalets. Demandez votre étude personnalisée, sans engagement.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BANDEAU CONTACT ==================== -->
+<section class="bandeau" id="contact">
+  <span class="kicker" style="justify-content:center; display:inline-flex;">Parlons de votre projet</span>
+  <h2>Confiez-nous votre bien,<br>retrouvez votre <em>tranquillité</em></h2>
+  <p>Estimation gratuite de vos revenus locatifs, sans engagement. Rencontrons-nous autour d'un café, à Paimpol ou chez vous.</p>
+  <a href="contact.html" class="btn btn-or">Nous contacter</a>
+</section>
+
+<!-- ==================== PIED DE PAGE ==================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grille">
+      <div>
+        <a href="index.html" class="logo">
+          <span class="logo-nom">Les Domaines de Tri Hent</span>
+          <span class="logo-sous">Conciergerie &middot; Bretagne</span>
+        </a>
+        <p style="margin-top:20px; max-width:300px;">Conciergerie haut de gamme de location courte durée, ancrée en Bretagne. Nous prenons soin de votre bien comme s'il était le nôtre.</p>
+        <div class="footer-sociaux">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4 1.3-.1 1.7-.1 4.9-.1zm0 2c-3.1 0-3.5 0-4.8.1-1.1.1-1.4.2-1.8.3-.4.2-.7.4-1 .7-.3.3-.5.6-.7 1-.1.4-.3.7-.3 1.8-.1 1.3-.1 1.7-.1 4.8s0 3.5.1 4.8c.1 1.1.2 1.4.3 1.8.2.4.4.7.7 1 .3.3.6.5 1 .7.4.1.7.3 1.8.3 1.3.1 1.7.1 4.8.1s3.5 0 4.8-.1c1.1-.1 1.4-.2 1.8-.3.4-.2.7-.4 1-.7.3-.3.5-.6.7-1 .1-.4.3-.7.3-1.8.1-1.3.1-1.7.1-4.8s0-3.5-.1-4.8c-.1-1.1-.2-1.4-.3-1.8-.2-.4-.4-.7-.7-1-.3-.3-.6-.5-1-.7-.4-.1-.7-.3-1.8-.3-1.3-.1-1.7-.1-4.8-.1zm0 3.4a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8zm0 2a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zm5.6-3.5a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9.5 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.5c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21h-4V9z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-coord">
+          <li><span class="picto">✆</span><a href="tel:+33666991128">06 66 99 11 28</a></li>
+          <li><span class="picto">✉</span><a href="mailto:domaines.trihent@gmail.com">domaines.trihent@gmail.com</a></li>
+          <li><span class="picto">⚓</span><span>Paimpol — Côtes-d'Armor<br>Bretagne, France</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Plan du site</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="index.html#apropos">À propos</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="nos-biens.html">Nos biens</a></li>
+          <li><a href="index.html#formules">Nos formules</a></li>
+          <li><a href="index.html#temoignages">Témoignages</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Informations</h4>
+        <ul>
+          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="mentions-legales.html#donnees">Politique de confidentialité</a></li>
+          <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bas">
+      <span>© 2026 Les Domaines de Tri Hent — Tous droits réservés</span>
+      <span>Conciergerie de location courte durée · Paimpol · Bretagne</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

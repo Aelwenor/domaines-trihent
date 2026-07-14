@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nos biens — Les Domaines de Tri Hent</title>
+<meta name="description" content="Découvrez les demeures d'exception proposées par Les Domaines de Tri Hent en Bretagne : manoirs, longères et maisons face à la mer autour de Paimpol. Réservation sur Airbnb.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ==================== NAVIGATION ==================== -->
+<header id="entete">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-nom">Les Domaines de Tri Hent</span>
+      <span class="logo-sous">Conciergerie &middot; Bretagne</span>
+    </a>
+    <nav class="desktop" aria-label="Navigation principale">
+      <a class="lien" href="index.html">Accueil</a>
+      <a class="lien" href="index.html#apropos">À propos</a>
+      <a class="lien" href="index.html#services">Services</a>
+      <a class="lien" href="nos-biens.html">Nos biens</a>
+      <a class="lien" href="index.html#temoignages">Témoignages</a>
+      <a class="lien" href="contact.html">Contact</a>
+      <a class="btn btn-or nav-cta" href="contact.html">Nous contacter</a>
+    </nav>
+    <button class="burger" aria-label="Ouvrir le menu" onclick="basculerMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="menu-mobile" aria-label="Navigation mobile">
+      <a href="index.html">Accueil</a>
+      <a href="index.html#apropos">À propos</a>
+      <a href="index.html#services">Services</a>
+      <a href="nos-biens.html" onclick="basculerMenu()">Nos biens</a>
+      <a href="index.html#temoignages">Témoignages</a>
+      <a href="contact.html">Contact</a>
+      <a class="btn btn-or" href="contact.html">Nous contacter</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ==================== BANNIÈRE ==================== -->
+<section class="banniere-page">
+  <div class="container">
+    <span class="kicker">Nos biens</span>
+    <h1>Des demeures d'exception en Bretagne</h1>
+    <p class="sous-titre">Manoirs de caractère, longères restaurées et maisons face à la mer : chaque bien de notre collection est sélectionné et entretenu avec la même exigence. Cliquez sur les vignettes pour découvrir l'intérieur, puis réservez directement sur Airbnb.</p>
+  </div>
+</section>
+
+<!-- ==================== BIENS ==================== -->
+<section class="biens">
+  <div class="container">
+    <div class="biens-grille">
+
+      <!-- ===== Bien 1 : remplacez le lien Airbnb ci-dessous par celui de l'annonce ===== -->
+      <div class="bien reveal">
+        <div class="visuel">
+          <span class="badge">Coup de cœur</span>
+          <img src="https://images.unsplash.com/photo-1664005943902-a432460a68a6?auto=format&fit=crop&w=1200&q=80" alt="Manoir de Kervelen — façade en pierre et jardin">
+        </div>
+        <div class="vignettes">
+          <img class="actif" onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1664005943902-a432460a68a6?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1664005943902-a432460a68a6?auto=format&fit=crop&w=300&q=60" alt="Manoir de Kervelen — extérieur">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=300&q=60" alt="Manoir de Kervelen — salon">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=300&q=60" alt="Manoir de Kervelen — chambre">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&w=300&q=60" alt="Manoir de Kervelen — cuisine">
+        </div>
+        <div class="corps">
+          <h3>Manoir de Kervelen</h3>
+          <div class="lieu">Paimpol · Côtes-d'Armor</div>
+          <div class="caracteristiques">
+            <span>10 voyageurs</span>
+            <span>5 chambres</span>
+            <span>3 salles de bain</span>
+            <span>260 m²</span>
+          </div>
+          <p class="description">Manoir breton du XVIIIe siècle au cœur d'un parc arboré d'un hectare. Cheminées d'époque, cuisine d'exception, salle de réception : l'adresse idéale pour les grandes tablées familiales, à 10 minutes du port de Paimpol.</p>
+          <!-- REMPLACER : lien vers l'annonce Airbnb de ce bien -->
+          <a href="https://www.airbnb.fr/" target="_blank" rel="noopener" class="btn btn-or">Réserver sur Airbnb</a>
+        </div>
+      </div>
+
+      <!-- ===== Bien 2 : remplacez le lien Airbnb ci-dessous par celui de l'annonce ===== -->
+      <div class="bien reveal">
+        <div class="visuel">
+          <img src="https://images.unsplash.com/photo-1651344055321-d7e34751c943?auto=format&fit=crop&w=1200&q=80" alt="Longère des Embruns — façade en pierre">
+        </div>
+        <div class="vignettes">
+          <img class="actif" onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1651344055321-d7e34751c943?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1651344055321-d7e34751c943?auto=format&fit=crop&w=300&q=60" alt="Longère des Embruns — extérieur">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=300&q=60" alt="Longère des Embruns — salon">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=300&q=60" alt="Longère des Embruns — chambre">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=300&q=60" alt="Longère des Embruns — cuisine">
+        </div>
+        <div class="corps">
+          <h3>Longère des Embruns</h3>
+          <div class="lieu">Ploubazlanec · Presqu'île sauvage</div>
+          <div class="caracteristiques">
+            <span>6 voyageurs</span>
+            <span>3 chambres</span>
+            <span>2 salles de bain</span>
+            <span>140 m²</span>
+          </div>
+          <p class="description">Longère en pierre entièrement restaurée, entre terre et mer. Jardin clos, poêle à bois et matériaux nobles ; le sentier des douaniers (GR34) et la pointe de l'Arcouest sont à quelques pas. Un cocon pour se ressourcer.</p>
+          <!-- REMPLACER : lien vers l'annonce Airbnb de ce bien -->
+          <a href="https://www.airbnb.fr/" target="_blank" rel="noopener" class="btn btn-or">Réserver sur Airbnb</a>
+        </div>
+      </div>
+
+      <!-- ===== Bien 3 : remplacez le lien Airbnb ci-dessous par celui de l'annonce ===== -->
+      <div class="bien reveal">
+        <div class="visuel">
+          <span class="badge">Vue mer</span>
+          <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80" alt="Villa des Roches Bleues — façade et terrasse">
+        </div>
+        <div class="vignettes">
+          <img class="actif" onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=300&q=60" alt="Villa des Roches Bleues — extérieur">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=300&q=60" alt="Villa des Roches Bleues — séjour">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=300&q=60" alt="Villa des Roches Bleues — chambre">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=300&q=60" alt="Villa des Roches Bleues — salle de bain">
+        </div>
+        <div class="corps">
+          <h3>Villa des Roches Bleues</h3>
+          <div class="lieu">Plouha · Falaises &amp; plages</div>
+          <div class="caracteristiques">
+            <span>8 voyageurs</span>
+            <span>4 chambres</span>
+            <span>3 salles de bain</span>
+            <span>190 m²</span>
+          </div>
+          <p class="description">Villa contemporaine dominant la Manche, face aux plus hautes falaises de Bretagne. Grande terrasse plein sud, baies vitrées sur la mer et plage de Bréhec en contrebas. Le luxe discret, les pieds dans l'eau.</p>
+          <!-- REMPLACER : lien vers l'annonce Airbnb de ce bien -->
+          <a href="https://www.airbnb.fr/" target="_blank" rel="noopener" class="btn btn-or">Réserver sur Airbnb</a>
+        </div>
+      </div>
+
+      <!-- ===== Bien 4 : remplacez le lien Airbnb ci-dessous par celui de l'annonce ===== -->
+      <div class="bien reveal">
+        <div class="visuel">
+          <img src="https://images.unsplash.com/photo-1694171738257-76d1260d491d?auto=format&fit=crop&w=1200&q=80" alt="La Maison du Port — façade">
+        </div>
+        <div class="vignettes">
+          <img class="actif" onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1694171738257-76d1260d491d?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1694171738257-76d1260d491d?auto=format&fit=crop&w=300&q=60" alt="La Maison du Port — extérieur">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=300&q=60" alt="La Maison du Port — séjour">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=300&q=60" alt="La Maison du Port — salon">
+          <img onclick="changerPhoto(this)" data-grand="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=300&q=60" alt="La Maison du Port — chambre">
+        </div>
+        <div class="corps">
+          <h3>La Maison du Port</h3>
+          <div class="lieu">Paimpol · Centre historique</div>
+          <div class="caracteristiques">
+            <span>4 voyageurs</span>
+            <span>2 chambres</span>
+            <span>1 salle de bain</span>
+            <span>85 m²</span>
+          </div>
+          <p class="description">Maison de ville pleine de charme à deux pas du port de plaisance et des halles. Décoration marine et raffinée, terrasse intimiste : le pied-à-terre parfait pour explorer Paimpol, Bréhat et la côte de Granit Rose.</p>
+          <!-- REMPLACER : lien vers l'annonce Airbnb de ce bien -->
+          <a href="https://www.airbnb.fr/" target="_blank" rel="noopener" class="btn btn-or">Réserver sur Airbnb</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== BANDEAU ==================== -->
+<section class="bandeau">
+  <span class="kicker" style="justify-content:center; display:inline-flex;">Propriétaires</span>
+  <h2>Votre bien a sa place<br>dans notre <em>collection</em></h2>
+  <p>Vous possédez une demeure de caractère en Bretagne ? Confiez-la-nous : estimation gratuite et sans engagement.</p>
+  <a href="contact.html" class="btn btn-or">Nous contacter</a>
+</section>
+
+<!-- ==================== PIED DE PAGE ==================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grille">
+      <div>
+        <a href="index.html" class="logo">
+          <span class="logo-nom">Les Domaines de Tri Hent</span>
+          <span class="logo-sous">Conciergerie &middot; Bretagne</span>
+        </a>
+        <p style="margin-top:20px; max-width:300px;">Conciergerie haut de gamme de location courte durée, ancrée en Bretagne. Nous prenons soin de votre bien comme s'il était le nôtre.</p>
+        <div class="footer-sociaux">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2-.1-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4 1.3-.1 1.7-.1 4.9-.1zm0 2c-3.1 0-3.5 0-4.8.1-1.1.1-1.4.2-1.8.3-.4.2-.7.4-1 .7-.3.3-.5.6-.7 1-.1.4-.3.7-.3 1.8-.1 1.3-.1 1.7-.1 4.8s0 3.5.1 4.8c.1 1.1.2 1.4.3 1.8.2.4.4.7.7 1 .3.3.6.5 1 .7.4.1.7.3 1.8.3 1.3.1 1.7.1 4.8.1s3.5 0 4.8-.1c1.1-.1 1.4-.2 1.8-.3.4-.2.7-.4 1-.7.3-.3.5-.6.7-1 .1-.4.3-.7.3-1.8.1-1.3.1-1.7.1-4.8s0-3.5-.1-4.8c-.1-1.1-.2-1.4-.3-1.8-.2-.4-.4-.7-.7-1-.3-.3-.6-.5-1-.7-.4-.1-.7-.3-1.8-.3-1.3-.1-1.7-.1-4.8-.1zm0 3.4a5.4 5.4 0 1 1 0 10.8 5.4 5.4 0 0 1 0-10.8zm0 2a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zm5.6-3.5a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></svg></a>
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2V7.5c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V21h3.4z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9.5 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.5c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21h-4V9z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-coord">
+          <li><span class="picto">✆</span><a href="tel:+33666991128">06 66 99 11 28</a></li>
+          <li><span class="picto">✉</span><a href="mailto:domaines.trihent@gmail.com">domaines.trihent@gmail.com</a></li>
+          <li><span class="picto">⚓</span><span>Paimpol — Côtes-d'Armor<br>Bretagne, France</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Plan du site</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="index.html#apropos">À propos</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="nos-biens.html">Nos biens</a></li>
+          <li><a href="index.html#formules">Nos formules</a></li>
+          <li><a href="index.html#temoignages">Témoignages</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Informations</h4>
+        <ul>
+          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="mentions-legales.html#donnees">Politique de confidentialité</a></li>
+          <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bas">
+      <span>© 2026 Les Domaines de Tri Hent — Tous droits réservés</span>
+      <span>Conciergerie de location courte durée · Paimpol · Bretagne</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
