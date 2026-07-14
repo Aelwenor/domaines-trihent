@@ -66,25 +66,44 @@ function changerPhoto(vignette) {
   vignette.classList.add('actif');
 }
 
-// Formulaire de contact : ouvre le client mail avec le message pré-rempli
+// Formulaire de contact : envoi direct vers domaines.trihent@gmail.com via FormSubmit,
+// sans quitter la page. Le visiteur voit un message de confirmation.
 const formulaire = document.getElementById('formulaire-contact');
 if (formulaire) {
-  formulaire.addEventListener('submit', e => {
+  const confirmation = document.getElementById('form-confirmation');
+  formulaire.addEventListener('submit', async e => {
     e.preventDefault();
-    const d = new FormData(formulaire);
-    const sujet = encodeURIComponent(
-      'Demande de contact — ' + (d.get('prenom') || '') + ' ' + (d.get('nom') || '')
-    );
-    const corps = encodeURIComponent(
-      'Genre : ' + (d.get('genre') || '—') + '\n' +
-      'Nom : ' + (d.get('prenom') || '') + ' ' + (d.get('nom') || '') + '\n' +
-      'Email : ' + (d.get('email') || '') + '\n' +
-      'Téléphone : ' + (d.get('telephone') || '') + '\n' +
-      'Type de bien : ' + (d.get('type-bien') || '') + '\n\n' +
-      (d.get('message') || '')
-    );
-    window.location.href = 'mailto:domaines.trihent@gmail.com?subject=' + sujet + '&body=' + corps;
-    const confirmation = document.getElementById('form-confirmation');
-    if (confirmation) confirmation.style.display = 'block';
+    const bouton = formulaire.querySelector('button[type="submit"]');
+    const texteInitial = bouton.textContent;
+    bouton.disabled = true;
+    bouton.textContent = 'Envoi en cours…';
+    try {
+      const reponse = await fetch('https://formsubmit.co/ajax/domaines.trihent@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(formulaire)
+      });
+      const resultat = await reponse.json().catch(() => ({}));
+      if (reponse.ok && (resultat.success === true || resultat.success === 'true')) {
+        formulaire.reset();
+        if (confirmation) {
+          confirmation.style.color = '';
+          confirmation.textContent = 'Merci ! Votre demande a bien été envoyée. Nous vous répondrons très rapidement.';
+          confirmation.style.display = 'block';
+        }
+      } else {
+        throw new Error(resultat.message || 'Envoi impossible');
+      }
+    } catch (err) {
+      if (confirmation) {
+        confirmation.innerHTML = 'Une erreur est survenue lors de l\'envoi. Écrivez-nous directement à ' +
+          '<a href="mailto:domaines.trihent@gmail.com">domaines.trihent@gmail.com</a> ' +
+          'ou appelez-nous au 06 66 99 11 28.';
+        confirmation.style.display = 'block';
+      }
+    } finally {
+      bouton.disabled = false;
+      bouton.textContent = texteInitial;
+    }
   });
 }
