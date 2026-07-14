@@ -68,9 +68,14 @@
         </ul>
       </div>
 
-      <form class="formulaire" id="formulaire-contact" action="contact.php" method="POST">
-        <!-- Anti-spam (piege invisible, a laisser vide) -->
-        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <form class="formulaire" id="formulaire-contact" action="https://api.web3forms.com/submit" method="POST">
+        <!-- Cle Web3Forms (publique) : la demande est envoyee vers domaines.trihent@gmail.com -->
+        <input type="hidden" name="access_key" value="01367b2a-aa36-4f53-a864-6b4bb2bef206">
+        <input type="hidden" name="subject" value="Nouvelle demande de contact - Les Domaines de Tri Hent">
+        <input type="hidden" name="from_name" value="Site Les Domaines de Tri Hent">
+        <input type="hidden" name="redirect" value="https://palegreen-caterpillar-762968.hostingersite.com/merci.html">
+        <!-- Anti-spam Web3Forms (case piege invisible, a laisser vide) -->
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" aria-hidden="true">
         <div class="champ">
           <span class="etiquette-champ">Genre <span class="obligatoire">*</span></span>
           <div class="radios">
