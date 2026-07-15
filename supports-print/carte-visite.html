@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Carte de visite — Les Domaines de Tri Hent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f6f3ea; --forest:#1f3b30; --gold:#b69256; --gold-light:#cbab72; --ink:#23261f;
+    --serif:'Cormorant Garamond',serif; --sans:'Jost',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#dedad1;font-family:var(--sans);padding:34px 20px;color:var(--ink)}
+  .intro{max-width:680px;margin:0 auto 26px;text-align:center}
+  .intro h1{font-family:var(--serif);font-weight:500;font-size:26px;color:var(--forest)}
+  .intro p{font-size:13.5px;color:#5c6154;margin-top:6px;line-height:1.55}
+  .stage{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start}
+  .item{text-align:center}
+  .item .lab{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#7a7466;margin-bottom:10px}
+
+  /* Carte au format standard 85 x 55 mm (taille réelle) */
+  .face{width:85mm;height:55mm;position:relative;overflow:hidden;
+        box-shadow:0 12px 30px rgba(22,41,31,.22)}
+
+  /* ---------- RECTO ---------- */
+  .recto{background:var(--cream);display:flex;flex-direction:column;
+         align-items:center;justify-content:center}
+  .recto .mark{font-family:var(--serif);text-align:center;line-height:1.04}
+  .recto .l1{display:block;font-weight:500;font-size:29px;color:var(--forest);letter-spacing:.01em}
+  .recto .l2{display:block;font-style:italic;font-weight:500;font-size:29px;color:var(--gold)}
+  .recto .rule{width:40px;height:1.4px;background:var(--gold);margin:15px 0 12px}
+  .recto .sub{font-size:11px;letter-spacing:.52em;text-transform:uppercase;
+              color:var(--forest);font-weight:400;padding-left:.52em}
+
+  /* ---------- VERSO ---------- */
+  .verso{background:var(--forest);color:var(--cream);
+         display:flex;flex-direction:column;align-items:center;justify-content:center;
+         text-align:center;padding:20px 24px}
+  .verso .tag{font-family:var(--serif);font-style:italic;font-weight:400;
+              font-size:16px;line-height:1.28;color:#f3ecdd}
+  .verso .rule{width:34px;height:1.3px;background:var(--gold);border:0;margin:11px 0 13px}
+  .verso .coords{display:flex;flex-direction:column;gap:5px;
+                 font-weight:300;letter-spacing:.03em;color:#efe9dc}
+  .verso .coords .tel{color:var(--gold-light);font-weight:400;font-size:13px;letter-spacing:.06em}
+  .verso .coords .mail{font-size:11.5px;letter-spacing:.03em}
+  .verso .qr{margin-top:13px;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .verso .qr img{width:15mm;height:15mm;background:#fff;padding:1.4mm;border-radius:3px;display:block}
+  .verso .qr .qrlab{font-size:7px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-light)}
+
+  @media print{
+    @page{size:85mm 55mm;margin:0}
+    body{background:#fff;padding:0}
+    .intro,.item .lab{display:none}
+    .stage{display:block}
+    .item{page-break-after:always}
+    .face{box-shadow:none}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Carte de visite — aperçu (taille réelle)</h1>
+  <p>Format 85 × 55 mm, recto-verso. Pour un PDF prêt à imprimer : <b>Ctrl + P → « Enregistrer au format PDF »</b>.</p>
+</div>
+
+<div class="stage">
+  <div class="item">
+    <div class="lab">Recto</div>
+    <div class="face recto">
+      <div class="mark">
+        <span class="l1">Les Domaines</span>
+        <span class="l2">de Tri Hent</span>
+      </div>
+      <div class="rule"></div>
+      <div class="sub">Bretagne</div>
+    </div>
+  </div>
+
+  <div class="item">
+    <div class="lab">Verso</div>
+    <div class="face verso">
+      <div class="tag">Conciergerie de<br>location courte durée</div>
+      <hr class="rule">
+      <div class="coords">
+        <span class="tel">06 66 99 11 28</span>
+        <span class="mail">domaines.trihent@gmail.com</span>
+      </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=https%3A%2F%2Fdomaines-trihent.com" alt="QR code vers le site">
+        <span class="qrlab">Notre site</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
