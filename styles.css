@@ -316,6 +316,23 @@ header.menu-ouvert .menu-mobile { display: flex; }
 .faq-reponse { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
 .faq-reponse p { padding: 0 30px 26px; color: var(--gris); font-size: 15.5px; }
 
+/* ---------- Collection à venir ---------- */
+.collection-attente { background: var(--creme); }
+.attente-carte {
+  max-width: 720px; margin: 0 auto; text-align: center;
+  background: var(--blanc);
+  border: 1px solid var(--creme-2);
+  padding: 72px 50px;
+}
+.attente-motif { display: block; font-size: 30px; color: var(--or-clair); margin-bottom: 24px; }
+.attente-carte .kicker { color: var(--or); }
+.attente-carte h2 { font-size: clamp(30px, 4vw, 44px); margin-bottom: 22px; }
+.attente-carte h2 em { font-style: italic; color: var(--or); }
+.attente-carte p { color: var(--gris); max-width: 560px; margin: 0 auto 18px; }
+.attente-carte .attente-note { font-size: 15px; }
+.attente-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
+@media (max-width: 600px) { .attente-carte { padding: 54px 26px; } }
+
 /* ---------- Bandeau contact ---------- */
 .bandeau {
   background: var(--vert-fonce); color: var(--creme); text-align: center; padding: 90px 24px;
