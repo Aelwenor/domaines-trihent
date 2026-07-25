@@ -235,32 +235,19 @@ header.menu-ouvert .menu-mobile { display: flex; }
 .chiffres-grille {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center;
 }
-.chiffre .valeur {
-  font-family: var(--serif); font-size: clamp(44px, 5vw, 64px);
-  font-weight: 500; color: var(--or-clair); line-height: 1;
+.engagements-entete { text-align: center; margin-bottom: 56px; }
+.engagements-entete .kicker { color: var(--or-clair); }
+.engagements-entete .kicker::before { background: var(--or-clair); }
+.engagements-entete h2 { color: var(--creme); font-size: clamp(30px, 4vw, 44px); }
+.chiffre .valeur, .chiffre .titre {
+  font-family: var(--serif); font-size: clamp(40px, 4.4vw, 56px);
+  font-weight: 500; color: var(--or-clair); line-height: 1.05;
 }
 .chiffre .valeur sup { font-size: 0.45em; top: -0.8em; }
 .chiffre .legende {
-  margin-top: 12px; font-size: 13.5px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: rgba(250, 246, 239, .8);
+  margin-top: 14px; font-size: 13.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(250, 246, 239, .8); line-height: 1.5;
 }
-
-/* ---------- Témoignages ---------- */
-.temoignages-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-.temoignage {
-  background: var(--blanc); padding: 44px 38px;
-  border: 1px solid var(--creme-2); position: relative;
-  display: flex; flex-direction: column;
-}
-.temoignage::before {
-  content: "\201C"; font-family: var(--serif); font-size: 90px; line-height: 1;
-  color: var(--or-clair); opacity: .55; position: absolute; top: 18px; left: 30px;
-}
-.temoignage .etoiles { color: var(--or); letter-spacing: 4px; margin: 26px 0 18px; font-size: 15px; }
-.temoignage p.avis { color: var(--gris); font-size: 15.5px; font-style: italic; flex: 1; }
-.temoignage .auteur { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--creme-2); }
-.temoignage .auteur .nom { font-family: var(--serif); font-size: 19px; font-weight: 600; color: var(--vert); }
-.temoignage .auteur .role { font-size: 13px; letter-spacing: 0.08em; color: var(--gris); text-transform: uppercase; }
 
 /* ---------- Tarifs (style JCM Invest, aux couleurs de la maison) ---------- */
 .tarifs { background: var(--vert); color: var(--creme); }
@@ -471,7 +458,6 @@ footer a:hover { color: var(--or-clair); }
   .audience { min-height: 480px; }
   .services-grille { grid-template-columns: repeat(2, 1fr); }
   .chiffres-grille { grid-template-columns: repeat(2, 1fr); }
-  .temoignages-grille { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
   .tarifs-grille { grid-template-columns: 1fr; max-width: 560px; }
   .biens-grille { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
   .contact-grille { grid-template-columns: 1fr; }
