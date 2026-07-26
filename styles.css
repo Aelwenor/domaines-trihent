@@ -261,7 +261,7 @@ header.menu-ouvert .menu-mobile { display: flex; }
   max-width: 860px; margin: 0 auto 70px; text-align: center;
 }
 .tarifs-citation em { color: var(--or-clair); font-style: italic; }
-.tarifs-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; max-width: 1020px; margin: 0 auto; }
+.tarifs-grille { display: grid; grid-template-columns: 1fr; gap: 36px; max-width: 480px; margin: 0 auto; }
 .offre {
   background: var(--creme); color: var(--encre);
   padding: 52px 44px; text-align: center;
