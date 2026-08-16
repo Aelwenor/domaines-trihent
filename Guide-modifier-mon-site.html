@@ -27,90 +27,96 @@
 <p><em>Les Domaines de Tri Hent — mémo pratique pour Anne-Sophie</em></p>
 
 <div class="box ok">
-<strong>Le principe :</strong> votre site est fait de 4 fichiers texte. On modifie le <strong>texte</strong> à l'intérieur, on enregistre, et c'est en ligne. Le plus simple : éditer directement dans le <strong>Gestionnaire de fichiers de Hostinger</strong> (changement immédiat, sans rien re-téléverser).
+<strong>Les 3 endroits (à ne pas confondre) :</strong>
+<ul style="margin:8px 0 0">
+  <li>💻 <strong>Votre ordinateur (+ Claude)</strong> : là où on modifie le site proprement. Les fichiers d'origine sont ici.</li>
+  <li>💾 <strong>GitHub</strong> : la <strong>sauvegarde</strong> + l'historique. Invisible pour les visiteurs.</li>
+  <li>🌐 <strong>Hostinger</strong> : le <strong>site en ligne</strong>, ce que le public voit. <strong>Seul Hostinger rend un changement visible.</strong></li>
+</ul>
 </div>
 
-<h2>1. Comment éditer un fichier (la méthode)</h2>
+<h2>1. Où vais-je pour modifier ?</h2>
+<table>
+  <tr><th>Type de modification</th><th>Où ?</th></tr>
+  <tr><td><strong>Minuscule et urgente</strong> : un mot, un numéro, un email, une faute de frappe</td><td>Directement sur <strong>Hostinger</strong> (§2) — <strong>puis prévenez Claude</strong> pour la sauvegarde</td></tr>
+  <tr><td><strong>Tout le reste</strong> : texte long, mise en page, couleurs, sections, photos, <code>styles.css</code></td><td>Demandez à <strong>Claude</strong> → il modifie + sauvegarde GitHub, vous téléversez sur Hostinger</td></tr>
+</table>
+
+<div class="box warn">
+<strong>⚠️ Ne modifiez JAMAIS <code>styles.css</code> directement sur Hostinger.</strong><br>
+Ce fichier (l'apparence du site) est gardé en mémoire « cache » par les navigateurs : votre changement risque de « ne pas prendre » et vous croirez que ça n'a pas marché. Pour tout ce qui touche à l'apparence (couleurs, alignement, tailles), <strong>passez par Claude</strong>.
+</div>
+
+<h2>2. Éditer directement sur Hostinger (pour le texte)</h2>
 <ol>
   <li>Connectez-vous à <strong>hpanel.hostinger.com</strong> → votre site → <strong>Gestionnaire de fichiers</strong></li>
   <li>Entrez dans le dossier <code>public_html</code></li>
   <li><strong>Clic droit</strong> sur le fichier voulu → <strong>« Modifier »</strong> (ou l'icône <code>&lt;&gt;</code>)</li>
   <li>Appuyez sur <code>Ctrl + F</code> pour <strong>chercher le texte</strong> à changer</li>
-  <li>Modifiez, puis cliquez sur <strong>Enregistrer</strong> (icône disquette 💾 en haut à gauche)</li>
-  <li>Rafraîchissez votre site (<code>F5</code>) → le changement est en ligne ⚡</li>
+  <li>Modifiez, puis cliquez sur <strong>Enregistrer</strong> (icône disquette 💾 en haut à droite)</li>
+  <li>Rafraîchissez votre site avec <code>Ctrl + F5</code> (rechargement forcé) → le changement est en ligne ⚡</li>
 </ol>
 
 <h3>Quel fichier pour quoi ?</h3>
 <table>
   <tr><th>Fichier</th><th>Contenu</th></tr>
-  <tr><td><code>index.html</code></td><td>Page d'accueil (accroche, services, bannière chiffres, témoignages, formules, FAQ, pied de page)</td></tr>
-  <tr><td><code>nos-biens.html</code></td><td>Les biens de votre conciergerie</td></tr>
-  <tr><td><code>contact.html</code></td><td>Formulaire + coordonnées</td></tr>
+  <tr><td><code>index.html</code></td><td>Page d'accueil : accroche, à propos, services, bandeau « Notre engagement », nos formules (barème), FAQ, pied de page</td></tr>
+  <tr><td><code>nos-biens.html</code></td><td>Page « Nos biens » (actuellement : message « collection à venir »)</td></tr>
+  <tr><td><code>contact.html</code></td><td>Formulaire de contact + coordonnées</td></tr>
+  <tr><td><code>merci.html</code></td><td>Page de remerciement affichée après l'envoi du formulaire</td></tr>
   <tr><td><code>mentions-legales.html</code></td><td>Mentions légales</td></tr>
 </table>
 
-<h2>2. La règle d'or ✋</h2>
+<h2>3. Les règles d'or ✋</h2>
 <div class="box warn">
 <strong>Ne jamais écrire le mot « gestion » (ni « gérer », « gère », « gérez »).</strong><br>
 Ce terme est réservé aux détenteurs de la carte G. Utilisez plutôt : <em>conciergerie, accompagnement, prise en charge, suivi, organisation</em>.
 </div>
 <div class="box warn">
 <strong>Ne touchez qu'au texte, pas aux balises.</strong> Modifiez ce qui est <em>entre</em> les chevrons, jamais les <code>&lt;...&gt;</code> ni les <code>class="..."</code>.<br>
-Exemple — dans <code>&lt;h3&gt;Manoir de Kervelen&lt;/h3&gt;</code>, changez seulement <strong>Manoir de Kervelen</strong>.
+Exemple — dans <code>&lt;h3&gt;Nos formules&lt;/h3&gt;</code>, ne changez que <strong>Nos formules</strong>.
+</div>
+<div class="box warn">
+<strong>Prévenez Claude après une modif faite en direct.</strong> Sinon la sauvegarde (ordinateur + GitHub) reste en retard, et un futur téléversement pourrait <strong>écraser</strong> votre changement. Un simple message : <em>« j'ai changé X sur Hostinger, resynchronise la sauvegarde »</em>.
 </div>
 
-<h2>3. Vos tâches courantes (exemples concrets)</h2>
+<h2>4. Vos modifications courantes (exemples)</h2>
 
-<h3>➜ Corriger une phrase (ex. « à l'agence »)</h3>
-<p>Vous n'avez pas d'agence ? Dans <code>contact.html</code>, cherchez (<code>Ctrl+F</code>) : <code>à l'agence</code></p>
-<pre>Rencontrons-nous autour d'un café, à l'agence ou chez vous.</pre>
-<p>Remplacez par :</p>
-<pre>Rencontrons-nous autour d'un café ou chez vous.</pre>
+<h3>➜ Changer le numéro de téléphone</h3>
+<p>Il apparaît dans le pied de page de chaque page et dans <code>contact.html</code>. Cherchez (<code>Ctrl+F</code>) : <code>06 66 99 11 28</code> et remplacez par le nouveau numéro (à deux endroits : le texte affiché <em>et</em> dans <code>href="tel:..."</code>).</p>
 
-<h3>➜ Enlever la bannière des chiffres (« Biens accompagnés, taux d'occupation… »)</h3>
-<p>Dans <code>index.html</code>, cherchez <code>class="chiffres"</code>. Sélectionnez et <strong>supprimez tout le bloc</strong>, depuis la ligne&nbsp;:</p>
-<pre>&lt;section class="chiffres"&gt;</pre>
-<p>… jusqu'à la balise de fermeture correspondante&nbsp;:</p>
-<pre>&lt;/section&gt;</pre>
-<p>(juste avant la section des témoignages). Enregistrez : la bannière disparaît. 💡 Astuce : faites d'abord une copie du fichier (voir §4) au cas où.</p>
+<h3>➜ Changer l'adresse email</h3>
+<p>Cherchez : <code>domaines.trihent@gmail.com</code> (là aussi, dans le texte affiché et dans <code>href="mailto:..."</code>).</p>
 
-<h3>➜ Modifier / ajouter / retirer un bien</h3>
-<p>Tout se passe dans <code>nos-biens.html</code>. Chaque bien est un bloc qui commence par&nbsp;:</p>
-<pre>&lt;div class="bien reveal"&gt;</pre>
-<p>… et se termine par le <code>&lt;/div&gt;</code> qui lui correspond (juste avant le bien suivant).</p>
+<h3>➜ Corriger une phrase</h3>
+<p>Repérez un bout de la phrase, cherchez-le avec <code>Ctrl+F</code>, et modifiez uniquement les mots — sans toucher aux balises autour.</p>
 
-<p><strong>Dans un bloc, ce que vous pouvez changer :</strong></p>
-<table>
-  <tr><th>Élément</th><th>À chercher</th></tr>
-  <tr><td>Nom du bien</td><td><code>&lt;h3&gt;...&lt;/h3&gt;</code></td></tr>
-  <tr><td>Lieu</td><td><code>class="lieu"</code></td></tr>
-  <tr><td>Voyageurs / chambres / m²</td><td><code>class="caracteristiques"</code> (les <code>&lt;span&gt;</code>)</td></tr>
-  <tr><td>Description</td><td><code>class="description"</code></td></tr>
-  <tr><td><strong>Lien « Réserver sur Airbnb »</strong></td><td><code>href="https://www.airbnb.fr/"</code> → remplacez par le lien réel de votre annonce Airbnb</td></tr>
-  <tr><td>Étiquette (Coup de cœur / Vue mer)</td><td><code>class="badge"</code> (supprimable)</td></tr>
-  <tr><td>Photos</td><td><code>src="https://images.unsplash.com/..."</code> (voir §5)</td></tr>
-</table>
+<h3>➜ Modifier le barème / le pourcentage</h3>
+<p>Dans <code>index.html</code>, cherchez <code>class="taux"</code> pour trouver le <strong>« à partir de 14 %»</strong> et le texte juste en dessous.</p>
 
-<p><strong>Retirer un bien :</strong> supprimez tout son bloc, de <code>&lt;div class="bien reveal"&gt;</code> jusqu'à son <code>&lt;/div&gt;</code>.</p>
-<p><strong>Ajouter un bien :</strong> copiez un bloc existant entier, collez-le juste après, puis modifiez le nom, le lieu, la description, les photos et le lien Airbnb.</p>
+<h3>➜ Retravailler l'apparence (couleurs, alignement, sections entières)</h3>
+<p>👉 <strong>Ça, demandez-le à Claude.</strong> Ce sont les cas où une petite erreur peut casser la mise en page — et souvent ça touche <code>styles.css</code> (cache).</p>
 
-<h2>4. Sécurité : ne rien casser 🛟</h2>
+<h2>5. Sécurité : ne rien casser 🛟</h2>
 <ul>
   <li><strong>Avant une grosse modif</strong>, faites une copie du fichier : dans le Gestionnaire de fichiers, clic droit sur le fichier → <em>Copier</em> (vous aurez un <code>index (copy).html</code> de secours).</li>
   <li><strong>En cas d'erreur</strong>, une corbeille (« Trash bin ») existe dans le Gestionnaire de fichiers.</li>
-  <li><strong>Filet de sécurité ultime :</strong> une sauvegarde complète du site existe sur GitHub (<code>github.com/Aelwenor/domaines-trihent</code>) et le fichier <code>site-tri-hent.zip</code> d'origine est sur votre ordinateur. En cas de pépin, on peut toujours tout restaurer.</li>
+  <li><strong>Filet de sécurité ultime :</strong> une sauvegarde complète du site existe sur GitHub (<code>github.com/Aelwenor/domaines-trihent</code>). En cas de pépin, Claude peut tout restaurer.</li>
 </ul>
 
-<h2>5. Les photos (un peu plus technique)</h2>
-<p>Les photos actuelles viennent d'Internet (Unsplash) — ce sont des exemples. Pour mettre vos <strong>vraies photos</strong> plus tard, le plus simple sera de les téléverser dans un dossier <code>images</code> sur Hostinger et de remplacer les adresses <code>src="..."</code>. <strong>Ça, faites-moi signe</strong> : c'est le genre d'étape où je peux vous aider efficacement.</p>
+<h2>6. Les photos (un peu plus technique)</h2>
+<p>Les photos actuelles viennent d'Internet (Unsplash) — ce sont des exemples. Pour mettre vos <strong>vraies photos</strong> plus tard, le plus simple sera de les téléverser dans un dossier <code>images</code> sur Hostinger et de remplacer les adresses <code>src="..."</code>. <strong>Ça, faites-moi signe</strong> : c'est le genre d'étape où Claude vous aide efficacement.</p>
 
-<h2>6. Bon à savoir</h2>
+<h2>7. Le workflow complet (quand Claude intervient)</h2>
 <div class="box">
-Les modifications faites directement sur Hostinger ne sont pas recopiées automatiquement dans la sauvegarde GitHub. Ce n'est pas grave. De temps en temps (après plusieurs changements), vous pouvez me demander : <em>« resynchronise la sauvegarde GitHub »</em> — et je m'en occupe.
+<strong>1.</strong> Vous demandez le changement à Claude → il modifie les fichiers.<br>
+<strong>2.</strong> Claude fait le « commit + push » sur GitHub (la sauvegarde).<br>
+<strong>3.</strong> Claude vous dit quels fichiers re-téléverser dans <code>public_html</code> sur Hostinger.<br>
+<strong>4.</strong> Vous téléversez ces fichiers (en écrasant les anciens) → c'est en ligne. Un <code>Ctrl + F5</code> force l'affichage de la nouvelle version.
 </div>
 
 <p style="margin-top:40px;text-align:center;color:#5c6154;font-size:14px">
-Guide créé le 14/07/2026 · Les Domaines de Tri Hent
+Guide créé le 14/07/2026 · mis à jour le 26/07/2026 · Les Domaines de Tri Hent
 </p>
 
 </body>
