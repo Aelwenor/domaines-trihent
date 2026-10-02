@@ -72,7 +72,8 @@ function db_migrate(PDO $pdo): void
             phone       TEXT NOT NULL DEFAULT '',
             objective   TEXT NOT NULL DEFAULT '',
             coach_notes TEXT NOT NULL DEFAULT '',
-            created_at  TEXT NOT NULL
+            created_at  TEXT NOT NULL,
+            access_token TEXT NOT NULL DEFAULT ''
         );
         -- start_at/end_at : la seance ; occ_start/occ_end : temps reellement bloque
         -- pour le coach (trajet aller + seance + trajet retour + pause eventuelle)
@@ -94,7 +95,6 @@ function db_migrate(PDO $pdo): void
             client_note   TEXT NOT NULL DEFAULT '',
             status        TEXT NOT NULL DEFAULT 'pending',
             cancelled_by  TEXT NOT NULL DEFAULT '',
-            reminder_sent INTEGER NOT NULL DEFAULT 0,
             created_at    TEXT NOT NULL,
             updated_at    TEXT NOT NULL
         );
@@ -107,7 +107,44 @@ function db_migrate(PDO $pdo): void
             is_read    INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL
         );
+        -- Rappels programmes. target : 'coach' ou 'client'.
+        -- kind : 'morning' (programme du jour), 'eve' (programme du lendemain),
+        --        'weekly' (les 7 jours a venir), 'before' (X heures avant chaque seance, clients)
+        CREATE TABLE IF NOT EXISTS reminders (
+            id      INTEGER PRIMARY KEY,
+            target  TEXT NOT NULL,
+            kind    TEXT NOT NULL,
+            weekday INTEGER NOT NULL DEFAULT 7,
+            time    TEXT NOT NULL DEFAULT '08:00',
+            hours   INTEGER NOT NULL DEFAULT 24,
+            active  INTEGER NOT NULL DEFAULT 1
+        );
+        -- Trace des rappels deja envoyes (evite les doublons)
+        CREATE TABLE IF NOT EXISTS reminder_log (
+            reminder_id INTEGER NOT NULL,
+            ref         TEXT NOT NULL,
+            sent_at     TEXT NOT NULL,
+            PRIMARY KEY (reminder_id, ref)
+        );
     ");
+
+    // Mises a jour d'une base deja installee
+    $cols = array_column($pdo->query('PRAGMA table_info(clients)')->fetchAll(), 'name');
+    if (!in_array('access_token', $cols, true)) {
+        $pdo->exec("ALTER TABLE clients ADD COLUMN access_token TEXT NOT NULL DEFAULT ''");
+    }
+    foreach ($pdo->query("SELECT id FROM clients WHERE access_token = ''")->fetchAll(PDO::FETCH_COLUMN) as $id) {
+        $pdo->prepare('UPDATE clients SET access_token = ? WHERE id = ?')->execute([bin2hex(random_bytes(16)), $id]);
+    }
+    if ((int) $pdo->query('SELECT COUNT(*) FROM reminders')->fetchColumn() === 0) {
+        $st = $pdo->prepare('INSERT INTO reminders(target, kind, weekday, time, hours, active) VALUES (?, ?, ?, ?, ?, ?)');
+        $st->execute(['coach', 'weekly', 7, '18:00', 24, 1]);   // dimanche 18h : la semaine a venir
+        $st->execute(['coach', 'eve', 7, '20:00', 24, 1]);      // chaque soir : le programme de demain
+        $st->execute(['coach', 'morning', 7, '07:00', 24, 0]);  // chaque matin : le programme du jour
+        $st->execute(['client', 'eve', 7, '18:00', 24, 1]);     // la veille : rappel de la seance
+        $st->execute(['client', 'weekly', 1, '08:00', 24, 0]);  // lundi : les seances de la semaine
+        $st->execute(['client', 'before', 7, '08:00', 2, 0]);   // 2 h avant la seance
+    }
 
     if ((int) $pdo->query('SELECT COUNT(*) FROM settings')->fetchColumn() === 0) {
         db_seed($pdo);
@@ -133,11 +170,11 @@ function db_seed(PDO $pdo): void
         'horizon_days'      => '60',
         'slot_step'         => '30',
         'buffer_minutes'    => '0',
-        'reminder_hours'    => '24',
         'admin_password'    => '',
         'ics_key'           => bin2hex(random_bytes(16)),
         'cron_key'          => bin2hex(random_bytes(16)),
         'site_url'          => '',
+        'last_auto_run'     => '0',
     ];
     $st = $pdo->prepare('INSERT INTO settings(key, value) VALUES (?, ?)');
     foreach ($defaults as $k => $v) {

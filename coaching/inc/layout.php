@@ -19,7 +19,7 @@ function logo_html(string $class = 'logo'): string
     return '<span class="' . $class . ' logo-initials">' . e($initials) . '</span>';
 }
 
-function page_header(string $title, bool $admin = false): void
+function page_header(string $title, bool $admin = false, string $manifest = ''): void
 {
     $color = setting('brand_color', '#0f766e');
     if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
@@ -34,7 +34,10 @@ function page_header(string $title, bool $admin = false): void
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($title) ?> — <?= e(brand_name()) ?></title>
   <meta name="theme-color" content="<?= e($color) ?>">
-  <link rel="manifest" href="<?= e(url('manifest.php')) ?>">
+  <link rel="manifest" href="<?= e($manifest ?: url('manifest.php')) ?>">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="<?= e(mb_substr(brand_name(), 0, 14)) ?>">
+  <?php if (setting('logo') !== ''): ?><link rel="apple-touch-icon" href="<?= e(url('uploads/' . setting('logo'))) ?>"><?php endif; ?>
   <link rel="stylesheet" href="<?= e($css) ?>">
   <style>:root { --brand: <?= e($color) ?>; }</style>
   <?php if ($admin): ?><meta name="robots" content="noindex"><?php endif; ?>
@@ -58,6 +61,7 @@ function page_header(string $title, bool $admin = false): void
         <a href="<?= e(url('admin/nouveau.php')) ?>">+ RDV</a>
         <a href="<?= e(url('admin/disponibilites.php')) ?>">Disponibilités</a>
         <a href="<?= e(url('admin/clients.php')) ?>">Clients</a>
+        <a href="<?= e(url('admin/rappels.php')) ?>">Rappels</a>
         <a href="<?= e(url('admin/cours.php')) ?>">Cours</a>
         <a href="<?= e(url('admin/lieux.php')) ?>">Lieux &amp; trajets</a>
         <a href="<?= e(url('admin/profil.php')) ?>">Profil</a>
@@ -68,7 +72,11 @@ function page_header(string $title, bool $admin = false): void
     <?php elseif (!$admin): ?>
       <nav class="nav nav-public">
         <a href="<?= e(url('')) ?>#cours">Les cours</a>
-        <a href="<?= e(url('mes-rdv.php')) ?>">Mes rendez-vous</a>
+        <?php if ($me = current_client()): ?>
+          <a href="<?= e(url('espace.php?c=' . $me['access_token'])) ?>">Mon espace</a>
+        <?php else: ?>
+          <a href="<?= e(url('mes-rdv.php')) ?>">Mes rendez-vous</a>
+        <?php endif; ?>
         <a class="btn btn-small" href="<?= e(url('reserver.php')) ?>">Réserver</a>
       </nav>
     <?php endif; ?>

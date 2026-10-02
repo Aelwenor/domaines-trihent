@@ -26,4 +26,7 @@ require __DIR__ . '/helpers.php';
 require __DIR__ . '/slots.php';
 require __DIR__ . '/mailer.php';
 require __DIR__ . '/ics.php';
+require __DIR__ . '/reminders.php';
 require __DIR__ . '/layout.php';
+
+auto_run_reminders();

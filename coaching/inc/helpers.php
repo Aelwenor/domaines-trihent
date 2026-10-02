@@ -258,7 +258,7 @@ function find_booking_by_token(string $token): ?array
     if (!preg_match('/^[a-f0-9]{32}$/', $token)) {
         return null;
     }
-    $st = db()->prepare('SELECT b.*, c.first_name, c.last_name, c.email, c.phone, c.age, c.objective
+    $st = db()->prepare('SELECT b.*, c.first_name, c.last_name, c.email, c.phone, c.age, c.objective, c.access_token
                          FROM bookings b JOIN clients c ON c.id = b.client_id WHERE b.token = ?');
     $st->execute([$token]);
     return $st->fetch() ?: null;
@@ -266,7 +266,7 @@ function find_booking_by_token(string $token): ?array
 
 function find_booking(int $id): ?array
 {
-    $st = db()->prepare('SELECT b.*, c.first_name, c.last_name, c.email, c.phone, c.age, c.objective, c.coach_notes
+    $st = db()->prepare('SELECT b.*, c.first_name, c.last_name, c.email, c.phone, c.age, c.objective, c.coach_notes, c.access_token
                          FROM bookings b JOIN clients c ON c.id = b.client_id WHERE b.id = ?');
     $st->execute([$id]);
     return $st->fetch() ?: null;
@@ -290,6 +290,57 @@ function find_row(string $table, int $id): ?array
     $st = db()->prepare("SELECT * FROM $table WHERE id = ?");
     $st->execute([$id]);
     return $st->fetch() ?: null;
+}
+
+/* ---------- Espace client ---------- */
+
+function find_client_by_token(string $token): ?array
+{
+    if (!preg_match('/^[a-f0-9]{32}$/', $token)) {
+        return null;
+    }
+    $st = db()->prepare('SELECT * FROM clients WHERE access_token = ?');
+    $st->execute([$token]);
+    return $st->fetch() ?: null;
+}
+
+/* Client actuellement connecte a son espace (lien d'invitation ouvert sur ce telephone) */
+function current_client(): ?array
+{
+    return isset($_SESSION['client_token']) ? find_client_by_token($_SESSION['client_token']) : null;
+}
+
+function espace_link(string $token): string
+{
+    return absolute_url('espace.php?c=' . $token);
+}
+
+/* Cree une fiche client (ou retrouve celle qui a le meme email) et renvoie son id. */
+function save_client(array $c): int
+{
+    $pdo = db();
+    $id = 0;
+    if (($c['email'] ?? '') !== '') {
+        $st = $pdo->prepare('SELECT id FROM clients WHERE email = ?');
+        $st->execute([$c['email']]);
+        $id = (int) $st->fetchColumn();
+    }
+    $age = ($c['age'] ?? '') !== '' && $c['age'] !== null ? (int) $c['age'] : null;
+    if ($id) {
+        $pdo->prepare('UPDATE clients SET first_name = ?, last_name = ?, age = COALESCE(?, age), phone = ?, objective = ? WHERE id = ?')
+            ->execute([$c['first_name'], $c['last_name'], $age, $c['phone'] ?? '', $c['objective'] ?? '', $id]);
+        return $id;
+    }
+    // Sans email (client ajoute a la main), on garde une adresse unique fictive
+    $email = ($c['email'] ?? '') !== '' ? $c['email'] : 'sans-email-' . random_token() . '@invalid';
+    $pdo->prepare('INSERT INTO clients(first_name, last_name, age, email, phone, objective, created_at, access_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+        ->execute([$c['first_name'], $c['last_name'], $age, $email, $c['phone'] ?? '', $c['objective'] ?? '', now_str(), random_token()]);
+    return (int) $pdo->lastInsertId();
+}
+
+function has_real_email(string $email): bool
+{
+    return filter_var($email, FILTER_VALIDATE_EMAIL) && !str_ends_with($email, '@invalid');
 }
 
 /* Le client peut-il encore annuler / deplacer lui-meme ce rendez-vous ? */

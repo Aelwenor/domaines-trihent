@@ -157,3 +157,8 @@ th { font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-s
 
 .footer { color: var(--muted); font-size: .88rem; padding: 24px 0; border-top: 1px solid var(--line); background: var(--card); }
 .footer a { color: var(--muted); }
+
+/* ---------- Espace client ---------- */
+.install-card { border-style: dashed; }
+.install-card p { margin: 6px 0; }
+[hidden] { display: none !important; }

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clientId = (int) post('client_id');
     if (!$clientId) {
         if (post('first_name') === '' || post('last_name') === '') $errors[] = 'Indiquez le prénom et le nom du nouveau client.';
-        if (!filter_var(post('email'), FILTER_VALIDATE_EMAIL)) $errors[] = "Indiquez l'email du client (il reçoit la confirmation).";
+        if (post('email') !== '' && !filter_var(post('email'), FILTER_VALIDATE_EMAIL)) $errors[] = "L'email du client n'est pas valide.";
     }
     if (!$errors && slot_conflicts("$date $time", (int) $service['duration'], (int) $location['travel']) && post('force') !== '1') {
         $errors[] = 'Ce créneau chevauche un autre rendez-vous ou une indisponibilité (trajet compris). Cochez « forcer » pour le placer quand même.';
@@ -30,15 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errors) {
         $pdo = db();
         if (!$clientId) {
-            $st = $pdo->prepare('SELECT id FROM clients WHERE email = ?');
-            $st->execute([post('email')]);
-            $clientId = (int) $st->fetchColumn();
-            if (!$clientId) {
-                $pdo->prepare('INSERT INTO clients(first_name, last_name, age, email, phone, objective, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-                    ->execute([post('first_name'), post('last_name'), post('age') !== '' ? (int) post('age') : null,
-                               post('email'), post('phone'), $service['name'], now_str()]);
-                $clientId = (int) $pdo->lastInsertId();
-            }
+            $clientId = save_client(['first_name' => post('first_name'), 'last_name' => post('last_name'), 'age' => post('age'),
+                                     'email' => post('email'), 'phone' => post('phone'), 'objective' => $service['name']]);
         }
         $t = booking_times("$date $time", (int) $service['duration'], (int) $location['travel']);
         $token = random_token();
@@ -48,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->execute([$token, $clientId, $service['id'], $location['id'], $service['name'], $location['name'], $location['kind'],
                        (int) $location['travel'], $t['start_at'], $t['end_at'], $t['occ_start'], $t['occ_end'], post('address'), now_str(), now_str()]);
         $b = find_booking_by_token($token);
-        if (post('notify') === '1') {
+        if (post('notify') === '1' && has_real_email($b['email'])) {
             notify_client_status($b);
         }
         flash('Rendez-vous ajouté.' . (post('notify') === '1' ? ' Le client a reçu la confirmation par email.' : ''));
@@ -73,7 +66,7 @@ page_header('Nouveau rendez-vous', true);
   <div id="newclient" class="grid2" <?= (int) post('client_id', get('client')) ? 'style="display:none"' : '' ?>>
     <div><label>Prénom</label><input name="first_name" value="<?= e(post('first_name')) ?>"></div>
     <div><label>Nom</label><input name="last_name" value="<?= e(post('last_name')) ?>"></div>
-    <div><label>Email</label><input type="email" name="email" value="<?= e(post('email')) ?>"></div>
+    <div><label>Email (conseillé)</label><input type="email" name="email" value="<?= e(post('email')) ?>"></div>
     <div><label>Téléphone</label><input type="tel" name="phone" value="<?= e(post('phone')) ?>"></div>
     <div><label>Âge</label><input type="number" name="age" value="<?= e(post('age')) ?>"></div>
   </div>

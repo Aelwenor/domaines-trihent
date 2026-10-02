@@ -17,9 +17,17 @@ Il fonctionne en PHP avec une base SQLite (un simple fichier) : rien à installe
 - Tableau de bord, agenda de la semaine, fiches clients avec notes privées.
 - Ajout de rendez-vous à la main (pour les clients qui passent encore par WhatsApp).
 - Messages avec le client, liens WhatsApp en un clic.
+- **Invitation des clients** : dès le contrat signé, le coach crée la fiche du client et lui envoie
+  (WhatsApp ou email) le lien de son espace personnel, à installer sur l'écran d'accueil du téléphone.
+- **Rappels paramétrables** (page Rappels), par email :
+  - pour le coach : programme du jour chaque matin, programme du lendemain chaque soir,
+    les 7 jours à venir chaque semaine (jour et heure au choix), alerte avant une séance ;
+  - pour les clients : rappel la veille, récapitulatif de la semaine, rappel quelques heures avant.
 - Lien d'abonnement pour voir les rendez-vous (trajet compris) dans l'agenda du téléphone.
 
 **Côté client**
+- Espace personnel installable comme une application (lien d'invitation du coach) : prochaines séances,
+  historique, réservation sans ressaisir son profil, messages, WhatsApp du coach.
 - Choix du cours, du lieu (chez le coach ou à domicile), puis du jour et de l'heure parmi les créneaux libres.
   Seuls les créneaux compatibles avec le trajet sont proposés.
 - Profil : nom, prénom, âge, objectif, téléphone, email, adresse si le coach se déplace.
@@ -33,8 +41,8 @@ Il fonctionne en PHP avec une base SQLite (un simple fichier) : rien à installe
    Les dossiers `coaching/data` et `coaching/uploads` doivent être accessibles en écriture (c'est le cas par défaut).
 2. Ouvrir `https://votre-site/coaching/admin/` : au premier passage, on crée le mot de passe du coach.
 3. Compléter **Profil**, **Cours**, **Lieux & trajets**, **Disponibilités** et **Réglages**.
-4. (Facultatif) Rappels automatiques : dans hPanel → Avancé → Tâches Cron, ajouter toutes les heures
-   la commande indiquée dans la page Réglages.
+4. Rappels : ils partent déjà lorsque quelqu'un ouvre l'application. Pour qu'ils partent à l'heure pile,
+   créer une tâche planifiée (Cron) toutes les 15 minutes avec la commande indiquée dans la page Rappels.
 5. Partager le lien `https://votre-site/coaching/` aux clients (bouton « Envoyer par WhatsApp » sur le tableau de bord).
 
 Prérequis : PHP 8.1 ou plus récent avec l'extension SQLite (standard chez Hostinger).

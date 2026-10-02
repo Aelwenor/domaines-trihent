@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         set_setting('auto_confirm', post('auto_confirm') === '1' ? '1' : '0');
         $ints = ['cancel_hours' => [0, 720], 'min_notice_hours' => [0, 720], 'horizon_days' => [1, 365],
-                 'slot_step' => [5, 120], 'buffer_minutes' => [0, 120], 'reminder_hours' => [1, 168]];
+                 'slot_step' => [5, 120], 'buffer_minutes' => [0, 120]];
         foreach ($ints as $k => [$min, $max]) {
             set_setting($k, (string) min($max, max($min, (int) post($k))));
         }
@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $ics = absolute_url('calendar.php?k=' . setting('ics_key'));
-$cron = absolute_url('cron.php?k=' . setting('cron_key'));
 
 page_header('Réglages', true);
 ?>
@@ -53,7 +52,6 @@ page_header('Réglages', true);
     <div><label>Créneaux proposés toutes les (min)</label><input type="number" name="slot_step" step="5" value="<?= setting_int('slot_step') ?>"></div>
     <div><label>Pause après chaque séance (min)</label><input type="number" name="buffer_minutes" step="5" value="<?= setting_int('buffer_minutes') ?>">
       <p class="help">Temps de souffle / rangement, en plus du trajet.</p></div>
-    <div><label>Rappel email au client (h avant)</label><input type="number" name="reminder_hours" value="<?= setting_int('reminder_hours') ?>"></div>
   </div>
   <p></p>
   <button class="btn" type="submit">Enregistrer</button>
@@ -69,13 +67,6 @@ page_header('Réglages', true);
     <?= csrf_field() ?><input type="hidden" name="action" value="regen_ics">
     <button class="btn btn-light btn-small" type="submit">Générer un nouveau lien</button>
   </form>
-</div>
-
-<div class="card">
-  <h2 style="margin-top:0">Rappels automatiques</h2>
-  <p>Pour envoyer un email de rappel aux clients avant leur séance, créez une tâche Cron chez Hostinger (hPanel → Avancé → Tâches Cron), toutes les heures, avec la commande :</p>
-  <input readonly value="php <?= e(APP_ROOT) ?>/cron.php" onclick="this.select()">
-  <p class="help">Ou, si votre hébergeur ne propose que des adresses web : <code><?= e($cron) ?></code></p>
 </div>
 
 <form method="post" class="card">

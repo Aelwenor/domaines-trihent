@@ -57,6 +57,11 @@ $slotOk   = $service && $location && $date !== '' && $time !== ''
 /* ---------- Envoi du formulaire ---------- */
 $errors = [];
 $form = $_SESSION['client_prefill'] ?? [];
+if ($me = current_client()) {
+    // Client venu de son espace : profil deja connu
+    $form = ['first_name' => $me['first_name'], 'last_name' => $me['last_name'], 'age' => (string) $me['age'],
+             'email' => has_real_email($me['email']) ? $me['email'] : '', 'phone' => $me['phone'], 'objective' => $me['objective']] + $form;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $service && $location && $date !== '' && $time !== '') {
     csrf_check();
@@ -76,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $service && $location && $date !== 
         $t = booking_times("$date $time", $duration, $travel);
         $status = setting('auto_confirm') === '1' ? 'confirmed' : 'pending';
         $pdo->prepare('UPDATE bookings SET service_id = ?, location_id = ?, service_name = ?, location_name = ?, location_kind = ?, travel = ?,
-                       start_at = ?, end_at = ?, occ_start = ?, occ_end = ?, status = ?, reminder_sent = 0, updated_at = ? WHERE id = ?')
+                       start_at = ?, end_at = ?, occ_start = ?, occ_end = ?, status = ?, updated_at = ? WHERE id = ?')
             ->execute([$service['id'], $location['id'], $service['name'], $location['name'], $location['kind'], $travel,
                        $t['start_at'], $t['end_at'], $t['occ_start'], $t['occ_end'], $status, now_str(), $resched['id']]);
         $pdo->exec('COMMIT');
@@ -112,17 +117,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $service && $location && $date !== 
             exit;
         }
         // Fiche client (retrouvee par son email, mise a jour a chaque reservation)
-        $st = $pdo->prepare('SELECT id FROM clients WHERE email = ?');
-        $st->execute([$form['email']]);
-        $clientId = $st->fetchColumn();
-        $age = $form['age'] !== '' ? (int) $form['age'] : null;
-        if ($clientId) {
+        if ($me) {
+            $clientId = (int) $me['id'];
             $pdo->prepare('UPDATE clients SET first_name = ?, last_name = ?, age = COALESCE(?, age), phone = ?, objective = ? WHERE id = ?')
-                ->execute([$form['first_name'], $form['last_name'], $age, $form['phone'], $form['objective'], $clientId]);
+                ->execute([$form['first_name'], $form['last_name'], $form['age'] !== '' ? (int) $form['age'] : null, $form['phone'], $form['objective'], $clientId]);
+            if (!has_real_email($me['email'])) {
+                try {
+                    $pdo->prepare('UPDATE clients SET email = ? WHERE id = ?')->execute([$form['email'], $clientId]);
+                } catch (PDOException $e) {
+                    // email deja utilise par une autre fiche : on garde la fiche de l'espace
+                }
+            }
         } else {
-            $pdo->prepare('INSERT INTO clients(first_name, last_name, age, email, phone, objective, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-                ->execute([$form['first_name'], $form['last_name'], $age, $form['email'], $form['phone'], $form['objective'], now_str()]);
-            $clientId = $pdo->lastInsertId();
+            $clientId = save_client($form);
         }
         $t = booking_times("$date $time", $duration, $travel);
         $token = random_token();

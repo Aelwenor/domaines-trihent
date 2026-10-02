@@ -58,6 +58,7 @@ page_header('Mon rendez-vous');
   </div>
 <?php endif; ?>
 
+<?php if (current_client()): ?><p><a href="<?= e(url('espace.php')) ?>">← Mon espace</a></p><?php endif; ?>
 <h1>Mon rendez-vous</h1>
 <div class="card">
   <p><?= status_badge($b['status']) ?></p>

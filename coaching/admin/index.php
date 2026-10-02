@@ -47,6 +47,7 @@ page_header('Tableau de bord', true);
     <button class="btn btn-light btn-small" type="button" onclick="navigator.clipboard.writeText('<?= e($bookingUrl) ?>');this.textContent='Copié ✓'">Copier</button>
     <a class="btn btn-wa btn-small" target="_blank" rel="noopener" href="https://wa.me/?text=<?= e(rawurlencode('Pour réserver ta séance de coaching, choisis ton créneau ici : ' . $bookingUrl)) ?>">Envoyer par WhatsApp</a>
   </div>
+  <p class="help">Nouveau client (contrat signé) ? <a href="<?= e(url('admin/clients.php?new=1')) ?>">Créez sa fiche et envoyez-lui son lien d'espace personnel</a>.</p>
   <p class="help">Mode de validation : <strong><?= setting('auto_confirm') === '1' ? 'automatique' : 'manuel (vous validez chaque demande)' ?></strong> — <a href="<?= e(url('admin/reglages.php')) ?>">modifier</a></p>
 </div>
 

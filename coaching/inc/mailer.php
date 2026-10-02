@@ -6,7 +6,7 @@
 
 function send_mail(string $to, string $subject, string $body, string $replyTo = ''): bool
 {
-    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+    if (!has_real_email($to)) {
         return false;
     }
     $host = $_SERVER['HTTP_HOST'] ?? (parse_url(setting('site_url'), PHP_URL_HOST) ?: 'localhost');
@@ -85,6 +85,7 @@ function notify_new_booking(array $b): void
         : "Votre rendez-vous est confirmé. À bientôt !\n\n";
     $body .= booking_summary($b);
     $body .= "\nSuivre, déplacer ou annuler votre rendez-vous : " . client_link($b) . "\n";
+    $body .= 'Votre espace personnel (toutes vos séances) : ' . espace_link($b['access_token']) . "\n";
     $body .= cancel_policy_text() . "\n";
     send_mail($b['email'], $pending ? 'Demande de rendez-vous envoyée' : 'Rendez-vous confirmé', $body, setting('coach_email'));
 }

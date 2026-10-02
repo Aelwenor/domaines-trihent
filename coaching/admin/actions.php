@@ -63,7 +63,7 @@ switch (post('action')) {
         }
         $t = booking_times("$date $time", $duration, $travel);
         $status = $b['status'] === 'pending' ? 'confirmed' : $b['status'];
-        db()->prepare('UPDATE bookings SET start_at = ?, end_at = ?, occ_start = ?, occ_end = ?, status = ?, reminder_sent = 0, updated_at = ? WHERE id = ?')
+        db()->prepare('UPDATE bookings SET start_at = ?, end_at = ?, occ_start = ?, occ_end = ?, status = ?, updated_at = ? WHERE id = ?')
             ->execute([$t['start_at'], $t['end_at'], $t['occ_start'], $t['occ_end'], $status, now_str(), $b['id']]);
         if ($note !== '') {
             add_message((int) $b['id'], 'coach', $note);
