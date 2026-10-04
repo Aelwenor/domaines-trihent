@@ -162,3 +162,30 @@ th { font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-s
 .install-card { border-style: dashed; }
 .install-card p { margin: 6px 0; }
 [hidden] { display: none !important; }
+
+/* ---------- Agenda semaine / mois ---------- */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
+.seg a { padding: 7px 14px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: .9rem; }
+.seg a.on { background: var(--brand); color: #fff; }
+.week-wrap { overflow-x: auto; }
+.week-wrap .week { min-width: 920px; overflow: visible; }
+.month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.month-dow { font-size: .78rem; font-weight: 700; color: var(--muted); text-align: center; padding: 4px 0; }
+.month-day { position: relative; display: flex; flex-direction: column; gap: 3px; min-height: 104px; padding: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--ink); min-width: 0; }
+.month-day:hover { border-color: var(--brand); }
+.month-day.today { border: 2px solid var(--brand); }
+.month-day.other { opacity: .45; }
+.month-day.blocked { background: #f1f2f4; }
+.month-num { font-weight: 700; font-size: .85rem; }
+.mev { display: block; font-size: .74rem; line-height: 1.3; padding: 2px 5px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: color-mix(in srgb, var(--brand) 12%, white); }
+.mev.pending { background: #fff4e0; color: var(--warn); }
+.mev.block { background: transparent; color: var(--muted); padding-left: 0; }
+.mev.more { background: transparent; color: var(--muted); }
+.mcount { display: none; }
+@media (max-width: 640px) {
+  .month-day { min-height: 58px; padding: 4px; align-items: center; }
+  .mev { display: none; }
+  .mcount { display: inline-grid; place-items: center; min-width: 22px; height: 22px; border-radius: 99px; background: var(--brand); color: #fff; font-size: .75rem; font-weight: 700; }
+  .mcount.has-pending { background: var(--warn); }
+  .month-day.blocked .month-num::after { content: ' ⛔'; font-size: .7rem; }
+}

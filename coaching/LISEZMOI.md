@@ -14,7 +14,8 @@ Il fonctionne en PHP avec une base SQLite (un simple fichier) : rien à installe
 - Disponibilités : horaires habituels de la semaine, et blocage de journées ou d'heures (congés…).
 - Validation **manuelle ou automatique** des demandes (au choix dans Réglages). En mode manuel, le coach reçoit
   un email à chaque demande et valide / refuse / propose un autre horaire en un clic.
-- Tableau de bord, agenda de la semaine, fiches clients avec notes privées.
+- Tableau de bord, agenda en vue **semaine ou mois** (au choix, mémorisé) avec bilan : séances, demandes à valider,
+  heures de coaching et heures de route. Fiches clients avec notes privées.
 - Ajout de rendez-vous à la main (pour les clients qui passent encore par WhatsApp).
 - Messages avec le client, liens WhatsApp en un clic.
 - **Invitation des clients** : dès le contrat signé, le coach crée la fiche du client et lui envoie
