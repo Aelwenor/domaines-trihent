@@ -4,12 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=1">
-<title>Nos biens — Les Domaines de Tri Hent</title>
-<meta name="description" content="Découvrez les demeures d'exception proposées par Les Domaines de Tri Hent en Bretagne : manoirs, longères et maisons face à la mer autour de Paimpol. Réservation sur Airbnb.">
+<title>Le Journal — conseils & découvertes en Bretagne | Tri Hent</title>
+<meta name="description" content="Le journal des Domaines de Tri Hent : guides des villes des Côtes-d'Armor, conseils pour les propriétaires en location courte durée et découvertes locales en Bretagne.">
+<link rel="canonical" href="https://domaines-trihent.com/blog.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Le Journal — Les Domaines de Tri Hent">
+<meta property="og:description" content="Guides des villes des Côtes-d'Armor, conseils pour propriétaires et découvertes locales en Bretagne.">
+<meta property="og:url" content="https://domaines-trihent.com/blog.html">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Paimpol.jpg/1280px-Paimpol.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -36,7 +42,7 @@
       <a href="index.html">Accueil</a>
       <a href="index.html#apropos">À propos</a>
       <a href="index.html#services">Services</a>
-      <a href="nos-biens.html" onclick="basculerMenu()">Nos biens</a>
+      <a href="nos-biens.html">Nos biens</a>
       <a href="blog.html">Journal</a>
       <a href="contact.html">Contact</a>
       <a class="btn btn-or" href="contact.html">Nous contacter</a>
@@ -47,44 +53,40 @@
 <!-- ==================== BANNIÈRE ==================== -->
 <section class="banniere-page">
   <div class="container">
-    <span class="kicker">Nos biens</span>
-    <h1>Des demeures d'exception en Bretagne</h1>
-    <p class="sous-titre">Chaque bien que nous accompagnons — de la Bretagne au cœur des villes du Grand Ouest — est sélectionné et entretenu avec la même exigence. Découvrez notre première adresse et réservez en un clic, directement sur Airbnb.</p>
+    <span class="kicker">Le Journal</span>
+    <h1>Conseils & découvertes en Bretagne</h1>
+    <p class="sous-titre">Guides des villes des Côtes-d'Armor, idées d'escapades et conseils pour les propriétaires qui louent leur bien en courte durée. Par une conciergerie ancrée dans la région.</p>
   </div>
 </section>
 
-<!-- ==================== BIENS ==================== -->
-<!-- Un seul bien pour l'instant : la grille est centrée (style en ligne ci-dessous).
-     Quand un 2e bien sera ajouté, supprimer le style="..." pour repasser en 2 colonnes. -->
-<section class="biens">
+<!-- ==================== ARTICLES ==================== -->
+<section class="blog">
   <div class="container">
-    <div class="biens-grille" style="grid-template-columns:1fr; max-width:600px; margin:0 auto;">
+    <div class="blog-grille">
 
-      <!-- ===== Bien 1 : Studio Île de Versailles (Nantes) ===== -->
-      <div class="bien reveal">
-        <div class="visuel">
-          <span class="badge">Nouveauté</span>
-          <img src="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/0adf5d3a-fbbc-4e5c-b16b-9f436b35a53d.png?im_w=1200" alt="Studio face à l'Île de Versailles — Nantes">
+      <article class="post-carte reveal">
+        <a href="guide-paimpol.html" class="post-img" aria-label="Lire : Que faire à Paimpol">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Paimpol.jpg/1280px-Paimpol.jpg" alt="Le port de Paimpol, Côtes-d'Armor">
+        </a>
+        <div class="post-corps">
+          <span class="post-cat">Guide local · Côtes-d'Armor</span>
+          <h3>Que faire à Paimpol et ses alentours ?</h3>
+          <p>Le port, l'Île de Bréhat, l'abbaye de Beauport, le GR34… notre guide des incontournables de Paimpol — et pourquoi la ville séduit autant les voyageurs.</p>
+          <a href="guide-paimpol.html" class="post-lien">Lire l'article →</a>
         </div>
-        <div class="vignettes">
-          <img class="actif" onclick="changerPhoto(this)" data-grand="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/0adf5d3a-fbbc-4e5c-b16b-9f436b35a53d.png?im_w=1200" src="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/0adf5d3a-fbbc-4e5c-b16b-9f436b35a53d.png?im_w=320" alt="Studio Île de Versailles — vue 1">
-          <img onclick="changerPhoto(this)" data-grand="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/6ff1604a-781a-45cd-b284-748400c95427.png?im_w=1200" src="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/6ff1604a-781a-45cd-b284-748400c95427.png?im_w=320" alt="Studio Île de Versailles — vue 2">
-          <img onclick="changerPhoto(this)" data-grand="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/c7f5f083-b770-4ab1-9492-88a263f23f3a.jpeg?im_w=1200" src="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/c7f5f083-b770-4ab1-9492-88a263f23f3a.jpeg?im_w=320" alt="Studio Île de Versailles — vue 3">
-          <img onclick="changerPhoto(this)" data-grand="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/ada6a811-7cca-40d2-b4da-f87c4222ee46.png?im_w=1200" src="https://a0.muscache.com/im/pictures/hosting/Hosting-1664474208193521875/original/ada6a811-7cca-40d2-b4da-f87c4222ee46.png?im_w=320" alt="Studio Île de Versailles — vue 4">
+      </article>
+
+      <article class="post-carte reveal">
+        <a href="guide-dinan.html" class="post-img" aria-label="Lire : Visiter Dinan">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Dinan_-_Panorama_B.jpg/1280px-Dinan_-_Panorama_B.jpg" alt="Panorama de Dinan et de la vallée de la Rance">
+        </a>
+        <div class="post-corps">
+          <span class="post-cat">Guide local · Côtes-d'Armor</span>
+          <h3>Visiter Dinan et ses alentours</h3>
+          <p>Ruelles médiévales, remparts, port sur la Rance et escapades vers Saint-Malo ou le Cap Fréhel : tout ce qu'il faut voir dans l'une des plus belles cités de Bretagne.</p>
+          <a href="guide-dinan.html" class="post-lien">Lire l'article →</a>
         </div>
-        <div class="corps">
-          <h3>Studio de l'Île de Versailles</h3>
-          <div class="lieu">Nantes · Pays de la Loire</div>
-          <div class="caracteristiques">
-            <span>2 voyageurs</span>
-            <span>Studio</span>
-            <span>1 salle de bain</span>
-            <span>30 m²</span>
-          </div>
-          <p class="description">Studio de 30 m² en rez-de-chaussée, niché dans un quartier ancien et central de Nantes, face à l'Île de Versailles et son jardin. Lumineux, confortable et à l'ambiance épurée, il est idéal pour un séjour à deux — à deux pas des transports, des commerces et du cœur historique de la ville.</p>
-          <a href="https://www.airbnb.fr/rooms/1664474208193521875" target="_blank" rel="noopener" class="btn btn-or">Réserver sur Airbnb</a>
-        </div>
-      </div>
+      </article>
 
     </div>
   </div>
@@ -93,8 +95,8 @@
 <!-- ==================== BANDEAU ==================== -->
 <section class="bandeau">
   <span class="kicker" style="justify-content:center; display:inline-flex;">Propriétaires</span>
-  <h2>Votre bien a sa place<br>dans notre <em>collection</em></h2>
-  <p>Vous possédez une demeure de caractère en Bretagne ? Confiez-la-nous : estimation gratuite et sans engagement.</p>
+  <h2>Votre bien mérite<br>la même <em>attention</em></h2>
+  <p>Vous possédez un bien en Côtes-d'Armor ou ailleurs en Bretagne ? Confiez-le à une conciergerie locale : estimation gratuite et sans engagement.</p>
   <a href="contact.html" class="btn btn-or">Nous contacter</a>
 </section>
 
@@ -130,7 +132,6 @@
           <li><a href="index.html#services">Services</a></li>
           <li><a href="nos-biens.html">Nos biens</a></li>
           <li><a href="blog.html">Journal</a></li>
-          <li><a href="index.html#formules">Nos formules</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </div>
