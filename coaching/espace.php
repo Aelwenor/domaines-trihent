@@ -49,6 +49,8 @@ page_header('Mon espace', false, url('manifest.php?c=' . $client['access_token']
 
 <?php if ($unread): ?><div class="alert alert-info">Vous avez <?= $unread ?> nouveau(x) message(s) de votre coach : ouvrez la séance concernée.</div><?php endif; ?>
 
+<?php if ($f = forfait_html($client)): ?><div class="card"><?= $f ?></div><?php endif; ?>
+
 <h2>Mes prochaines séances</h2>
 <div class="card">
   <?php foreach ($upcoming as $b): ?>

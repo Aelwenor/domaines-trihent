@@ -43,7 +43,7 @@ page_header('Rendez-vous', true);
       <p class="travel">🚗 Trajet <?= (int) $b['travel'] ?> min aller / <?= (int) $b['travel'] ?> min retour — agenda bloqué de <?= e(fr_time($b['occ_start'])) ?> à <?= e(fr_time($b['occ_end'])) ?></p>
     <?php endif; ?>
     <?php if ($b['client_note'] !== ''): ?><p><em>« <?= nl2br(e($b['client_note'])) ?> »</em></p><?php endif; ?>
-    <p class="muted small">Demande reçue le <?= e(fr_date($b['created_at']) . ' à ' . fr_time($b['created_at'])) ?>
+    <p class="muted small">Créé le <?= e(fr_date($b['created_at']) . ' à ' . fr_time($b['created_at'])) ?>
       <?= $b['cancelled_by'] === 'client' ? ' · annulé par le client' : '' ?></p>
   </div>
   <div class="card">
@@ -52,6 +52,7 @@ page_header('Rendez-vous', true);
       Objectif : <?= e($b['objective'] ?: '—') ?><br>
       📞 <a href="tel:<?= e($b['phone']) ?>"><?= e($b['phone']) ?></a><br>
       ✉️ <a href="mailto:<?= e($b['email']) ?>"><?= e($b['email']) ?></a></p>
+    <?php if ($b['coach_notes'] !== ''): ?><p class="small" style="background:var(--bg);padding:8px 10px;border-radius:8px">📝 <?= nl2br(e($b['coach_notes'])) ?></p><?php endif; ?>
     <div class="actions">
       <?php if ($wa): ?><a class="btn btn-wa btn-small" target="_blank" rel="noopener" href="<?= e($wa) ?>">WhatsApp</a><?php endif; ?>
       <a class="btn btn-light btn-small" href="<?= e(url('admin/clients.php?id=' . $b['client_id'])) ?>">Fiche client</a>

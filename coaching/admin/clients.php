@@ -16,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('admin/clients.php?new=1');
         }
         $id = save_client(['first_name' => post('first_name'), 'last_name' => post('last_name'), 'age' => post('age'),
-                           'email' => post('email'), 'phone' => post('phone'), 'objective' => post('objective')]);
-        flash('Client ajouté. Envoyez-lui maintenant son lien d\'invitation.');
+                           'email' => post('email'), 'phone' => post('phone'), 'objective' => post('objective'),
+                           'address' => post('address'), 'monthly_hours' => str_replace(',', '.', post('monthly_hours')), 'coach_notes' => post('coach_notes')]);
+        flash('Fiche créée. Étape suivante : envoyez-lui son lien, puis planifiez ses séances.');
         redirect('admin/clients.php?id=' . $id);
     }
     $c = find_row('clients', (int) post('id'));
@@ -31,8 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash('Nouveau lien créé : l\'ancien ne fonctionne plus.');
         redirect('admin/clients.php?id=' . $c['id']);
     }
-    $pdo->prepare('UPDATE clients SET coach_notes = ?, phone = ?, age = ?, objective = ? WHERE id = ?')
-        ->execute([post('coach_notes'), post('phone'), post('age') !== '' ? (int) post('age') : null, post('objective'), (int) post('id')]);
+    $pdo->prepare('UPDATE clients SET coach_notes = ?, phone = ?, age = ?, objective = ?, address = ?, monthly_hours = ? WHERE id = ?')
+        ->execute([post('coach_notes'), post('phone'), post('age') !== '' ? (int) post('age') : null, post('objective'),
+                   post('address'), max(0, (float) str_replace(',', '.', post('monthly_hours'))), (int) post('id')]);
     flash('Fiche client enregistrée.');
     redirect('admin/clients.php?id=' . (int) post('id'));
 }
@@ -62,7 +64,11 @@ if (get('new')): ?>
       <div><label>Âge</label><input type="number" name="age" min="5" max="110"></div>
       <div><label>Objectif</label>
         <select name="objective"><?php foreach (active_services() as $s): ?><option><?= e($s['name']) ?></option><?php endforeach; ?><option>Autre</option></select></div>
+      <div><label>Adresse des séances (si vous vous déplacez)</label><input name="address" placeholder="N°, rue, commune"></div>
+      <div><label>Forfait : heures par mois (facultatif)</label><input name="monthly_hours" inputmode="decimal" placeholder="Ex. 8"></div>
     </div>
+    <label>Mes notes privées (santé, contrat… jamais visibles par le client)</label>
+    <textarea name="coach_notes" rows="3" placeholder="Ex. douleur dorsale, contrat 8 h/mois signé le…"></textarea>
     <p></p><button class="btn" type="submit">Créer la fiche</button>
   </form>
 <?php elseif ($client):
@@ -73,6 +79,7 @@ if (get('new')): ?>
 ?>
   <p><a href="<?= e(url('admin/clients.php')) ?>">← Tous les clients</a></p>
   <h1><?= e($client['first_name'] . ' ' . $client['last_name']) ?></h1>
+  <?php if ($f = forfait_html($client)): ?><div class="card"><?= $f ?><?= forfait_html($client, date('Y-m', strtotime('first day of next month'))) ?></div><?php endif; ?>
   <div class="card">
     <h2 style="margin-top:0">📲 Lien d'invitation</h2>
     <p class="small">Le client ouvre ce lien sur son téléphone et l'ajoute à son écran d'accueil : il retrouve ses séances, réserve, déplace et vous écrit.</p>
@@ -92,7 +99,7 @@ if (get('new')): ?>
   <div class="actions">
     <?php if ($client['phone'] !== ''): ?><a class="btn btn-wa btn-small" target="_blank" rel="noopener" href="<?= e(whatsapp_link($client['phone'])) ?>">WhatsApp</a><?php endif; ?>
     <?php if (has_real_email($client['email'])): ?><a class="btn btn-light btn-small" href="mailto:<?= e($client['email']) ?>">Email</a><?php endif; ?>
-    <a class="btn btn-small" href="<?= e(url('admin/nouveau.php?client=' . $client['id'])) ?>">+ Rendez-vous</a>
+    <a class="btn btn-small" href="<?= e(url('admin/nouveau.php?client=' . $client['id'])) ?>">📅 Planifier ses séances</a>
   </div>
   <form method="post" class="card">
     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $client['id'] ?>">
@@ -101,6 +108,10 @@ if (get('new')): ?>
       <div><label>Téléphone</label><input name="phone" value="<?= e($client['phone']) ?>"></div>
       <div><label>Âge</label><input type="number" name="age" value="<?= e((string) $client['age']) ?>"></div>
       <div><label>Objectif</label><input name="objective" value="<?= e($client['objective']) ?>"></div>
+    </div>
+    <div class="grid2">
+      <div><label>Adresse des séances</label><input name="address" value="<?= e($client['address']) ?>"></div>
+      <div><label>Forfait : heures par mois (0 = sans forfait)</label><input name="monthly_hours" inputmode="decimal" value="<?= e(rtrim(rtrim(number_format((float) $client['monthly_hours'], 1, '.', ''), '0'), '.')) ?>"></div>
     </div>
     <label>Mes notes privées (suivi, mesures, blessures… jamais visibles par le client)</label>
     <textarea name="coach_notes" rows="6"><?= e($client['coach_notes']) ?></textarea>
@@ -130,13 +141,13 @@ if (get('new')): ?>
   <form class="actions"><input name="q" value="<?= e($q) ?>" placeholder="Rechercher un nom, un email…" style="flex:1"><button class="btn btn-light">Rechercher</button></form>
   <div class="table-wrap">
     <table>
-      <tr><th>Nom</th><th>Objectif</th><th>Téléphone</th><th>Séances</th><th>Dernier / prochain RDV</th></tr>
+      <tr><th>Nom</th><th>Objectif</th><th>Téléphone</th><th>Ce mois-ci</th><th>Dernier / prochain RDV</th></tr>
       <?php foreach ($clients as $c): ?>
         <tr>
           <td><a href="?id=<?= (int) $c['id'] ?>"><?= e($c['last_name'] . ' ' . $c['first_name']) ?></a><?= $c['age'] ? ' <span class="muted small">(' . (int) $c['age'] . ' ans)</span>' : '' ?></td>
           <td><?= e($c['objective']) ?></td>
           <td class="nowrap"><?= e($c['phone']) ?></td>
-          <td><?= (int) $c['nb'] ?></td>
+          <td class="nowrap"><?php $m = client_month_minutes((int) $c['id'], date('Y-m')); ?><?= e(fr_duration($m)) ?><?= $c['monthly_hours'] > 0 ? ' / ' . e(fr_duration((int) round($c['monthly_hours'] * 60))) : '' ?></td>
           <td class="nowrap"><?= $c['last'] ? e(date('d/m/Y', strtotime($c['last']))) : '—' ?></td>
         </tr>
       <?php endforeach; ?>

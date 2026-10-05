@@ -16,7 +16,10 @@ Il fonctionne en PHP avec une base SQLite (un simple fichier) : rien à installe
   un email à chaque demande et valide / refuse / propose un autre horaire en un clic.
 - Tableau de bord, agenda en vue **semaine ou mois** (au choix, mémorisé) avec bilan : séances, demandes à valider,
   heures de coaching et heures de route. Fiches clients avec notes privées.
-- Ajout de rendez-vous à la main (pour les clients qui passent encore par WhatsApp).
+- **Planification par le coach**, avec répétition chaque semaine (ex. contrat 2 h/semaine planifié en une fois)
+  et durée de séance libre ; les dates déjà prises sont sautées et signalées.
+- **Forfait mensuel** par client (ex. 8 h/mois) : jauge « heures planifiées / forfait » sur la fiche client,
+  dans la liste des clients et dans l'espace du client.
 - Messages avec le client, liens WhatsApp en un clic.
 - **Invitation des clients** : dès le contrat signé, le coach crée la fiche du client et lui envoie
   (WhatsApp ou email) le lien de son espace personnel, à installer sur l'écran d'accueil du téléphone.

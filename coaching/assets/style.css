@@ -189,3 +189,9 @@ th { font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-s
   .mcount.has-pending { background: var(--warn); }
   .month-day.blocked .month-num::after { content: ' ⛔'; font-size: .7rem; }
 }
+
+/* ---------- Forfait mensuel ---------- */
+.forfait { margin: 8px 0; }
+.forfait-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+.forfait-bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.forfait-bar span { display: block; height: 100%; background: var(--brand); border-radius: 99px; }

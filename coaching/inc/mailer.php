@@ -151,3 +151,16 @@ function cancel_policy_text(): string
     $h = setting_int('cancel_hours', 48);
     return "Rappel : merci de prévenir au moins {$h} h à l'avance pour annuler ou déplacer votre séance.";
 }
+
+/* Recapitulatif des seances planifiees par le coach (une ou plusieurs semaines). */
+function notify_planned(array $bookings): void
+{
+    $b = $bookings[0];
+    $body = "Bonjour {$b['first_name']},\n\nVoici " . (count($bookings) > 1 ? 'vos séances planifiées' : 'votre séance planifiée') . " :\n\n";
+    foreach ($bookings as $x) {
+        $body .= '- ' . ucfirst(fr_slot($x['start_at'], $x['end_at'])) . " — {$x['service_name']}\n";
+    }
+    $body .= "\nLieu : {$b['location_name']}" . ($b['address'] !== '' ? " — {$b['address']}" : '') . "\n";
+    $body .= "\nVotre espace (déplacer, annuler, écrire au coach) : " . espace_link($b['access_token']) . "\n" . cancel_policy_text();
+    send_mail($b['email'], count($bookings) > 1 ? 'Vos séances sont planifiées' : 'Votre séance est planifiée', $body, setting('coach_email'));
+}

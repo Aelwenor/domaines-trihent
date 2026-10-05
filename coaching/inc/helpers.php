@@ -333,9 +333,42 @@ function save_client(array $c): int
     }
     // Sans email (client ajoute a la main), on garde une adresse unique fictive
     $email = ($c['email'] ?? '') !== '' ? $c['email'] : 'sans-email-' . random_token() . '@invalid';
-    $pdo->prepare('INSERT INTO clients(first_name, last_name, age, email, phone, objective, created_at, access_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-        ->execute([$c['first_name'], $c['last_name'], $age, $email, $c['phone'] ?? '', $c['objective'] ?? '', now_str(), random_token()]);
+    $pdo->prepare('INSERT INTO clients(first_name, last_name, age, email, phone, objective, created_at, access_token, address, monthly_hours, coach_notes)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        ->execute([$c['first_name'], $c['last_name'], $age, $email, $c['phone'] ?? '', $c['objective'] ?? '', now_str(), random_token(),
+                   $c['address'] ?? '', (float) ($c['monthly_hours'] ?? 0), $c['coach_notes'] ?? '']);
     return (int) $pdo->lastInsertId();
+}
+
+/* Heures de coaching d'un client sur un mois (seances confirmees ou en attente), en minutes. */
+function client_month_minutes(int $clientId, string $month): int
+{
+    $st = db()->prepare("SELECT start_at, end_at FROM bookings WHERE client_id = ? AND status IN ('confirmed', 'pending')
+                         AND start_at >= ? AND start_at < ?");
+    $st->execute([$clientId, "$month-01", date('Y-m-d', strtotime("$month-01 +1 month"))]);
+    $min = 0;
+    foreach ($st as $b) {
+        $min += (strtotime($b['end_at']) - strtotime($b['start_at'])) / 60;
+    }
+    return (int) $min;
+}
+
+/* Petite jauge "forfait du mois" (vide si le client n'a pas de forfait). */
+function forfait_html(array $client, string $month = ''): string
+{
+    $hours = (float) ($client['monthly_hours'] ?? 0);
+    if ($hours <= 0) {
+        return '';
+    }
+    $month = $month ?: date('Y-m');
+    $used = client_month_minutes((int) $client['id'], $month);
+    $total = (int) round($hours * 60);
+    $pct = min(100, (int) round($used / max(1, $total) * 100));
+    $left = $total - $used;
+    $label = ucfirst(MOIS[(int) substr($month, 5, 2)]);
+    return '<div class="forfait"><div class="forfait-head"><strong>Forfait ' . e($label) . ' : ' . e(fr_duration($used)) . ' sur ' . e(fr_duration($total)) . '</strong>'
+         . '<span class="' . ($left < 0 ? 'travel' : 'muted') . ' small">' . ($left > 0 ? 'reste ' . e(fr_duration($left)) . ' à planifier' : ($left === 0 ? 'complet' : 'dépassé de ' . e(fr_duration(-$left)))) . '</span></div>'
+         . '<div class="forfait-bar"><span style="width:' . $pct . '%"></span></div></div>';
 }
 
 function has_real_email(string $email): bool

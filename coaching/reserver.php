@@ -60,7 +60,7 @@ $form = $_SESSION['client_prefill'] ?? [];
 if ($me = current_client()) {
     // Client venu de son espace : profil deja connu
     $form = ['first_name' => $me['first_name'], 'last_name' => $me['last_name'], 'age' => (string) $me['age'],
-             'email' => has_real_email($me['email']) ? $me['email'] : '', 'phone' => $me['phone'], 'objective' => $me['objective']] + $form;
+             'email' => has_real_email($me['email']) ? $me['email'] : '', 'phone' => $me['phone'], 'objective' => $me['objective'], 'address' => $me['address']] + $form;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $service && $location && $date !== '' && $time !== '') {

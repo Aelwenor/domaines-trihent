@@ -133,6 +133,13 @@ function db_migrate(PDO $pdo): void
     if (!in_array('access_token', $cols, true)) {
         $pdo->exec("ALTER TABLE clients ADD COLUMN access_token TEXT NOT NULL DEFAULT ''");
     }
+    // Adresse habituelle (seances a domicile) et forfait mensuel en heures (0 = pas de forfait)
+    if (!in_array('address', $cols, true)) {
+        $pdo->exec("ALTER TABLE clients ADD COLUMN address TEXT NOT NULL DEFAULT ''");
+    }
+    if (!in_array('monthly_hours', $cols, true)) {
+        $pdo->exec('ALTER TABLE clients ADD COLUMN monthly_hours REAL NOT NULL DEFAULT 0');
+    }
     foreach ($pdo->query("SELECT id FROM clients WHERE access_token = ''")->fetchAll(PDO::FETCH_COLUMN) as $id) {
         $pdo->prepare('UPDATE clients SET access_token = ? WHERE id = ?')->execute([bin2hex(random_bytes(16)), $id]);
     }
