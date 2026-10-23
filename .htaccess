@@ -1,0 +1,5 @@
+# Rediriger (301) le www et le http vers la version canonique : https://domaines-trihent.com
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\. [NC,OR]
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://domaines-trihent.com%{REQUEST_URI} [L,R=301]
