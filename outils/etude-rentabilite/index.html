@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Étude de rentabilité — Tri Hent</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Outil interne : saisie à gauche, dossier A4 (aperçu = PDF) à droite. Charte du site domaines-trihent.com */
+:root {
+  --creme: #FAF6EF;
+  --creme-2: #F3EDE2;
+  --blanc: #FFFFFF;
+  --vert: #1E3A2B;
+  --vert-fonce: #16291F;
+  --or: #B08D4A;
+  --or-clair: #C9A96E;
+  --encre: #2C2A25;
+  --gris: #6E6A60;
+  --filet: rgba(30, 58, 43, .14);
+  --positif: #2F6B45;
+  --alerte: #9A5B1E;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Jost', 'Segoe UI', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body { font-family: var(--sans); font-weight: 300; color: var(--encre); background: #E6E0D4; font-size: 14px; line-height: 1.5; }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--vert); line-height: 1.15; text-wrap: balance; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+
+/* ---------- Barre d'application ---------- */
+.barre {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  background: var(--vert); color: var(--creme);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+}
+.barre .marque { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.barre .marque svg { width: 34px; height: 34px; flex-shrink: 0; }
+.barre .marque b { font-family: var(--serif); font-size: 20px; font-weight: 600; display: block; line-height: 1.1; }
+.barre .marque span { font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: var(--or-clair); }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 400; letter-spacing: .12em; text-transform: uppercase; font-size: 11.5px;
+  padding: 10px 16px; border: 1px solid transparent; cursor: pointer; background: none;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.btn-or { background: var(--or); color: var(--blanc); }
+.btn-or:hover { background: var(--or-clair); }
+.btn-ligne { border-color: rgba(250,246,239,.5); color: var(--creme); }
+.btn-ligne:hover { background: var(--creme); color: var(--vert); }
+.btn-vert { background: var(--vert); color: var(--creme); }
+.btn-vert:hover { background: var(--or); }
+.btn-discret { border-color: var(--filet); color: var(--vert); background: var(--blanc); }
+.btn-discret:hover { border-color: var(--vert); }
+.btn-mini { padding: 6px 10px; font-size: 10.5px; }
+
+/* ---------- Mise en page ---------- */
+.app { display: grid; grid-template-columns: minmax(340px, 440px) 1fr; height: calc(100% - 56px); }
+.saisie { background: var(--creme); overflow-y: auto; border-right: 1px solid var(--filet); }
+.apercu { overflow: auto; padding: 28px 24px 60px; }
+.apercu-inner { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+@media (max-width: 980px) {
+  .app { grid-template-columns: 1fr; height: auto; }
+  .saisie { border-right: 0; }
+  .apercu { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); }
+}
+
+/* ---------- Formulaire ---------- */
+.etape { border-bottom: 1px solid var(--filet); }
+.etape > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 12px;
+  padding: 16px 20px; user-select: none;
+}
+.etape > summary::-webkit-details-marker { display: none; }
+.etape > summary .num { font-family: var(--serif); font-size: 22px; color: var(--or); font-weight: 600; width: 18px; }
+.etape > summary h2 { font-size: 21px; flex: 1; }
+.etape > summary .chev { color: var(--gris); transition: transform .2s; }
+.etape[open] > summary .chev { transform: rotate(90deg); }
+.etape .corps { padding: 0 20px 20px; display: grid; gap: 12px; }
+.grille { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.grille.trois { grid-template-columns: 1fr 1fr 1fr; }
+.champ { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.champ.plein { grid-column: 1 / -1; }
+.champ label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gris); font-weight: 400; }
+.champ input, .champ select, .champ textarea {
+  background: var(--blanc); border: 1px solid var(--filet); padding: 8px 10px; width: 100%;
+  font-weight: 400; font-size: 14px; border-radius: 0;
+}
+.champ input:focus, .champ select:focus, .champ textarea:focus { border-color: var(--or); outline: none; }
+.champ input::placeholder { color: #A39E92; font-weight: 300; }
+.champ textarea { resize: vertical; min-height: 70px; line-height: 1.45; }
+.champ .aide { font-size: 11.5px; color: var(--gris); }
+.cases { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.cases label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+.cases input { accent-color: var(--vert); width: 15px; height: 15px; }
+.note { font-size: 12px; color: var(--gris); background: var(--creme-2); padding: 10px 12px; border-left: 2px solid var(--or); }
+.note b { color: var(--vert); font-weight: 500; }
+.detecte { display: flex; flex-wrap: wrap; gap: 6px; }
+.detecte span { font-size: 11.5px; background: var(--blanc); border: 1px solid var(--filet); padding: 3px 8px; }
+.detecte span b { color: var(--vert); font-weight: 500; }
+.ligne-btn { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.saison { width: 100%; border-collapse: collapse; font-size: 13px; }
+.saison th { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--gris); font-weight: 400; text-align: left; padding: 4px; }
+.saison td { padding: 2px 4px; }
+.saison input { width: 100%; background: var(--blanc); border: 1px solid var(--filet); padding: 5px 6px; font-variant-numeric: tabular-nums; }
+.saison td:first-child { color: var(--vert); font-weight: 400; width: 56px; }
+.mode { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; background: var(--vert); color: var(--creme); }
+.mode.manuel { background: var(--or); }
+.comparable { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; padding: 10px; background: var(--blanc); border: 1px solid var(--filet); }
+.comparable .champ.plein input { font-weight: 400; }
+.comparable .suppr { grid-column: 1 / -1; justify-self: end; }
+.resume-saisie { padding: 16px 20px; background: var(--vert); color: var(--creme); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.resume-saisie div span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--or-clair); }
+.resume-saisie div b { font-family: var(--serif); font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--vert); color: var(--creme); padding: 10px 18px; font-size: 13px; z-index: 50; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.toast.visible { opacity: 1; }
+
+/* =========================================================
+   DOSSIER A4 — identique à l'écran et dans le PDF
+   ========================================================= */
+.page {
+  width: 210mm; height: 297mm; background: var(--creme); position: relative; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(22, 41, 31, .18);
+  padding: 20mm 17mm 22mm; display: flex; flex-direction: column;
+  font-size: 9.6pt; line-height: 1.55; color: var(--encre); flex-shrink: 0;
+}
+.page .entete { position: absolute; top: 9mm; left: 17mm; right: 17mm; display: flex; justify-content: space-between; align-items: center; font-size: 7pt; letter-spacing: .3em; text-transform: uppercase; color: var(--or); }
+.page .entete .nom { font-family: var(--serif); font-size: 10.5pt; letter-spacing: .04em; text-transform: none; color: var(--vert); font-weight: 600; }
+.page .pied { position: absolute; bottom: 9mm; left: 17mm; right: 17mm; display: flex; justify-content: space-between; font-size: 7pt; color: var(--gris); border-top: 1px solid var(--filet); padding-top: 3mm; letter-spacing: .04em; }
+.page .pied .no { color: var(--or); font-weight: 400; }
+.kicker { display: inline-flex; align-items: center; gap: 10px; font-weight: 400; letter-spacing: .3em; text-transform: uppercase; font-size: 7.5pt; color: var(--or); margin-bottom: 3mm; }
+.kicker::before { content: ""; width: 26px; height: 1px; background: var(--or); }
+.page h2.titre { font-size: 25pt; margin-bottom: 2mm; }
+.page .intro { color: var(--gris); max-width: 150mm; margin-bottom: 6mm; font-size: 10pt; }
+.page h3 { font-size: 14pt; margin: 5mm 0 2.5mm; }
+.page p + p { margin-top: 2mm; }
+.page .petit { font-size: 7.6pt; color: var(--gris); line-height: 1.45; }
+.chiffre { font-variant-numeric: tabular-nums; }
+
+/* Couverture */
+.couverture { background: var(--vert); color: var(--creme); padding: 0; }
+.couverture .photo { height: 128mm; background: var(--vert-fonce) center / cover no-repeat; position: relative; }
+.couverture .photo.vide { background-image: radial-gradient(circle at 70% 30%, rgba(201,169,110,.18), transparent 55%), linear-gradient(160deg, #234433, #16291F); }
+.couverture .filigrane { position: absolute; right: 17mm; top: 26mm; width: 82mm; height: 82mm; opacity: .35; }
+.couverture .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(22,41,31,.0) 55%, rgba(30,58,43,1)); }
+.couverture .monogramme { position: absolute; top: 14mm; left: 17mm; z-index: 2; display: flex; align-items: center; gap: 4mm; }
+.couverture .monogramme svg { width: 15mm; height: 15mm; }
+.couverture .monogramme b { font-family: var(--serif); font-size: 15pt; font-weight: 600; display: block; color: var(--creme); line-height: 1.1; }
+.couverture .monogramme span { font-size: 6.5pt; letter-spacing: .4em; text-transform: uppercase; color: var(--or-clair); }
+.couverture .contenu { padding: 4mm 17mm 0; position: relative; z-index: 2; margin-top: -14mm; flex: 1; display: flex; flex-direction: column; }
+.couverture .kicker { color: var(--or-clair); }
+.couverture .kicker::before { background: var(--or-clair); }
+.couverture h1 { color: var(--creme); font-size: 38pt; font-weight: 500; line-height: 1.02; }
+.couverture h1 em { color: var(--or-clair); font-style: italic; font-weight: 500; }
+.couverture .bien { margin-top: 7mm; padding-top: 6mm; border-top: 1px solid rgba(201,169,110,.45); display: grid; grid-template-columns: 1fr auto; gap: 4mm; align-items: end; }
+.couverture .bien h2 { color: var(--creme); font-size: 19pt; font-weight: 500; }
+.couverture .bien p { color: rgba(250,246,239,.75); font-size: 9.5pt; margin-top: 1.5mm; }
+.couverture .bien .prix { font-family: var(--serif); font-size: 24pt; color: var(--or-clair); font-weight: 600; white-space: nowrap; }
+.couverture .chiffres-couv { margin-top: 14mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+.couverture .chiffres-couv div { border-left: 1px solid rgba(201,169,110,.5); padding-left: 4mm; }
+.couverture .chiffres-couv span { display: block; font-size: 6.6pt; letter-spacing: .26em; text-transform: uppercase; color: var(--or-clair); }
+.couverture .chiffres-couv b { display: block; font-family: var(--serif); font-size: 22pt; font-weight: 500; color: var(--creme); margin: 1mm 0; font-variant-numeric: tabular-nums; }
+.couverture .chiffres-couv small { font-size: 7.6pt; color: rgba(250,246,239,.7); }
+.couverture .pour { margin-top: auto; margin-bottom: 14mm; display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; font-size: 8.8pt; color: rgba(250,246,239,.85); }
+.couverture .pour span { display: block; font-size: 6.8pt; letter-spacing: .3em; text-transform: uppercase; color: var(--or-clair); margin-bottom: 1mm; }
+.couverture .bas { position: absolute; bottom: 0; left: 0; right: 0; height: 9mm; background: var(--vert-fonce); display: flex; align-items: center; justify-content: space-between; padding: 0 17mm; font-size: 7pt; letter-spacing: .14em; color: var(--or-clair); text-transform: uppercase; }
+
+/* Tuiles chiffres clés */
+.tuiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin-bottom: 6mm; }
+.tuile { background: var(--blanc); padding: 4.5mm 5mm; border-top: 2px solid var(--or); }
+.tuile.fonce { background: var(--vert); color: var(--creme); border-top-color: var(--or-clair); }
+.tuile span { display: block; font-size: 6.8pt; letter-spacing: .22em; text-transform: uppercase; color: var(--gris); }
+.tuile.fonce span { color: var(--or-clair); }
+.tuile b { display: block; font-family: var(--serif); font-size: 23pt; font-weight: 600; color: var(--vert); line-height: 1.1; margin: 1.5mm 0 1mm; font-variant-numeric: tabular-nums; }
+.tuile.fonce b { color: var(--creme); }
+.tuile small { font-size: 7.8pt; color: var(--gris); display: block; line-height: 1.35; }
+.tuile.fonce small { color: rgba(250,246,239,.75); }
+
+.deux-col { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+.deux-col > * { min-width: 0; }
+.encadre { background: var(--creme-2); padding: 4.5mm 5mm; }
+.encadre.vert { background: var(--vert); color: var(--creme); }
+.encadre.vert h3, .encadre.vert h4 { color: var(--creme); }
+.citation { font-family: var(--serif); font-style: italic; font-size: 13pt; line-height: 1.4; color: var(--vert); border-left: 2px solid var(--or); padding-left: 5mm; margin: 2mm 0 5mm; }
+
+/* Tableaux */
+table.t { width: 100%; border-collapse: collapse; font-size: 8.6pt; font-variant-numeric: tabular-nums; }
+table.t th { text-align: left; font-weight: 400; font-size: 6.9pt; letter-spacing: .14em; text-transform: uppercase; color: var(--gris); padding: 1.6mm 2mm; border-bottom: 1px solid var(--vert); }
+table.t td { padding: 1.1mm 2mm; border-bottom: 1px solid var(--filet); }
+table.t .n { text-align: right; white-space: nowrap; }
+table.t tr.total td { border-top: 1px solid var(--vert); border-bottom: 0; font-weight: 500; color: var(--vert); background: var(--creme-2); }
+table.t tr.sous td { font-weight: 400; color: var(--vert); }
+table.t tr.sec td { padding-top: 3mm; font-size: 7pt; letter-spacing: .18em; text-transform: uppercase; color: var(--or); border-bottom: 0; }
+table.t tr.hl td { background: rgba(176,141,74,.12); }
+table.t tr.hl td:first-child { color: var(--vert); font-weight: 500; }
+table.t td.pos { color: var(--positif); font-weight: 500; }
+table.t td.neg { color: var(--alerte); }
+table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
+
+.fiche { display: grid; grid-template-columns: 1fr 1fr; gap: 0 6mm; font-size: 8.8pt; }
+.fiche div { display: flex; justify-content: space-between; gap: 3mm; border-bottom: 1px solid var(--filet); padding: 1.4mm 0; }
+.fiche div span { color: var(--gris); }
+.fiche div b { font-weight: 400; color: var(--vert); text-align: right; }
+
+.puces { list-style: none; display: grid; gap: 1.8mm; }
+.puces li { position: relative; padding-left: 5mm; }
+.puces li::before { content: ""; position: absolute; left: 0; top: 2.4mm; width: 3mm; height: 1px; background: var(--or); }
+.puces li b { color: var(--vert); font-weight: 500; }
+.graph { width: 100%; height: auto; display: block; }
+.legende { display: flex; gap: 5mm; font-size: 7.5pt; color: var(--gris); margin-top: 1.5mm; flex-wrap: wrap; }
+.legende i { display: inline-block; width: 9px; height: 9px; margin-right: 5px; vertical-align: -1px; }
+.services { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm 7mm; }
+.services div h4 { font-size: 12pt; margin-bottom: 1mm; }
+.services div p { font-size: 8.6pt; color: var(--encre); }
+.contact-bloc { display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: center; }
+.contact-bloc .tel { font-family: var(--serif); font-size: 20pt; font-weight: 600; color: var(--or-clair); }
+.contact-bloc p { color: rgba(250,246,239,.85); }
+.contact-bloc svg { width: 22mm; height: 22mm; }
+
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body { height: auto; background: none; }
+  body * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .barre, .saisie, .toast { display: none !important; }
+  .app { display: block; height: auto; }
+  .apercu { padding: 0; overflow: visible; }
+  .apercu-inner { display: block; }
+  .page { box-shadow: none; zoom: 1 !important; break-after: page; page-break-after: always; margin: 0; }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="barre">
+  <div class="marque">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#16291F"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#B08D4A" stroke-width="1.5"/><text x="32" y="41.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="29" fill="#C9A96E">TH</text></svg>
+    <div><b>Étude de rentabilité</b><span>Courte durée vs année</span></div>
+  </div>
+  <button class="btn btn-ligne" id="btn-nouvelle" type="button">Nouvelle étude</button>
+  <button class="btn btn-ligne" id="btn-enregistrer" type="button">Enregistrer</button>
+  <button class="btn btn-or" id="btn-pdf" type="button">Exporter le PDF</button>
+</header>
+
+<div class="app">
+<aside class="saisie" id="saisie">
+
+  <div class="resume-saisie" id="resume-saisie"></div>
+
+  <!-- 1. Annonce -->
+  <details class="etape" open>
+    <summary><span class="num">1</span><h2>L'annonce</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="champ">
+        <label for="annonce">Texte de l'annonce (copier-coller)</label>
+        <textarea id="annonce" data-path="annonce" rows="7" placeholder="Collez ici le texte de l'annonce de l'agence…"></textarea>
+      </div>
+      <div class="ligne-btn">
+        <button class="btn btn-vert" type="button" id="btn-analyser">Analyser l'annonce</button>
+        <span class="aide" style="font-size:11.5px;color:var(--gris)">Remplit automatiquement la fiche du bien.</span>
+      </div>
+      <div class="detecte" id="detecte"></div>
+    </div>
+  </details>
+
+  <!-- 2. Le bien -->
+  <details class="etape" open>
+    <summary><span class="num">2</span><h2>Le bien</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="grille">
+        <div class="champ"><label for="b-type">Type</label>
+          <select id="b-type" data-path="bien.type"><option value="appartement">Appartement</option><option value="maison">Maison</option></select></div>
+        <div class="champ"><label for="b-commune">Commune</label><select id="b-commune" data-path="bien.commune"></select></div>
+        <div class="champ"><label for="b-pieces">Pièces</label><input id="b-pieces" type="number" min="1" data-path="bien.pieces"></div>
+        <div class="champ"><label for="b-chambres">Chambres</label><input id="b-chambres" type="number" min="0" data-path="bien.chambres"></div>
+        <div class="champ"><label for="b-surface">Surface (m²)</label><input id="b-surface" type="number" min="5" data-path="bien.surface"></div>
+        <div class="champ"><label for="b-capacite">Voyageurs</label><input id="b-capacite" type="number" min="1" data-path="bien.capacite"></div>
+        <div class="champ"><label for="b-prix">Prix de vente FAI (€)</label><input id="b-prix" type="number" min="0" step="1000" data-path="bien.prix"></div>
+        <div class="champ"><label for="b-annee">Année de construction</label><input id="b-annee" type="number" min="1500" max="2030" data-path="bien.annee"></div>
+        <div class="champ"><label for="b-etat">État</label>
+          <select id="b-etat" data-path="bien.etat">
+            <option value="a_rafraichir">À rafraîchir</option><option value="bon">Bon état</option>
+            <option value="renove">Rénové / refait à neuf</option><option value="premium">Prestations haut de gamme</option></select></div>
+        <div class="champ"><label for="b-dpe">DPE</label>
+          <select id="b-dpe" data-path="bien.dpe"><option value="">Non précisé</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+        <div class="champ"><label for="b-copro">Charges copro (€/an)</label><input id="b-copro" type="number" min="0" data-path="bien.chargesCopro"></div>
+        <div class="champ"><label for="b-tf">Taxe foncière (€/an)</label><input id="b-tf" type="number" min="0" data-path="bien.taxeFonciere"></div>
+        <div class="champ plein"><label>Atouts</label>
+          <div class="cases">
+            <label><input type="checkbox" data-path="bien.vueMer"> Vue mer</label>
+            <label><input type="checkbox" data-path="bien.plage"> Plage à pied</label>
+            <label><input type="checkbox" data-path="bien.exterieur"> Balcon / terrasse / jardin</label>
+            <label><input type="checkbox" data-path="bien.parking"> Parking</label>
+            <label><input type="checkbox" data-path="bien.piscine"> Piscine</label>
+          </div></div>
+        <div class="champ plein"><label for="b-titre">Titre du bien (dossier)</label><input id="b-titre" data-path="bien.titre"></div>
+        <div class="champ"><label for="b-ref">Référence annonce</label><input id="b-ref" data-path="bien.reference"></div>
+        <div class="champ"><label for="b-photo">Photo de couverture</label><input id="b-photo" type="file" accept="image/*"></div>
+      </div>
+      <div class="ligne-btn"><button class="btn btn-discret btn-mini" type="button" id="btn-suppr-photo">Retirer la photo</button></div>
+      <p class="note">Les champs laissés vides prennent une <b>valeur estimée</b>, affichée en gris. Saisissez une valeur pour la remplacer.</p>
+    </div>
+  </details>
+
+  <!-- 3. Marché -->
+  <details class="etape">
+    <summary><span class="num">3</span><h2>Marché courte durée</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="grille">
+        <div class="champ"><label for="m-adr">Tarif de référence (€/nuit)</label><input id="m-adr" type="number" min="20" data-path="marche.adrBase"><span class="aide">Moyenne saison (juin, sept.)</span></div>
+        <div class="champ"><label for="m-scenario">Scénario du dossier</label>
+          <select id="m-scenario" data-path="marche.scenario"><option value="prudent">Prudent</option><option value="realiste">Réaliste</option><option value="optimiste">Optimiste</option></select></div>
+        <div class="champ"><label for="m-dms">Durée moyenne de séjour (nuits)</label><input id="m-dms" type="number" min="1" step="0.1" data-path="marche.dms"><span class="aide">×1,5 en juillet-août</span></div>
+        <div class="champ"><label for="m-menage">Frais de ménage voyageur (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"></div>
+      </div>
+      <div class="ligne-btn" style="justify-content:space-between">
+        <span>Saisonnalité <span class="mode" id="mode-saison">Auto</span></span>
+        <button class="btn btn-discret btn-mini" type="button" id="btn-reset-saison">Revenir à l'estimation</button>
+      </div>
+      <table class="saison" id="table-saison">
+        <thead><tr><th>Mois</th><th>Prix / nuit (€)</th><th>Occupation (%)</th></tr></thead><tbody></tbody>
+      </table>
+      <div class="champ">
+        <label for="m-import">Importer PriceLabs / AirDNA</label>
+        <textarea id="m-import" rows="4" placeholder="Une ligne par mois, ex. :&#10;Juillet  118 €  86 %&#10;2026-08 ; 132 ; 0,93"></textarea>
+        <span class="aide">Collez l'export mensuel (Market Dashboard PriceLabs, onglet saisonnalité AirDNA, ou un comparable). Prix et taux d'occupation sont reconnus par mois.</span>
+      </div>
+      <div class="ligne-btn"><button class="btn btn-vert btn-mini" type="button" id="btn-importer">Importer les données</button></div>
+      <div class="champ"><label for="m-source">Source des données saisonnières</label><input id="m-source" data-path="marche.source" placeholder="ex. PriceLabs, T2 2-4 voyageurs, rayon 5 km, oct. 2026"></div>
+    </div>
+  </details>
+
+  <!-- 4. Charges courte durée -->
+  <details class="etape">
+    <summary><span class="num">4</span><h2>Charges courte durée</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="grille">
+        <div class="champ"><label for="c-plat">Commission plateformes (%)</label><input id="c-plat" type="number" step="0.5" data-path="cd.plateformes"></div>
+        <div class="champ"><label for="c-conc">Commission conciergerie (%)</label><input id="c-conc" type="number" step="0.5" data-path="cd.conciergerie"><span class="aide">Sur les nuitées nettes</span></div>
+        <div class="champ"><label for="c-menage">Coût ménage + linge / séjour (€)</label><input id="c-menage" type="number" data-path="cd.menageCout"></div>
+        <div class="champ"><label for="c-conso">Accueil & consommables / séjour (€)</label><input id="c-conso" type="number" data-path="cd.consommables"></div>
+        <div class="champ"><label for="c-energie">Énergie & eau (€/an)</label><input id="c-energie" type="number" data-path="cd.energie"></div>
+        <div class="champ"><label for="c-internet">Internet & TV (€/an)</label><input id="c-internet" type="number" data-path="cd.internet"></div>
+        <div class="champ"><label for="c-assu">Assurance (€/an)</label><input id="c-assu" type="number" data-path="cd.assurance"></div>
+        <div class="champ"><label for="c-cfe">CFE (€/an)</label><input id="c-cfe" type="number" data-path="cd.cfe"></div>
+        <div class="champ"><label for="c-entretien">Entretien & renouvellement (% CA)</label><input id="c-entretien" type="number" step="0.5" data-path="cd.entretienPct"></div>
+        <div class="champ"><label for="c-amb">Équipement initial (€)</label><input id="c-amb" type="number" step="100" data-path="cd.ameublement"></div>
+        <div class="champ plein"><label for="c-regime">Fiscalité courte durée</label>
+          <select id="c-regime" data-path="cd.regime">
+            <option value="reel">LMNP au réel (amortissements)</option>
+            <option value="classe">Micro-BIC meublé de tourisme classé (50 %)</option>
+            <option value="nonclasse">Micro-BIC meublé non classé (30 %)</option></select></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- 5. Location à l'année -->
+  <details class="etape">
+    <summary><span class="num">5</span><h2>Location à l'année</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="grille">
+        <div class="champ"><label for="l-mode">Type de bail</label>
+          <select id="l-mode" data-path="ld.mode"><option value="meublee">Meublé (bail 1 an)</option><option value="nue">Nu (bail 3 ans)</option></select></div>
+        <div class="champ"><label for="l-loyer">Loyer hors charges (€/mois)</label><input id="l-loyer" type="number" data-path="ld.loyer"></div>
+        <div class="champ"><label for="l-vac">Vacance locative (%)</label><input id="l-vac" type="number" step="0.5" data-path="ld.vacance"></div>
+        <div class="champ"><label for="l-gest">Gestion locative agence (%)</label><input id="l-gest" type="number" step="0.5" data-path="ld.gestion"></div>
+        <div class="champ"><label for="l-gli">Garantie loyers impayés (%)</label><input id="l-gli" type="number" step="0.1" data-path="ld.gli"></div>
+        <div class="champ"><label for="l-assu">Assurance PNO (€/an)</label><input id="l-assu" type="number" data-path="ld.assurance"></div>
+        <div class="champ"><label for="l-entretien">Entretien (€/an)</label><input id="l-entretien" type="number" data-path="ld.entretien"></div>
+        <div class="champ"><label for="l-recup">Charges copro récupérables (%)</label><input id="l-recup" type="number" data-path="ld.recup"></div>
+        <div class="champ plein"><label for="l-regime">Fiscalité location à l'année</label>
+          <select id="l-regime" data-path="ld.regime">
+            <option value="auto">Comme la courte durée (réel ou micro)</option>
+            <option value="microfoncier">Location nue : micro-foncier (30 %)</option>
+            <option value="foncierreel">Location nue : régime réel</option>
+            <option value="microbic">Meublé : micro-BIC (50 %)</option>
+            <option value="reel">Meublé : LMNP au réel</option></select></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- 6. Financement & fiscalité -->
+  <details class="etape">
+    <summary><span class="num">6</span><h2>Financement & impôts</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="cases"><label><input type="checkbox" data-path="fin.comptant"> Achat comptant (sans crédit)</label></div>
+      <div class="grille">
+        <div class="champ"><label for="f-notaire">Frais de notaire (%)</label><input id="f-notaire" type="number" step="0.1" data-path="fin.notaire"></div>
+        <div class="champ"><label for="f-apport">Apport (% du projet)</label><input id="f-apport" type="number" step="1" data-path="fin.apport"></div>
+        <div class="champ"><label for="f-taux">Taux du crédit (%)</label><input id="f-taux" type="number" step="0.05" data-path="fin.taux"></div>
+        <div class="champ"><label for="f-duree">Durée (ans)</label><input id="f-duree" type="number" data-path="fin.duree"></div>
+        <div class="champ"><label for="f-assu">Assurance emprunteur (%)</label><input id="f-assu" type="number" step="0.01" data-path="fin.assurance"></div>
+        <div class="champ"><label for="f-tmi">Tranche marginale d'imposition (%)</label>
+          <select id="f-tmi" data-path="fisc.tmi"><option value="0">0 %</option><option value="11">11 %</option><option value="30">30 %</option><option value="41">41 %</option><option value="45">45 %</option></select></div>
+        <div class="champ"><label for="f-ps">Prélèvements sociaux (%)</label><input id="f-ps" type="number" step="0.1" data-path="fisc.ps"></div>
+      </div>
+      <p class="note">Hypothèses fiscales indicatives (règles 2026) à faire valider par un expert-comptable.</p>
+    </div>
+  </details>
+
+  <!-- 7. Comparables -->
+  <details class="etape">
+    <summary><span class="num">7</span><h2>Annonces comparables</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <p class="note">Ajoutez 3 à 5 logements concurrents relevés sur Airbnb, Booking ou PriceLabs (même capacité, même secteur). Ils apparaissent dans la page « Marché ».</p>
+      <div id="liste-comparables" style="display:grid;gap:8px"></div>
+      <div class="ligne-btn"><button class="btn btn-vert btn-mini" type="button" id="btn-ajout-comp">Ajouter un comparable</button></div>
+    </div>
+  </details>
+
+  <!-- 8. Dossier -->
+  <details class="etape">
+    <summary><span class="num">8</span><h2>Destinataires & dossiers</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="grille">
+        <div class="champ"><label for="d-agence">Agence immobilière</label><input id="d-agence" data-path="dossier.agence"></div>
+        <div class="champ"><label for="d-agent">À l'attention de</label><input id="d-agent" data-path="dossier.agent"></div>
+        <div class="champ"><label for="d-invest">Investisseur (facultatif)</label><input id="d-invest" data-path="dossier.investisseur"></div>
+        <div class="champ"><label for="d-date">Date de l'étude</label><input id="d-date" type="date" data-path="dossier.date"></div>
+        <div class="champ plein"><label for="d-mot">Mot personnalisé (page de synthèse)</label><textarea id="d-mot" rows="3" data-path="dossier.message"></textarea></div>
+      </div>
+      <div class="champ"><label for="sauvegardes">Études enregistrées</label><select id="sauvegardes"></select></div>
+      <div class="ligne-btn">
+        <button class="btn btn-discret btn-mini" type="button" id="btn-charger">Ouvrir</button>
+        <button class="btn btn-discret btn-mini" type="button" id="btn-supprimer">Supprimer</button>
+        <button class="btn btn-discret btn-mini" type="button" id="btn-export-json">Exporter (.json)</button>
+        <label class="btn btn-discret btn-mini" for="import-json">Importer (.json)</label>
+        <input type="file" id="import-json" accept="application/json" hidden>
+      </div>
+    </div>
+  </details>
+</aside>
+
+<main class="apercu" id="apercu"><div class="apercu-inner" id="dossier"></div></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =========================================================
+   Référentiels marché — Côte du Goëlo & Trégor (relevés oct. 2026)
+   adrCoef : indice de prix nuitée vs Plouézec ; ldCoef : indice loyer à l'année
+   marche : chiffres publics tous logements confondus (€ ; $ convertis à 0,86)
+   ========================================================= */
+const COMMUNES = {
+  plouezec:     { nom: "Plouézec", cp: "22470", adrCoef: 1.00, ldCoef: 1.00, marche: { adr: 103, occ: 52, annonces: "≈ 210", src: "AirDNA 2026 (AirROI : 93 €, 38 %)" } },
+  paimpol:      { nom: "Paimpol", cp: "22500", adrCoef: 1.04, ldCoef: 1.05, marche: { adr: 105, occ: 50, annonces: "—", src: "GuestFavorites 2025-26 (Airbtics : 103 €, 57 %)" } },
+  ploubazlanec: { nom: "Ploubazlanec", cp: "22620", adrCoef: 1.12, ldCoef: 1.00, marche: { adr: 125, occ: 53, annonces: "≈ 140 à 240", src: "GuestFavorites avr. 2026 (AirDNA : 56 %)" } },
+  plehedel:     { nom: "Pléhédel", cp: "22290", adrCoef: 0.95, ldCoef: 0.92, marche: { adr: 98, occ: null, annonces: "—", src: "AirROI 2026 (médiane)" } },
+  lanloup:      { nom: "Lanloup", cp: "22580", adrCoef: 1.02, ldCoef: 0.95 },
+  plourivo:     { nom: "Plourivo", cp: "22860", adrCoef: 0.93, ldCoef: 0.92 },
+  kerfot:       { nom: "Kerfot", cp: "22500", adrCoef: 0.92, ldCoef: 0.92 },
+  yvias:        { nom: "Yvias", cp: "22930", adrCoef: 0.92, ldCoef: 0.90 },
+  plouha:       { nom: "Plouha", cp: "22580", adrCoef: 1.00, ldCoef: 0.95 },
+  lezardrieux:  { nom: "Lézardrieux", cp: "22740", adrCoef: 1.00, ldCoef: 0.95 },
+  brehat:       { nom: "Île-de-Bréhat", cp: "22870", adrCoef: 1.35, ldCoef: 1.00 },
+  saintquay:    { nom: "Saint-Quay-Portrieux", cp: "22410", adrCoef: 1.06, ldCoef: 1.05 },
+  treguier:     { nom: "Tréguier", cp: "22220", adrCoef: 1.00, ldCoef: 0.98 }
+};
+const VOISINES = ["plouezec", "paimpol", "ploubazlanec", "plehedel"];
+
+const MOIS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const MOIS_C = ["Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."];
+const JOURS = [31,28,31,30,31,30,31,31,30,31,30,31];
+/* Saisonnalité type d'un logement géré par une conciergerie sur la côte du Goëlo (moy. ≈ 45 %) */
+const SAISON_OCC = [22, 28, 30, 45, 52, 58, 82, 92, 58, 38, 20, 26];
+const SAISON_ADR = [0.85, 0.85, 0.87, 0.95, 0.98, 1.00, 1.25, 1.35, 1.00, 0.92, 0.85, 0.92];
+const SCENARIOS = { prudent: { occ: 0.85, adr: 0.95, nom: "Prudent" }, realiste: { occ: 1, adr: 1, nom: "Réaliste" }, optimiste: { occ: 1.10, adr: 1.05, nom: "Optimiste" } };
+/* Tarif de référence par typologie (€/nuit, moyenne saison, Plouézec) */
+const ADR_APPART = [62, 72, 95, 118, 138];
+const ADR_MAISON = [80, 95, 118, 145, 180, 220];
+const ETAT = { a_rafraichir: { adr: 0.92, ld: 0.95, nom: "À rafraîchir" }, bon: { adr: 1, ld: 1, nom: "Bon état" }, renove: { adr: 1.06, ld: 1.03, nom: "Rénové" }, premium: { adr: 1.15, ld: 1.06, nom: "Haut de gamme" } };
+const AGENCES = ["Optimo", "Orpi", "Century 21", "Laforêt", "Square Habitat", "Guy Hoquet", "Stéphane Plaza", "Nestenn", "iad", "Safti", "Capifrance", "Foncia", "Citya", "Le Tuc", "ERA", "Agence du Goëlo", "Cabinet Sainte-Anne", "Bretagne Sud Immobilier", "Kermarrec", "Immo de France", "Notaire"];
+const PLAFOND_NONCLASSE = 15000, PLAFOND_CLASSE = 83600, PLAFOND_FONCIER = 15000, PLAFOND_MICROBIC_LD = 83600;
+
+/* ---------- État ---------- */
+const EXEMPLE_ANNONCE = "EXEMPLE — Agence Optimo — Plouézec (22470)\nAppartement 2 pièces de 30 m², construction 2000, entièrement refait à neuf : séjour avec cuisine équipée, une chambre, salle d'eau. Proche du bourg et des plages de la côte du Goëlo, à 10 minutes de Paimpol.\nPrix : 129 000 € honoraires inclus.";
+function etatVide() {
+  return {
+    id: "e" + Date.now().toString(36), annonce: "",
+    bien: { type: "appartement", commune: "plouezec", pieces: "", chambres: "", surface: "", capacite: "", prix: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
+    marche: { adrBase: "", scenario: "realiste", dms: "", fraisMenage: "", saisonMode: "auto", mois: [], source: "" },
+    cd: { plateformes: "", conciergerie: "", menageCout: "", consommables: "", energie: "", internet: "", assurance: "", cfe: "", entretienPct: "", ameublement: "", regime: "reel" },
+    ld: { mode: "meublee", loyer: "", vacance: "", gestion: "", gli: "", assurance: "", entretien: "", recup: "", regime: "auto" },
+    fin: { comptant: false, notaire: "", apport: "", taux: "", duree: "", assurance: "" },
+    fisc: { tmi: "30", ps: "" },
+    comparables: [],
+    dossier: { agence: "", agent: "", investisseur: "", date: new Date().toISOString().slice(0, 10), message: "" }
+  };
+}
+let S = etatVide();
+
+/* ---------- Utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const nf0 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+const nf1 = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+const eur = (v) => nf0.format(Math.round(v)) + " €";
+const eurArr = (v, pas = 100) => nf0.format(Math.round(v / pas) * pas) + " €";
+const pct = (v, d = 0) => (d ? nf1.format(v) : nf0.format(v)) + " %";
+const moins = (v) => Math.round(v) ? "− " + eur(v) : "0 €";
+const signe = (v) => (v > 0 ? "+ " : v < 0 ? "− " : "") + nf0.format(Math.abs(Math.round(v))) + " €";
+const num = (v) => { if (v === "" || v === null || v === undefined) return NaN; const n = typeof v === "number" ? v : parseFloat(String(v).replace(/\s/g, "").replace(",", ".")); return isFinite(n) ? n : NaN; };
+const lire = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
+const ecrire = (o, p, v) => { const ks = p.split("."); const last = ks.pop(); ks.reduce((a, k) => a[k], o)[last] = v; };
+const norm = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[  ]/g, " ");
+const arrondi = (v, pas) => Math.round(v / pas) * pas;
+
+/* ---------- Valeurs estimées (champs laissés vides) ---------- */
+function autos(s) {
+  const A = {};
+  const b = s.bien, maison = b.type === "maison";
+  const c = COMMUNES[b.commune] || COMMUNES.plouezec;
+  const pieces = num(b.pieces) || (maison ? 4 : 2);
+  A["bien.pieces"] = pieces;
+  A["bien.chambres"] = Math.max(0, maison ? pieces - 1 : pieces - 1);
+  const ch = isNaN(num(b.chambres)) ? A["bien.chambres"] : num(b.chambres);
+  A["bien.surface"] = maison ? 25 + pieces * 18 : 12 + pieces * 15;
+  const surf = num(b.surface) || A["bien.surface"];
+  A["bien.capacite"] = ch === 0 ? 2 : ch * 2 + (!maison && surf >= 25 ? 2 : 0);
+  A["bien.prix"] = arrondi(surf * (maison ? 2600 : 3300), 1000);
+  A["bien.chargesCopro"] = maison ? 0 : arrondi(surf * 24, 10);
+  A["bien.taxeFonciere"] = arrondi(surf * (maison ? 11 : 16), 10);
+
+  const base = maison ? ADR_MAISON[Math.min(ch, 5)] : ADR_APPART[Math.min(ch, 4)];
+  let f = c.adrCoef * ETAT[b.etat || "bon"].adr;
+  if (b.vueMer) f *= 1.15; if (b.plage) f *= 1.06; if (b.exterieur) f *= 1.04; if (b.parking) f *= 1.02; if (b.piscine) f *= 1.15;
+  A["marche.adrBase"] = Math.round(base * f);
+  A["marche.dms"] = maison ? 4 : 3.2;
+  A["marche.fraisMenage"] = surf < 40 ? 45 : surf < 70 ? 60 : surf < 110 ? 80 : 110;
+
+  A["cd.plateformes"] = 15;
+  A["cd.conciergerie"] = 20;
+  A["cd.menageCout"] = A["marche.fraisMenage"];
+  A["cd.consommables"] = 4;
+  A["cd.energie"] = arrondi(400 + surf * 17, 10);
+  A["cd.internet"] = 360;
+  A["cd.assurance"] = arrondi(150 + surf * 1.5, 10);
+  A["cd.cfe"] = 150;
+  A["cd.entretienPct"] = 4;
+  A["cd.ameublement"] = arrondi(2200 + surf * 45, 100);
+
+  const eurM2 = surf <= 30 ? 14 : surf <= 45 ? 12.5 : surf <= 65 ? 11 : surf <= 90 ? 10 : 9;
+  A["ld.loyer"] = arrondi(surf * eurM2 * c.ldCoef * ETAT[b.etat || "bon"].ld * (s.ld.mode === "meublee" ? 1.08 : 1), 5);
+  A["ld.vacance"] = s.ld.mode === "meublee" ? 6 : 4;
+  A["ld.gestion"] = 7;
+  A["ld.gli"] = 2.5;
+  A["ld.assurance"] = 120;
+  A["ld.entretien"] = arrondi(150 + surf * 5, 10);
+  A["ld.recup"] = 70;
+
+  A["fin.notaire"] = num(b.annee) >= new Date().getFullYear() - 5 ? 2.5 : 7.5;
+  A["fin.apport"] = 10;
+  A["fin.taux"] = 3.3;
+  A["fin.duree"] = 20;
+  A["fin.assurance"] = 0.30;
+  A["fisc.ps"] = 17.2;
+
+  A.mois = SAISON_OCC.map((o, i) => ({ adr: Math.round(A["marche.adrBase"] * SAISON_ADR[i]), occ: o }));
+  return A;
+}
+function V(s, A, p) {
+  const raw = lire(s, p);
+  if (typeof raw === "boolean") return raw;
+  const n = num(raw);
+  if (!isNaN(n)) return n;
+  if (p === "marche.adrBase" || A[p] === undefined) return A[p] ?? raw;
+  return A[p];
+}
+function moisEffectifs(s, A) {
+  const adrBase = V(s, A, "marche.adrBase");
+  if (s.marche.saisonMode === "manuel" && s.marche.mois.length === 12) return s.marche.mois.map(m => ({ adr: num(m.adr) || 0, occ: num(m.occ) || 0 }));
+  return SAISON_OCC.map((o, i) => ({ adr: Math.round(adrBase * SAISON_ADR[i]), occ: o }));
+}
+
+/* ---------- Calculs ---------- */
+function credit(montant, tauxAn, ans, assuAn) {
+  if (montant <= 0) return { mens: 0, annuite: 0, interets1: 0, assurance: 0 };
+  const t = tauxAn / 100 / 12, n = ans * 12;
+  const mens = t === 0 ? montant / n : montant * t / (1 - Math.pow(1 + t, -n));
+  let crd = montant, interets1 = 0;
+  for (let k = 0; k < 12; k++) { const it = crd * t; interets1 += it; crd -= (mens - it); }
+  const assurance = montant * assuAn / 100;
+  return { mens: mens + assurance / 12, annuite: mens * 12 + assurance, interets1, assurance };
+}
+function impot(regime, recettes, chargesDed, interets, amort, taux) {
+  let base = 0, abatt = 0, libelle = "", alerte = "";
+  if (regime === "classe") { abatt = 0.5; base = recettes * 0.5; libelle = "Micro-BIC classé, abattement 50 %"; if (recettes > PLAFOND_CLASSE) alerte = "Recettes au-delà du plafond micro-BIC : régime réel obligatoire."; }
+  else if (regime === "nonclasse") { abatt = 0.3; base = recettes * 0.7; libelle = "Micro-BIC non classé, abattement 30 %"; if (recettes > PLAFOND_NONCLASSE) alerte = "Recettes supérieures à 15 000 € : le micro-BIC non classé n'est plus accessible. Classement du meublé ou régime réel."; }
+  else if (regime === "microfoncier") { base = recettes * 0.7; libelle = "Micro-foncier, abattement 30 %"; if (recettes > PLAFOND_FONCIER) alerte = "Loyers au-delà de 15 000 € : régime réel."; }
+  else if (regime === "microbic") { base = recettes * 0.5; libelle = "Micro-BIC meublé, abattement 50 %"; }
+  else if (regime === "foncierreel") { base = Math.max(0, recettes - chargesDed - interets); libelle = "Revenus fonciers au réel"; }
+  else { base = Math.max(0, recettes - chargesDed - interets - amort); libelle = "LMNP au réel, amortissements"; }
+  return { base, impot: base * taux, libelle, alerte };
+}
+
+function calculer(s, scenarioKey, facteurOcc = 1) {
+  const A = autos(s);
+  const g = (p) => V(s, A, p);
+  const sc = SCENARIOS[scenarioKey || s.marche.scenario] || SCENARIOS.realiste;
+  const b = s.bien;
+  const surface = g("bien.surface"), prix = g("bien.prix");
+  const dms = g("marche.dms"), fraisMen = g("marche.fraisMenage");
+  const mois = moisEffectifs(s, A).map((m, i) => {
+    const occ = Math.min(0.97, (m.occ / 100) * sc.occ * facteurOcc);
+    const adr = m.adr * sc.adr;
+    const nuits = JOURS[i] * occ;
+    const sejours = nuits / (dms * (i === 6 || i === 7 ? 1.5 : 1));
+    return { i, occ, adr, nuits, sejours, caNuits: nuits * adr, caMenage: sejours * fraisMen };
+  });
+  const T = mois.reduce((a, m) => ({ nuits: a.nuits + m.nuits, sejours: a.sejours + m.sejours, caNuits: a.caNuits + m.caNuits, caMenage: a.caMenage + m.caMenage }), { nuits: 0, sejours: 0, caNuits: 0, caMenage: 0 });
+  T.occ = T.nuits / 365; T.adr = T.nuits ? T.caNuits / T.nuits : 0;
+
+  const copro = g("bien.chargesCopro"), tf = g("bien.taxeFonciere");
+  const tauxImpot = (num(s.fisc.tmi) || 0) / 100 + g("fisc.ps") / 100;
+  const comptant = !!s.fin.comptant;
+  const notaire = prix * g("fin.notaire") / 100;
+
+  /* Courte durée */
+  const cd = {};
+  cd.recettes = T.caNuits + T.caMenage;
+  cd.lignes = [
+    ["Commission plateformes (Airbnb, Booking…)", cd.recettes * g("cd.plateformes") / 100],
+    ["Conciergerie Les Domaines de Tri Hent", T.caNuits * (1 - g("cd.plateformes") / 100) * g("cd.conciergerie") / 100],
+    ["Ménage hôtelier & linge", T.sejours * g("cd.menageCout")],
+    ["Accueil & consommables", T.sejours * g("cd.consommables")],
+    ["Énergie & eau", g("cd.energie")],
+    ["Internet & TV", g("cd.internet")],
+    ["Assurance", g("cd.assurance")],
+    ["Charges de copropriété", copro],
+    ["Taxe foncière", tf],
+    ["CFE", g("cd.cfe")],
+    ["Entretien", cd.recettes * g("cd.entretienPct") / 100]
+  ];
+  if (s.cd.regime === "reel") cd.lignes.push(["Expert-comptable LMNP", 450]);
+  cd.charges = cd.lignes.reduce((a, l) => a + l[1], 0);
+  cd.net = cd.recettes - cd.charges;
+  cd.equipement = g("cd.ameublement");
+  cd.invest = prix + notaire + cd.equipement;
+
+  /* Location à l'année */
+  const ld = {};
+  const meublee = s.ld.mode === "meublee";
+  ld.loyerM = g("ld.loyer");
+  ld.recettesBrutes = ld.loyerM * 12;
+  const vac = ld.recettesBrutes * g("ld.vacance") / 100;
+  ld.recettes = ld.recettesBrutes - vac;
+  ld.lignes = [
+    ["Gestion locative", ld.recettes * g("ld.gestion") / 100],
+    ["Garantie loyers impayés", ld.recettes * g("ld.gli") / 100],
+    ["Assurance", g("ld.assurance")],
+    ["Charges de copropriété", copro * (1 - g("ld.recup") / 100)],
+    ["Taxe foncière", tf],
+    ["Entretien", g("ld.entretien")]
+  ];
+  if (meublee) ld.lignes.push(["CFE", g("cd.cfe")]);
+  let regimeLd = s.ld.regime;
+  if (regimeLd === "auto") regimeLd = meublee ? (s.cd.regime === "reel" ? "reel" : "microbic") : (s.cd.regime === "reel" ? "foncierreel" : "microfoncier");
+  if (!meublee && (regimeLd === "reel" || regimeLd === "microbic")) regimeLd = regimeLd === "reel" ? "foncierreel" : "microfoncier";
+  if (meublee && (regimeLd === "foncierreel" || regimeLd === "microfoncier")) regimeLd = regimeLd === "foncierreel" ? "reel" : "microbic";
+  if (regimeLd === "reel") ld.lignes.push(["Expert-comptable LMNP", 450]);
+  ld.charges = ld.lignes.reduce((a, l) => a + l[1], 0);
+  ld.vacance = vac;
+  ld.net = ld.recettes - ld.charges;
+  ld.equipement = meublee ? arrondi(cd.equipement * 0.55, 100) : 0;
+  ld.invest = prix + notaire + ld.equipement;
+  ld.regime = regimeLd;
+
+  /* Financement et impôts */
+  for (const [o, regime] of [[cd, s.cd.regime], [ld, regimeLd]]) {
+    o.apport = comptant ? o.invest : o.invest * g("fin.apport") / 100;
+    o.emprunt = comptant ? 0 : o.invest - o.apport;
+    o.credit = credit(o.emprunt, g("fin.taux"), g("fin.duree"), g("fin.assurance"));
+    const amort = (prix + notaire) * 0.85 / 30 + o.equipement / 7;
+    o.amort = amort;
+    o.fisc = impot(regime, o === cd ? cd.recettes : ld.recettes, o.charges, o.credit.interets1 + o.credit.assurance, amort, tauxImpot);
+    o.netApresImpot = o.net - o.fisc.impot;
+    o.cashflow = o.net - o.credit.annuite - o.fisc.impot;
+    o.rdtBrut = (o === cd ? cd.recettes : ld.recettesBrutes) / o.invest * 100;
+    o.rdtNet = o.net / o.invest * 100;
+    o.rdtNetNet = o.netApresImpot / o.invest * 100;
+  }
+  return { A, g, sc, mois, T, cd, ld, prix, notaire, surface, tauxImpot };
+}
+function pointMort(s) {
+  const ref = calculer(s, "realiste");
+  const cible = ref.ld.net;
+  let lo = 0.05, hi = 2.5;
+  if (calculer(s, "realiste", hi).cd.net < cible) return null;
+  for (let k = 0; k < 40; k++) { const mid = (lo + hi) / 2; if (calculer(s, "realiste", mid).cd.net < cible) lo = mid; else hi = mid; }
+  return calculer(s, "realiste", hi).T.occ * 100;
+}
+
+/* ---------- Lecture d'annonce ---------- */
+const MOTS_NB = { un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8, neuf: 9, dix: 10 };
+const nbMot = (x) => MOTS_NB[x] ?? parseInt(x, 10);
+function analyserAnnonce(texte) {
+  const t = norm(texte);
+  const r = {};
+  const NBRE = "(\\d+|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)";
+  // Prix : le plus grand montant plausible
+  const prix = [];
+  for (const m of t.matchAll(/(\d{1,3}(?:[ .]\d{3})+|\d{4,7})(?:[.,]\d{1,2})?\s*(?:€|eur\b|euros)/g)) { const v = parseInt(m[1].replace(/[ .]/g, ""), 10); if (v >= 15000 && v <= 8000000) prix.push(v); }
+  const k = t.match(/(\d{2,4}(?:[.,]\d+)?)\s*k\s?€/); if (k) prix.push(Math.round(parseFloat(k[1].replace(",", ".")) * 1000));
+  if (prix.length) r.prix = Math.max(...prix);
+  // Surface habitable
+  let m = t.match(/(?:surface|habitable|superficie|carrez)[^\d]{0,25}(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)/) || t.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)(?!\s*de\s*terrain)/);
+  if (m) { const v = parseFloat(m[1].replace(",", ".")); if (v >= 8 && v <= 1500) r.surface = Math.round(v); }
+  const terr = t.match(/terrain[^\d]{0,20}(\d[\d ]*)\s*(?:m2|m²)/); if (terr) r.terrain = parseInt(terr[1].replace(/ /g, ""), 10);
+  // Pièces / chambres
+  m = t.match(new RegExp(NBRE + "\\s*pieces?\\b")) || t.match(/\b[tf]\s?(\d)\b/);
+  if (m) r.pieces = nbMot(m[1]);
+  if (/\bstudio\b/.test(t) && !r.pieces) r.pieces = 1;
+  m = t.match(new RegExp(NBRE + "\\s*chambres?\\b")); if (m) r.chambres = nbMot(m[1]);
+  else if (/\b(une|la) chambre\b/.test(t)) r.chambres = 1;
+  // Type
+  if (/\b(maison|villa|longere|penty|propriete|chaumiere|pavillon|ti\s?bihan)\b/.test(t) && !/\bappartement\b/.test(t.slice(0, 120))) r.type = "maison";
+  else if (/\b(appartement|studio|duplex|triplex)\b/.test(t)) r.type = "appartement";
+  // Année
+  m = t.match(/(?:construction|construit|construite|batie?|annee|edifie|datant de|de)\s*(?:en|:|de|du)?\s*((?:18|19|20)\d{2})\b/); if (m) r.annee = parseInt(m[1], 10);
+  // État
+  if (/(a renover|travaux a prevoir|a rafraichir|a moderniser|rafraichissement)/.test(t)) r.etat = "a_rafraichir";
+  else if (/(haut de gamme|prestations de qualite|standing|prestige|luxe)/.test(t)) r.etat = "premium";
+  else if (/(refait|refaite|renove|renovee|renovation|a neuf|neuf\b)/.test(t)) r.etat = "renove";
+  // DPE
+  m = t.match(/(?:dpe|classe energie|classe energetique|etiquette energie|diagnostic de performance energetique)\s*(?:[:=]|est|en|classe)?\s*\(?\b([a-g])\b/); if (m) r.dpe = m[1].toUpperCase();
+  // Charges & taxe
+  m = t.match(/charges?\s*(?:de\s*copropriete|copro|courantes|annuelles)?[^\d€]{0,30}(\d[\d ]{0,6})(?:[.,]\d+)?\s*(?:€|eur)\s*(?:\/|par)?\s*(an|annee|mois|trimestre|mensuel)?/);
+  if (m) { let v = parseInt(m[1].replace(/ /g, ""), 10); const u = m[2] || ""; if (u.startsWith("mois") || u === "mensuel" || (!u && v < 250)) v *= 12; else if (u === "trimestre") v *= 4; if (v > 0 && v < 20000) r.chargesCopro = v; }
+  m = t.match(/taxe fonciere[^\d]{0,20}(\d[\d ]{0,6})\s*(?:€|eur)/); if (m) r.taxeFonciere = parseInt(m[1].replace(/ /g, ""), 10);
+  // Atouts
+  if (/(vue (?:sur (?:la )?)?mer|vue (?:sur )?l'ocean|vue (?:sur )?la baie|vue (?:sur )?le port|vue (?:sur )?l'archipel|vue degagee sur la mer)/.test(t)) r.vueMer = true;
+  if (/(plages? a pied|plages? a \d+ ?m|proche (?:de la |des )?plages?|a \d+ ?m(?:etres)? (?:de la |des )plages?|pieds dans l'eau|bord de mer|acces direct (?:a la )?(?:plage|mer)|a deux pas (?:de la |des )?plages?)/.test(t)) r.plage = true;
+  if (/\b(balcon|terrasse|jardin|loggia|cour privative|jardinet)\b/.test(t)) r.exterieur = true;
+  if (/\b(parking|garage|stationnement|box)\b/.test(t)) r.parking = true;
+  if (/\bpiscine\b/.test(t)) r.piscine = true;
+  // Commune : celle qui revient le plus, à égalité la première citée
+  let best = null;
+  for (const [cle, c] of Object.entries(COMMUNES)) {
+    const n = norm(c.nom).replace(/-/g, "[- ]");
+    const re = new RegExp("\\b" + n + "\\b", "g");
+    const hits = [...t.matchAll(re)];
+    const viaCp = t.includes(c.cp) && cle !== "kerfot" ? 1 : 0;
+    if (hits.length || viaCp) { const score = hits.length + viaCp * 2; const pos = hits.length ? hits[0].index : 99999; if (!best || score > best.score || (score === best.score && pos < best.pos)) best = { cle, score, pos }; }
+  }
+  if (best) r.commune = best.cle;
+  // Agence & référence
+  for (const a of AGENCES) if (t.includes(norm(a))) { r.agence = a === "Notaire" ? "" : (a === "Optimo" ? "Optimo Immobilier" : a); break; }
+  m = texte.match(/\br[ée]f(?:[ée]rence)?(?:\s+annonce)?\s*[.:n°#]+\s*([A-Z0-9][A-Z0-9-]{2,})/i); if (m) r.reference = m[1];
+  return r;
+}
+
+/* ---------- Synchronisation formulaire ---------- */
+function remplirSelectCommunes() {
+  $("#b-commune").innerHTML = Object.entries(COMMUNES).map(([k, c]) => `<option value="${k}">${esc(c.nom)}</option>`).join("");
+}
+function versFormulaire() {
+  const A = autos(S);
+  document.querySelectorAll("[data-path]").forEach(el => {
+    const p = el.dataset.path, v = lire(S, p);
+    if (el.type === "checkbox") el.checked = !!v;
+    else if (document.activeElement !== el) el.value = v ?? "";
+    if (el.tagName === "INPUT" && el.type !== "checkbox") {
+      const a = A[p];
+      el.placeholder = a !== undefined ? "≈ " + (typeof a === "number" ? String(a).replace(".", ",") : a) : (el.getAttribute("data-ph") || el.placeholder);
+    }
+  });
+  dessinerSaison();
+  dessinerComparables();
+}
+function dessinerSaison() {
+  const A = autos(S), mois = moisEffectifs(S, A);
+  const manuel = S.marche.saisonMode === "manuel";
+  $("#mode-saison").textContent = manuel ? "Saisie manuelle" : "Estimation";
+  $("#mode-saison").classList.toggle("manuel", manuel);
+  const tb = $("#table-saison tbody");
+  const focus = document.activeElement && tb.contains(document.activeElement) ? document.activeElement.id : null;
+  tb.innerHTML = mois.map((m, i) => `<tr><td>${MOIS_C[i]}</td><td><input id="s-adr-${i}" type="number" data-mois="${i}" data-k="adr" value="${m.adr}"></td><td><input id="s-occ-${i}" type="number" data-mois="${i}" data-k="occ" value="${m.occ}"></td></tr>`).join("");
+  if (focus) { const el = document.getElementById(focus); if (el) { el.focus(); const v = el.value; el.value = ""; el.value = v; } }
+}
+function dessinerComparables() {
+  const box = $("#liste-comparables");
+  if (box.contains(document.activeElement)) return;
+  box.innerHTML = S.comparables.map((c, i) => `
+    <div class="comparable">
+      <div class="champ plein"><label for="cp-t-${i}">Annonce</label><input id="cp-t-${i}" data-comp="${i}" data-k="titre" value="${esc(c.titre)}" placeholder="ex. T2 vue port, Paimpol"></div>
+      <div class="champ"><label for="cp-c-${i}">Commune</label><input id="cp-c-${i}" data-comp="${i}" data-k="commune" value="${esc(c.commune)}"></div>
+      <div class="champ"><label for="cp-v-${i}">Voyageurs</label><input id="cp-v-${i}" type="number" data-comp="${i}" data-k="voyageurs" value="${esc(c.voyageurs)}"></div>
+      <div class="champ"><label for="cp-p-${i}">Prix/nuit (€)</label><input id="cp-p-${i}" type="number" data-comp="${i}" data-k="prix" value="${esc(c.prix)}"></div>
+      <div class="champ"><label for="cp-n-${i}">Note /5</label><input id="cp-n-${i}" type="number" step="0.01" data-comp="${i}" data-k="note" value="${esc(c.note)}"></div>
+      <div class="champ"><label for="cp-a-${i}">Avis</label><input id="cp-a-${i}" type="number" data-comp="${i}" data-k="avis" value="${esc(c.avis)}"></div>
+      <div class="champ"><label for="cp-o-${i}">Occupation (%)</label><input id="cp-o-${i}" type="number" data-comp="${i}" data-k="occ" value="${esc(c.occ)}"></div>
+      <button class="btn btn-discret btn-mini suppr" type="button" data-suppr-comp="${i}">Retirer</button>
+    </div>`).join("");
+}
+
+/* ---------- Graphiques SVG ---------- */
+function graphSaison(r) {
+  const W = 600, H = 210, gl = 34, gr = 34, gt = 14, gb = 26, w = W - gl - gr, h = H - gt - gb;
+  const maxAdr = Math.max(...r.mois.map(m => m.adr)) * 1.15;
+  const bw = w / 12;
+  let s = `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Saisonnalité : occupation et prix par mois">`;
+  for (const v of [0, 25, 50, 75, 100]) { const y = gt + h - v / 100 * h; s += `<line x1="${gl}" x2="${W - gr}" y1="${y}" y2="${y}" stroke="rgba(30,58,43,.10)"/><text x="${gl - 6}" y="${y + 3}" font-size="9" text-anchor="end" fill="#6E6A60">${v} %</text>`; }
+  r.mois.forEach((m, i) => {
+    const bh = m.occ * h, x = gl + i * bw + bw * 0.18;
+    s += `<rect x="${x}" y="${gt + h - bh}" width="${bw * 0.64}" height="${bh}" fill="${i === 6 || i === 7 ? "#1E3A2B" : "#9DB0A3"}"/>`;
+    s += `<text x="${x + bw * 0.32}" y="${gt + h - bh - 4}" font-size="8.5" text-anchor="middle" fill="#1E3A2B">${Math.round(m.occ * 100)}</text>`;
+    s += `<text x="${gl + i * bw + bw / 2}" y="${H - 9}" font-size="9" text-anchor="middle" fill="#6E6A60">${MOIS_C[i]}</text>`;
+  });
+  const pts = r.mois.map((m, i) => [gl + i * bw + bw / 2, gt + h - m.adr / maxAdr * h]);
+  s += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="#B08D4A" stroke-width="2"/>`;
+  pts.forEach((p, i) => { s += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#FAF6EF" stroke="#B08D4A" stroke-width="1.6"/>`; });
+  for (const v of [0, 0.5, 1]) { const val = maxAdr * v; s += `<text x="${W - gr + 6}" y="${gt + h - v * h + 3}" font-size="9" fill="#B08D4A">${Math.round(val)} €</text>`; }
+  return s + `</svg>`;
+}
+function graphRevenus(r) {
+  const W = 600, H = 200, gl = 44, gr = 10, gt = 12, gb = 24, w = W - gl - gr, h = H - gt - gb;
+  const vals = r.mois.map(m => m.caNuits + m.caMenage);
+  const loyer = r.ld.loyerM;
+  const max = Math.max(...vals, loyer) * 1.12;
+  const pas = max > 4000 ? 1000 : max > 2000 ? 500 : 250;
+  const bw = w / 12;
+  let s = `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Recettes mensuelles courte durée et loyer mensuel">`;
+  for (let v = 0; v <= max; v += pas) { const y = gt + h - v / max * h; s += `<line x1="${gl}" x2="${W - gr}" y1="${y}" y2="${y}" stroke="rgba(30,58,43,.10)"/><text x="${gl - 6}" y="${y + 3}" font-size="9" text-anchor="end" fill="#6E6A60">${nf0.format(v)} €</text>`; }
+  vals.forEach((v, i) => {
+    const bh = v / max * h, x = gl + i * bw + bw * 0.16;
+    s += `<rect x="${x}" y="${gt + h - bh}" width="${bw * 0.68}" height="${bh}" fill="#1E3A2B"/>`;
+    s += `<text x="${gl + i * bw + bw / 2}" y="${H - 8}" font-size="9" text-anchor="middle" fill="#6E6A60">${MOIS_C[i]}</text>`;
+  });
+  const yl = gt + h - loyer / max * h;
+  s += `<line x1="${gl}" x2="${W - gr}" y1="${yl}" y2="${yl}" stroke="#B08D4A" stroke-width="2" stroke-dasharray="6 4"/>`;
+  return s + `</svg>`;
+}
+function graphComparaison(rows) {
+  const W = 600, rowH = 30, gl = 150, gr = 70, H = rows.length * rowH + 10, w = W - gl - gr;
+  const max = Math.max(...rows.map(r => Math.abs(r.v)), 1) * 1.05;
+  let s = `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenu net annuel par scénario">`;
+  rows.forEach((r, i) => {
+    const y = 5 + i * rowH, bw = Math.max(0, r.v) / max * w;
+    s += `<text x="${gl - 8}" y="${y + 17}" font-size="10.5" text-anchor="end" fill="${r.ld ? "#B08D4A" : "#1E3A2B"}">${esc(r.label)}</text>`;
+    s += `<rect x="${gl}" y="${y + 5}" width="${bw}" height="${rowH - 12}" fill="${r.ld ? "#C9A96E" : r.main ? "#1E3A2B" : "#9DB0A3"}"/>`;
+    s += `<text x="${gl + bw + 6}" y="${y + 17}" font-size="10.5" fill="#2C2A25">${eurArr(r.v)}</text>`;
+  });
+  return s + `</svg>`;
+}
+
+/* ---------- Dossier ---------- */
+const MONO = (fond = "#1E3A2B") => `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="${fond}"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#B08D4A" stroke-width="1.5"/><text x="32" y="41.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="29" fill="#C9A96E">TH</text></svg>`;
+function entete(rubrique) { return `<div class="entete"><span class="nom">Les Domaines de Tri Hent</span><span>${esc(rubrique)}</span></div>`; }
+function pied(n, total) { return `<div class="pied"><span>Les Domaines de Tri Hent · Conciergerie de location courte durée · Paimpol — Côtes-d'Armor</span><span>domaines-trihent.com · 06 66 99 11 28 · <span class="no">${n} / ${total}</span></span></div>`; }
+
+function titreBien(r) {
+  const b = S.bien;
+  if (b.titre) return b.titre;
+  const pieces = r.g("bien.pieces");
+  const c = COMMUNES[b.commune]?.nom || "";
+  return `${b.type === "maison" ? "Maison" : "Appartement"} ${pieces} pièce${pieces > 1 ? "s" : ""} — ${nf0.format(r.surface)} m² — ${c}`;
+}
+function dateFr(d) { try { return new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return d; } }
+
+function rendre() {
+  const r = calculer(S);
+  const P = calculer(S, "prudent"), O = calculer(S, "optimiste");
+  const pm = pointMort(S);
+  const b = S.bien, c = COMMUNES[b.commune] || COMMUNES.plouezec;
+  const titre = titreBien(r);
+  const gain = r.cd.net - r.ld.net;
+  const gainPct = r.ld.net > 0 ? gain / r.ld.net * 100 : 0;
+  const gainNet = r.cd.netApresImpot - r.ld.netApresImpot;
+  const scNom = r.sc.nom.toLowerCase();
+  const pages = [];
+  const TOTAL = 7;
+  const scs = [["Prudent", P], ["Réaliste", r.sc.nom === "Réaliste" ? r : calculer(S, "realiste")], ["Optimiste", O]];
+  const atouts = [b.vueMer && "vue mer", b.plage && "plage à pied", b.exterieur && "extérieur", b.parking && "parking", b.piscine && "piscine"].filter(Boolean);
+  const regimeNom = { reel: "LMNP au réel", classe: "Micro-BIC classé", nonclasse: "Micro-BIC non classé", microfoncier: "Micro-foncier", foncierreel: "Foncier au réel", microbic: "Micro-BIC meublé" };
+
+  /* Résumé dans la colonne de saisie */
+  $("#resume-saisie").innerHTML = `<div><span>Courte durée · net/an</span><b>${eurArr(r.cd.net)}</b></div><div><span>À l'année · net/an</span><b>${eurArr(r.ld.net)}</b></div><div><span>Écart</span><b>${signe(arrondi(gain, 100))}</b></div><div><span>Occupation · prix moyen</span><b>${Math.round(r.T.occ * 100)} % · ${eur(r.T.adr)}</b></div>`;
+
+  /* 1. Couverture */
+  const photo = b.photo ? `style="background-image:url('${b.photo}')"` : "";
+  pages.push(`<section class="page couverture">
+    <div class="photo ${b.photo ? "" : "vide"}" ${photo}>${b.photo ? "" : `<svg class="filigrane" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="96" fill="none" stroke="#C9A96E" stroke-width=".8"/><circle cx="100" cy="100" r="88" fill="none" stroke="#C9A96E" stroke-width=".4"/><text x="100" y="128" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="600" font-size="84" fill="none" stroke="#C9A96E" stroke-width=".8">TH</text></svg>`}</div>
+    <div class="monogramme">${MONO("#16291F")}<div><b>Les Domaines de Tri Hent</b><span>Conciergerie · Bretagne</span></div></div>
+    <div class="contenu">
+      <p class="kicker">Étude de marché · Location courte durée</p>
+      <h1>Étude de rentabilité <em>locative</em></h1>
+      <div class="bien">
+        <div><h2>${esc(titre)}</h2><p>${esc(c.nom)} (${c.cp}) · ${b.annee ? "Construction " + esc(b.annee) + " · " : ""}${ETAT[b.etat].nom}${atouts.length ? " · " + atouts.join(", ") : ""}${b.reference ? " · Réf. " + esc(b.reference) : ""}</p></div>
+        <div class="prix">${eur(r.prix)}</div>
+      </div>
+      <div class="chiffres-couv">
+        <div><span>Recettes estimées</span><b>${eurArr(r.cd.recettes)}</b><small>par an en courte durée</small></div>
+        <div><span>Revenu net</span><b>${eurArr(r.cd.net)}</b><small>par an, toutes charges déduites</small></div>
+        <div><span>Face à la location à l'année</span><b>${signe(arrondi(gain, 100))}</b><small>par an, avant impôt</small></div>
+      </div>
+      <div class="pour">
+        <div><span>Préparé pour</span>${esc(S.dossier.agence || "Votre agence")}${S.dossier.agent ? "<br>À l'attention de " + esc(S.dossier.agent) : ""}${S.dossier.investisseur ? "<br>et de " + esc(S.dossier.investisseur) : ""}</div>
+        <div><span>Étude réalisée le</span>${esc(dateFr(S.dossier.date))}<br>par Les Domaines de Tri Hent</div>
+      </div>
+    </div>
+    <div class="bas"><span>domaines-trihent.com</span><span>06 66 99 11 28 · domaines.trihent@gmail.com</span></div>
+  </section>`);
+
+  /* 2. Synthèse */
+  const phrase = gain > 0
+    ? `Avec un taux d'occupation de <b>${Math.round(r.T.occ * 100)} %</b> et un prix moyen de <b>${eur(r.T.adr)}</b> la nuit, ce bien générerait environ <b>${eurArr(r.cd.recettes)}</b> de recettes par an en location courte durée, contre <b>${eurArr(r.ld.recettesBrutes)}</b> de loyers en location à l'année. Une fois déduits toutes les charges, y compris notre commission de conciergerie, le revenu net avant impôt atteint <b>${eurArr(r.cd.net)}</b>, soit <b>${signe(arrondi(gain, 100))}</b> par an (${gainPct > 0 ? "+" + Math.round(gainPct) + " %" : ""}).`
+    : `Avec un taux d'occupation de <b>${Math.round(r.T.occ * 100)} %</b> et un prix moyen de <b>${eur(r.T.adr)}</b> la nuit, la location courte durée générerait <b>${eurArr(r.cd.net)}</b> net avant impôt, contre <b>${eurArr(r.ld.net)}</b> en location à l'année. Sur ce bien et avec ces hypothèses, la location à l'année reste compétitive : l'écart de ${signe(arrondi(gain, 100))} ne justifie pas à lui seul la courte durée.`;
+  pages.push(`<section class="page">${entete("Synthèse")}
+    <p class="kicker">En bref</p>
+    <h2 class="titre">Courte durée ou location à l'année&nbsp;?</h2>
+    <p class="intro">${esc(titre)} · scénario ${scNom} · revenus nets annuels avant impôt, toutes charges déduites.</p>
+    <div class="tuiles">
+      <div class="tuile fonce"><span>Location courte durée</span><b>${eurArr(r.cd.net)}</b><small>net par an · ${eurArr(r.cd.recettes)} de recettes</small></div>
+      <div class="tuile"><span>Location à l'année</span><b>${eurArr(r.ld.net)}</b><small>net par an · loyer de ${eur(r.ld.loyerM)} / mois</small></div>
+      <div class="tuile"><span>Gain courte durée</span><b>${signe(arrondi(gain, 100))}</b><small>par an${gainPct > 0 ? " · +" + Math.round(gainPct) + " %" : ""} · ${signe(arrondi(gain * 10, 1000))} sur 10 ans</small></div>
+    </div>
+    <p class="citation">${phrase}</p>
+    <div class="deux-col">
+      <div>
+        <h3>Le bien</h3>
+        <div class="fiche" style="grid-template-columns:1fr">
+          <div><span>Type</span><b>${b.type === "maison" ? "Maison" : "Appartement"} · ${r.g("bien.pieces")} pièces · ${r.g("bien.chambres")} ch.</b></div>
+          <div><span>Surface</span><b>${nf0.format(r.surface)} m²</b></div>
+          <div><span>Commune</span><b>${esc(c.nom)}</b></div>
+          <div><span>Capacité d'accueil</span><b>${r.g("bien.capacite")} voyageurs</b></div>
+          <div><span>Construction · état</span><b>${b.annee ? esc(b.annee) + " · " : ""}${ETAT[b.etat].nom}</b></div>
+          ${b.dpe ? `<div><span>DPE</span><b>Classe ${esc(b.dpe)}</b></div>` : ""}
+          <div><span>Prix de vente</span><b>${eur(r.prix)}</b></div>
+          <div><span>Projet total (notaire, équipement)</span><b>${eurArr(r.cd.invest)}</b></div>
+        </div>
+      </div>
+      <div>
+        <h3>Ce qu'il faut retenir</h3>
+        <ul class="puces">
+          <li>Rendement net avant impôt : <b>${pct(r.cd.rdtNet, 1)}</b> en courte durée, contre <b>${pct(r.ld.rdtNet, 1)}</b> à l'année.</li>
+          <li>Après impôt (${regimeNom[S.cd.regime]}) : <b>${eurArr(r.cd.netApresImpot)}</b> contre <b>${eurArr(r.ld.netApresImpot)}</b>, soit ${signe(arrondi(gainNet, 100))} par an.</li>
+          ${pm !== null ? `<li>Point d'équilibre : dès <b>${Math.round(pm)} %</b> d'occupation annuelle, la courte durée rapporte autant que la location à l'année.</li>` : ""}
+          <li>Fourchette selon les scénarios : de <b>${eurArr(P.cd.net)}</b> (prudent) à <b>${eurArr(O.cd.net)}</b> (optimiste) par an.</li>
+          <li>Le bien reste disponible pour le propriétaire hors réservations, et la gestion est entièrement déléguée.</li>
+        </ul>
+      </div>
+    </div>
+    <h3>Revenu net annuel selon le scénario</h3>
+    ${graphComparaison([...scs.map(([n, x]) => ({ label: "Courte durée · " + n.toLowerCase(), v: x.cd.net, main: x === r })), { label: "Location à l'année", v: r.ld.net, ld: true }])}
+    ${S.dossier.message ? `<div class="encadre" style="margin-top:4mm"><p>${esc(S.dossier.message).replace(/\n/g, "<br>")}</p></div>` : ""}
+    ${pied(2, TOTAL)}</section>`);
+
+  /* 3. Marché */
+  const lignesMarche = VOISINES.map(k => ({ k, c: COMMUNES[k] })).filter(x => x.c.marche);
+  if (!COMMUNES[b.commune].marche) lignesMarche.unshift({ k: b.commune, c: COMMUNES[b.commune], estime: true });
+  const comps = S.comparables.filter(x => x.titre || x.prix);
+  pages.push(`<section class="page">${entete("Le marché local")}
+    <p class="kicker">Côte du Goëlo · ${esc(c.nom)} et alentours</p>
+    <h2 class="titre">Le marché de la location courte durée</h2>
+    <p class="intro">Entre Paimpol, l'archipel de Bréhat et les falaises de Plouha, la côte du Goëlo attire une clientèle fidèle : familles en été, randonneurs du GR 34 au printemps et à l'automne, courts séjours le week-end toute l'année.</p>
+    <table class="t">
+      <thead><tr><th>Commune</th><th class="n">Prix moyen / nuit</th><th class="n">Occupation</th><th class="n">Annonces actives</th><th>Source</th></tr></thead>
+      <tbody>
+        ${lignesMarche.map(x => x.estime
+          ? `<tr class="hl"><td>${esc(x.c.nom)}</td><td class="n">≈ ${eur(103 * x.c.adrCoef)}</td><td class="n">—</td><td class="n">—</td><td>Estimation Tri Hent (indice vs Plouézec)</td></tr>`
+          : `<tr class="${x.k === b.commune ? "hl" : ""}"><td>${esc(x.c.nom)}</td><td class="n">${eur(x.c.marche.adr)}</td><td class="n">${x.c.marche.occ ? x.c.marche.occ + " %" : "—"}</td><td class="n">${esc(x.c.marche.annonces)}</td><td>${esc(x.c.marche.src)}</td></tr>`).join("")}
+        <tr class="total"><td>Votre bien (projection)</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">—</td><td>Scénario ${scNom}, ${r.g("bien.capacite")} voyageurs</td></tr>
+      </tbody>
+    </table>
+    <p class="petit" style="margin-top:1.5mm">Moyennes tous logements confondus (studios aux grandes maisons), relevées en octobre 2026. Les annonces de particuliers peu actives tirent l'occupation moyenne vers le bas.</p>
+    <h3>Saisonnalité projetée pour votre bien</h3>
+    ${graphSaison(r)}
+    <div class="legende"><span><i style="background:#9DB0A3"></i>Taux d'occupation</span><span><i style="background:#1E3A2B"></i>Haute saison</span><span><i style="background:#B08D4A;height:2px;vertical-align:3px"></i>Prix moyen par nuit (échelle de droite)</span></div>
+    ${S.marche.source ? `<p class="petit" style="margin-top:1mm">Données saisonnières : ${esc(S.marche.source)}.</p>` : ""}
+    ${comps.length ? `<h3>Annonces comparables</h3>
+    <table class="t"><thead><tr><th>Annonce</th><th>Commune</th><th class="n">Voyageurs</th><th class="n">Prix / nuit</th><th class="n">Note</th><th class="n">Occupation</th></tr></thead><tbody>
+      ${comps.slice(0, 6).map(x => `<tr><td>${esc(x.titre)}</td><td>${esc(x.commune)}</td><td class="n">${esc(x.voyageurs)}</td><td class="n">${num(x.prix) ? eur(num(x.prix)) : "—"}</td><td class="n">${num(x.note) ? String(x.note).replace(".", ",") + (x.avis ? " (" + esc(x.avis) + ")" : "") : "—"}</td><td class="n">${num(x.occ) ? num(x.occ) + " %" : "—"}</td></tr>`).join("")}
+    </tbody></table>` : `<div class="deux-col" style="margin-top:4mm">
+      <div><h3 style="margin-top:0">Ce qui porte la demande</h3><ul class="puces"><li><b>Juillet-août</b> : occupation proche du complet et prix majorés de 25 à 35 %.</li><li><b>Avril-juin et septembre</b> : ponts de mai, randonnée, Bréhat, séjours de seniors.</li><li><b>Hiver</b> : week-ends, vacances scolaires, déplacements professionnels.</li></ul></div>
+      <div><h3 style="margin-top:0">Ce qui fait la différence</h3><ul class="puces"><li>Photos professionnelles et annonce soignée sur plusieurs plateformes.</li><li>Prix ajustés chaque jour selon la demande (outils de tarification dynamique).</li><li>Ménage hôtelier et accueil réactif : notes élevées, meilleur classement.</li></ul></div>
+    </div>`}
+    ${pied(3, TOTAL)}</section>`);
+
+  /* 4. Projection mensuelle */
+  pages.push(`<section class="page">${entete("Projection courte durée")}
+    <p class="kicker">Scénario ${scNom}</p>
+    <h2 class="titre">Douze mois de location courte durée</h2>
+    <p class="intro">Projection mois par mois des nuits louées et des recettes. Séjours moyens de ${nf1.format(r.g("marche.dms"))} nuits, plus longs en juillet-août ; frais de ménage de ${eur(r.g("marche.fraisMenage"))} facturés à chaque séjour.</p>
+    <table class="t">
+      <thead><tr><th>Mois</th><th class="n">Prix / nuit</th><th class="n">Occupation</th><th class="n">Nuits louées</th><th class="n">Séjours</th><th class="n">Nuitées</th><th class="n">Ménage</th><th class="n">Recettes</th></tr></thead>
+      <tbody>${r.mois.map(m => `<tr><td>${MOIS[m.i]}</td><td class="n">${eur(m.adr)}</td><td class="n">${Math.round(m.occ * 100)} %</td><td class="n">${nf0.format(m.nuits)}</td><td class="n">${nf0.format(m.sejours)}</td><td class="n">${eur(m.caNuits)}</td><td class="n">${eur(m.caMenage)}</td><td class="n">${eur(m.caNuits + m.caMenage)}</td></tr>`).join("")}
+      <tr class="total"><td>Année</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">${nf0.format(r.T.nuits)}</td><td class="n">${nf0.format(r.T.sejours)}</td><td class="n">${eur(r.T.caNuits)}</td><td class="n">${eur(r.T.caMenage)}</td><td class="n">${eur(r.cd.recettes)}</td></tr></tbody>
+    </table>
+    <h3>Recettes mensuelles comparées au loyer à l'année</h3>
+    ${graphRevenus(r)}
+    <div class="legende"><span><i style="background:#1E3A2B"></i>Recettes courte durée (nuitées + ménage)</span><span><i style="background:#B08D4A;height:2px;vertical-align:3px"></i>Loyer à l'année : ${eur(r.ld.loyerM)} / mois hors charges</span></div>
+    ${pied(4, TOTAL)}</section>`);
+
+  /* 5. Comparatif détaillé */
+  const L = (lbl, a, bb, cls = "") => `<tr class="${cls}"><td>${lbl}</td><td class="n cd">${a}</td><td class="n">${bb}</td></tr>`;
+  const credLigne = S.fin.comptant ? "" : L("Remboursement du crédit (assurance incluse)", moins(r.cd.credit.annuite), moins(r.ld.credit.annuite));
+  const lignesCharges = [];
+  const labels = new Set([...r.cd.lignes.map(l => l[0]), ...r.ld.lignes.map(l => l[0])]);
+  const ordre = ["Commission plateformes (Airbnb, Booking…)", "Conciergerie Les Domaines de Tri Hent", "Gestion locative", "Garantie loyers impayés", "Ménage hôtelier & linge", "Accueil & consommables", "Énergie & eau", "Internet & TV", "Assurance", "Charges de copropriété", "Taxe foncière", "CFE", "Entretien", "Expert-comptable LMNP"];
+  for (const lbl of ordre) if (labels.has(lbl)) {
+    const a = r.cd.lignes.find(l => l[0] === lbl), z = r.ld.lignes.find(l => l[0] === lbl);
+    lignesCharges.push(L(lbl === "Charges de copropriété" ? "Charges de copropriété (part non récupérable à l'année)" : lbl, a ? moins(a[1]) : "—", z ? moins(z[1]) : "—"));
+  }
+  const alertes = [r.cd.fisc.alerte, r.ld.fisc.alerte].filter(Boolean);
+  pages.push(`<section class="page">${entete("Comparatif détaillé")}
+    <p class="kicker">Première année · scénario ${scNom}</p>
+    <h2 class="titre">Le comparatif ligne à ligne</h2>
+    <p class="intro">Location à l'année ${S.ld.mode === "meublee" ? "en meublé" : "en nu"} gérée par une agence, face à la location courte durée confiée aux Domaines de Tri Hent. Montants annuels.</p>
+    <table class="t">
+      <thead><tr><th></th><th class="n cd">Courte durée</th><th class="n">À l'année</th></tr></thead>
+      <tbody>
+        <tr class="sec"><td colspan="3">Recettes</td></tr>
+        ${L("Nuitées / loyers", eur(r.T.caNuits), eur(r.ld.recettesBrutes))}
+        ${L("Frais de ménage facturés aux voyageurs", eur(r.T.caMenage), "—")}
+        ${L("Vacance locative", "—", moins(r.ld.vacance))}
+        ${L("Recettes encaissées", eur(r.cd.recettes), eur(r.ld.recettes), "sous")}
+        <tr class="sec"><td colspan="3">Charges</td></tr>
+        ${lignesCharges.join("")}
+        ${L("Total des charges", moins(r.cd.charges), moins(r.ld.charges), "sous")}
+        ${L("Revenu net avant impôt", eur(r.cd.net), eur(r.ld.net), "total")}
+        <tr class="sec"><td colspan="3">Fiscalité &amp; trésorerie</td></tr>
+        ${L("Régime fiscal", regimeNom[S.cd.regime], regimeNom[r.ld.regime])}
+        ${L("Impôt et prélèvements sociaux (TMI " + esc(S.fisc.tmi) + " %)", moins(r.cd.fisc.impot), moins(r.ld.fisc.impot))}
+        ${L("Revenu net après impôt", eur(r.cd.netApresImpot), eur(r.ld.netApresImpot), "sous")}
+        ${credLigne}
+        ${S.fin.comptant ? "" : L("Trésorerie mensuelle après crédit et impôt", signe(r.cd.cashflow / 12), signe(r.ld.cashflow / 12), "total")}
+      </tbody>
+    </table>
+    <p class="petit" style="margin-top:2mm">${S.fin.comptant ? "Achat comptant." : `Crédit de ${eurArr(r.cd.emprunt, 1000)} sur ${r.g("fin.duree")} ans à ${nf1.format(r.g("fin.taux"))} %, apport de ${r.g("fin.apport")} %.`} Frais de notaire de ${nf1.format(r.g("fin.notaire"))} %. ${S.cd.regime === "reel" || r.ld.regime === "reel" ? "Au réel, l'amortissement du bien (85 % sur 30 ans) et du mobilier (7 ans) réduit la base imposable ; depuis 2025, les amortissements sont réintégrés dans le calcul de la plus-value à la revente." : ""} ${alertes.map(esc).join(" ")}</p>
+    ${pied(5, TOTAL)}</section>`);
+
+  /* 6. Scénarios & cadre réglementaire */
+  pages.push(`<section class="page">${entete("Scénarios & cadre")}
+    <p class="kicker">Sensibilité</p>
+    <h2 class="titre">Trois scénarios, un point d'équilibre</h2>
+    <p class="intro">Le scénario prudent retient 15 % d'occupation et 5 % de prix en moins ; l'optimiste, 10 % d'occupation et 5 % de prix en plus. Revenus nets annuels avant impôt.</p>
+    <table class="t">
+      <thead><tr><th>Scénario</th><th class="n">Occupation</th><th class="n">Prix moyen</th><th class="n">Recettes</th><th class="n">Net avant impôt</th><th class="n">Écart vs année</th><th class="n">Sur 10 ans</th></tr></thead>
+      <tbody>${scs.map(([n, x]) => { const d = x.cd.net - x.ld.net; return `<tr class="${x === r ? "hl" : ""}"><td>${n}</td><td class="n">${Math.round(x.T.occ * 100)} %</td><td class="n">${eur(x.T.adr)}</td><td class="n">${eurArr(x.cd.recettes)}</td><td class="n">${eurArr(x.cd.net)}</td><td class="n ${d >= 0 ? "pos" : "neg"}">${signe(arrondi(d, 100))}</td><td class="n ${d >= 0 ? "pos" : "neg"}">${signe(arrondi(d * 10, 1000))}</td></tr>`; }).join("")}
+      <tr><td>Location à l'année</td><td class="n">${Math.round(100 - r.g("ld.vacance"))} %</td><td class="n">${eur(r.ld.loyerM)}/mois</td><td class="n">${eurArr(r.ld.recettes)}</td><td class="n">${eurArr(r.ld.net)}</td><td class="n">—</td><td class="n">—</td></tr></tbody>
+    </table>
+    ${pm !== null ? `<div class="encadre vert" style="margin-top:5mm;display:grid;grid-template-columns:auto 1fr;gap:6mm;align-items:center"><div style="font-family:var(--serif);font-size:32pt;color:var(--or-clair);font-weight:600;line-height:1">${Math.round(pm)} %</div><p>C'est le taux d'occupation annuel à partir duquel la courte durée devient plus rentable que la location à l'année, soit environ <b>${Math.round(pm * 3.65)} nuits louées par an</b>. Notre projection réaliste en retient ${Math.round(r.T.nuits)}.</p></div>` : ""}
+    <h3>Rendements sur le projet total</h3>
+    <table class="t">
+      <thead><tr><th></th><th class="n cd">Courte durée</th><th class="n">À l'année</th></tr></thead>
+      <tbody>
+        ${L("Projet total (prix, notaire, équipement)", eur(r.cd.invest), eur(r.ld.invest))}
+        ${L("Rendement brut", pct(r.cd.rdtBrut, 1), pct(r.ld.rdtBrut, 1))}
+        ${L("Rendement net avant impôt", pct(r.cd.rdtNet, 1), pct(r.ld.rdtNet, 1))}
+        ${L("Rendement net après impôt", pct(r.cd.rdtNetNet, 1), pct(r.ld.rdtNetNet, 1))}
+      </tbody>
+    </table>
+    <h3>Le cadre réglementaire en 2026</h3>
+    <ul class="puces">
+      <li><b>Déclaration et numéro d'enregistrement</b> : obligatoires pour tout meublé de tourisme depuis le 20 mai 2026 (loi Le Meur), numéro à afficher sur chaque annonce.</li>
+      <li><b>Classement du meublé</b> (1 à 5 étoiles) : il ouvre le micro-BIC à 50 % jusqu'à ${nf0.format(PLAFOND_CLASSE)} € de recettes, contre 30 % et 15 000 € pour un meublé non classé.</li>
+      <li><b>Copropriété</b> : vérifier que le règlement autorise la location meublée de tourisme ; depuis la loi Le Meur, une interdiction peut, sous conditions, être votée à la majorité des deux tiers.</li>
+      <li><b>DPE</b> : classe E au minimum exigée là où un changement d'usage est requis ; classe D pour tous les meublés de tourisme à partir de 2034.</li>
+      <li><b>Taxe de séjour</b> : payée par les voyageurs et reversée à Guingamp-Paimpol Agglomération, en général collectée directement par les plateformes.</li>
+    </ul>
+    ${pied(6, TOTAL)}</section>`);
+
+  /* 7. Accompagnement */
+  pages.push(`<section class="page">${entete("Notre accompagnement")}
+    <p class="kicker">Les Domaines de Tri Hent</p>
+    <h2 class="titre">Votre bien mérite une attention d'exception</h2>
+    <p class="intro">Conciergerie de location courte durée ancrée à Paimpol, nous prenons soin de chaque bien comme s'il était le nôtre. L'investisseur garde la main ; nous nous occupons du reste.</p>
+    <div class="services">
+      <div><h4>Mise en valeur</h4><p>Photos, rédaction de l'annonce, diffusion et synchronisation sur Airbnb, Booking et Abritel.</p></div>
+      <div><h4>Tarification dynamique</h4><p>Prix ajustés chaque jour selon la saison, les événements et la demande, pour remplir sans brader.</p></div>
+      <div><h4>Accueil des voyageurs</h4><p>Messages, arrivées et départs, assistance pendant le séjour, sept jours sur sept.</p></div>
+      <div><h4>Ménage hôtelier & linge</h4><p>Ménage aux standards hôteliers, linge haut de gamme blanchi par nos soins, contrôle qualité avant chaque arrivée.</p></div>
+      <div><h4>Entretien du bien</h4><p>Suivi régulier, petites interventions, réseau d'artisans locaux de confiance.</p></div>
+      <div><h4>Démarches</h4><p>Déclaration en mairie, dossier de classement, taxe de séjour : nous vous guidons à chaque étape.</p></div>
+    </div>
+    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. La commission retenue dans cette étude est de ${nf1.format(r.g("cd.conciergerie"))} %.</p></div>
+    <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO("#16291F")}</div></div>
+    <h3>Méthode et sources</h3>
+    <p class="petit">Données de marché publiques consultées le 27 octobre 2026 : AirDNA (Plouézec, Paimpol, Ploubazlanec), AirROI, GuestFavorites, Airbtics, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon la saisonnalité de la côte du Goëlo${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
+    <p class="petit">Étude indicative, non contractuelle : les revenus dépendent du marché, de la qualité du bien et de la réglementation en vigueur. Les éléments fiscaux sont donnés à titre d'information et doivent être confirmés par un expert-comptable. SIRET 939 823 001 00010.</p>
+    ${pied(7, TOTAL)}</section>`);
+
+  $("#dossier").innerHTML = pages.join("");
+  ajusterZoom();
+}
+
+function ajusterZoom() {
+  const box = $("#apercu");
+  const dispo = box.clientWidth - 48;
+  const largeur = 210 * 96 / 25.4;
+  const z = Math.min(1, dispo / largeur);
+  document.querySelectorAll("#dossier .page").forEach(p => p.style.zoom = z > 0 ? z : 1);
+}
+
+/* ---------- Sauvegarde locale ---------- */
+const CLE = "trihent.etudes.v1", CLE_COURANTE = "trihent.etude.courante.v1";
+function lireSauvegardes() { try { return JSON.parse(localStorage.getItem(CLE) || "[]"); } catch (e) { return []; } }
+function ecrireSauvegardes(l) { try { localStorage.setItem(CLE, JSON.stringify(l)); return true; } catch (e) { toast("Stockage plein : retirez la photo ou supprimez d'anciennes études."); return false; } }
+let minuteurAuto;
+function autoSauver() { clearTimeout(minuteurAuto); minuteurAuto = setTimeout(() => { try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {} }, 400); }
+function listerSauvegardes() {
+  const l = lireSauvegardes();
+  $("#sauvegardes").innerHTML = l.length ? l.map(x => `<option value="${esc(x.id)}">${esc(x.nom)} — ${esc(dateFr(x.date))}</option>`).join("") : `<option value="">Aucune étude enregistrée</option>`;
+}
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("visible"); clearTimeout(t._m); t._m = setTimeout(() => t.classList.remove("visible"), 2600); }
+function fusion(base, data) {
+  for (const k of Object.keys(data || {})) {
+    if (data[k] && typeof data[k] === "object" && !Array.isArray(data[k]) && base[k] && typeof base[k] === "object") fusion(base[k], data[k]);
+    else base[k] = data[k];
+  }
+  return base;
+}
+
+/* ---------- Événements ---------- */
+let minuteurRendu;
+function maj() { clearTimeout(minuteurRendu); minuteurRendu = setTimeout(() => { versFormulaire(); rendre(); }, 120); autoSauver(); }
+
+document.addEventListener("input", (e) => {
+  const el = e.target;
+  if (el.dataset.path) { ecrire(S, el.dataset.path, el.type === "checkbox" ? el.checked : el.value); maj(); }
+  else if (el.dataset.mois !== undefined) {
+    if (S.marche.saisonMode !== "manuel") { S.marche.mois = moisEffectifs(S, autos(S)); S.marche.saisonMode = "manuel"; }
+    S.marche.mois[+el.dataset.mois][el.dataset.k] = el.value; maj();
+  } else if (el.dataset.comp !== undefined) { S.comparables[+el.dataset.comp][el.dataset.k] = el.value; maj(); }
+});
+document.addEventListener("change", (e) => { if (e.target.dataset.path && e.target.tagName === "SELECT") { ecrire(S, e.target.dataset.path, e.target.value); maj(); } });
+document.addEventListener("click", (e) => {
+  const sup = e.target.closest("[data-suppr-comp]");
+  if (sup) { S.comparables.splice(+sup.dataset.supprComp, 1); $("#liste-comparables").innerHTML = ""; dessinerComparables(); maj(); }
+});
+
+$("#btn-analyser").addEventListener("click", () => {
+  S.annonce = $("#annonce").value;
+  const r = analyserAnnonce(S.annonce);
+  const libs = { type: "Type", commune: "Commune", pieces: "Pièces", chambres: "Chambres", surface: "Surface", prix: "Prix", annee: "Construction", etat: "État", dpe: "DPE", chargesCopro: "Charges", taxeFonciere: "Taxe foncière", vueMer: "Vue mer", plage: "Plage", exterieur: "Extérieur", parking: "Parking", piscine: "Piscine", agence: "Agence", reference: "Réf." };
+  const out = [];
+  for (const [k, v] of Object.entries(r)) {
+    if (k === "terrain") continue;
+    if (k === "agence") { if (v) S.dossier.agence = v; }
+    else S.bien[k] = v;
+    const aff = k === "commune" ? COMMUNES[v].nom : k === "etat" ? ETAT[v].nom : k === "prix" || k === "chargesCopro" || k === "taxeFonciere" ? eur(v) : k === "surface" ? v + " m²" : v === true ? "oui" : v;
+    if (libs[k] && aff !== "") out.push(`<span>${libs[k]} : <b>${esc(aff)}</b></span>`);
+  }
+  if (r.chambres === undefined && r.pieces) S.bien.chambres = "";
+  S.bien.titre = "";
+  $("#detecte").innerHTML = out.length ? out.join("") : `<span>Aucune information reconnue. Complétez la fiche du bien à la main.</span>`;
+  toast(out.length ? out.length + " informations reprises de l'annonce" : "Annonce non reconnue");
+  versFormulaire(); rendre(); autoSauver();
+});
+$("#btn-reset-saison").addEventListener("click", () => { S.marche.saisonMode = "auto"; S.marche.mois = []; maj(); });
+$("#btn-importer").addEventListener("click", () => {
+  const txt = $("#m-import").value;
+  const reps = [["janv", 0], ["jan", 0], ["fev", 1], ["feb", 1], ["mars", 2], ["mar", 2], ["avr", 3], ["apr", 3], ["mai", 4], ["may", 4], ["juin", 5], ["jun", 5], ["juil", 6], ["jul", 6], ["aou", 7], ["aug", 7], ["sep", 8], ["oct", 9], ["nov", 10], ["dec", 11]];
+  const base = moisEffectifs(S, autos(S)).map(m => ({ ...m }));
+  let n = 0;
+  txt.split(/\n+/).forEach(ligne => {
+    const l = norm(ligne).trim(); if (!l) return;
+    let idx = -1, reste = l;
+    const iso = l.match(/\b(20\d{2})[-/](\d{1,2})\b/);
+    if (iso) { idx = +iso[2] - 1; reste = l.replace(iso[0], " "); }
+    else { for (const [p, i] of reps) if (new RegExp("\\b" + p).test(l)) { idx = i; reste = l.replace(new RegExp("\\b" + p + "[a-z.]*"), " "); break; } }
+    if (idx < 0) { const m0 = l.match(/^\s*(\d{1,2})\b[^\d,.]/); if (m0 && +m0[1] >= 1 && +m0[1] <= 12) { idx = +m0[1] - 1; reste = l.replace(m0[1], " "); } }
+    if (idx < 0 || idx > 11) return;
+    reste = reste.replace(/\b20\d{2}\b/g, " ");
+    const nums = [...reste.matchAll(/(\d+(?:[.,]\d+)?)\s*(%|€|eur|\$)?/g)].map(m => ({ v: parseFloat(m[1].replace(",", ".")), u: m[2] || "" }));
+    if (!nums.length) return;
+    let occ = nums.find(x => x.u === "%"), adr = nums.find(x => x.u === "€" || x.u === "eur" || x.u === "$");
+    const libres = nums.filter(x => x !== occ && x !== adr);
+    if (!adr) adr = libres.find(x => x.v > 1.5 && (!occ || x !== occ)) || null;
+    if (!occ) occ = libres.find(x => x !== adr) || null;
+    if (adr) base[idx].adr = Math.round(adr.u === "$" ? adr.v * 0.86 : adr.v);
+    if (occ) base[idx].occ = Math.round(occ.v <= 1 ? occ.v * 100 : occ.v);
+    if (adr || occ) n++;
+  });
+  if (!n) { toast("Aucun mois reconnu : une ligne par mois avec le prix et le taux d'occupation."); return; }
+  S.marche.mois = base; S.marche.saisonMode = "manuel"; maj();
+  toast(n + " mois importés");
+});
+$("#btn-ajout-comp").addEventListener("click", () => { S.comparables.push({ titre: "", commune: COMMUNES[S.bien.commune]?.nom || "", voyageurs: "", prix: "", note: "", avis: "", occ: "" }); $("#liste-comparables").innerHTML = ""; dessinerComparables(); maj(); });
+$("#b-photo").addEventListener("change", (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1600 / img.width), cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      S.bien.photo = cv.toDataURL("image/jpeg", 0.82); maj();
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+});
+$("#btn-suppr-photo").addEventListener("click", () => { S.bien.photo = ""; $("#b-photo").value = ""; maj(); });
+$("#btn-pdf").addEventListener("click", () => {
+  const ancien = document.title;
+  document.title = "Etude rentabilite - " + titreBien(calculer(S)).replace(/[—/\\:]/g, "-");
+  window.print();
+  setTimeout(() => document.title = ancien, 1000);
+});
+$("#btn-nouvelle").addEventListener("click", () => {
+  S = etatVide(); $("#detecte").innerHTML = ""; $("#liste-comparables").innerHTML = "";
+  versFormulaire(); rendre(); autoSauver(); toast("Nouvelle étude");
+  $("#annonce").focus();
+});
+$("#btn-enregistrer").addEventListener("click", () => {
+  const l = lireSauvegardes().filter(x => x.id !== S.id);
+  l.unshift({ id: S.id, nom: titreBien(calculer(S)) + (S.dossier.agence ? " · " + S.dossier.agence : ""), date: S.dossier.date, data: S });
+  if (ecrireSauvegardes(l)) { listerSauvegardes(); toast("Étude enregistrée dans ce navigateur"); }
+});
+$("#btn-charger").addEventListener("click", () => {
+  const x = lireSauvegardes().find(x => x.id === $("#sauvegardes").value); if (!x) return;
+  S = fusion(etatVide(), JSON.parse(JSON.stringify(x.data))); $("#liste-comparables").innerHTML = ""; versFormulaire(); rendre(); autoSauver(); toast("Étude ouverte");
+});
+$("#btn-supprimer").addEventListener("click", () => {
+  const id = $("#sauvegardes").value; if (!id) return;
+  const btn = $("#btn-supprimer");
+  if (!btn.dataset.confirmer) { btn.dataset.confirmer = "1"; btn.textContent = "Confirmer la suppression"; setTimeout(() => { delete btn.dataset.confirmer; btn.textContent = "Supprimer"; }, 3000); return; }
+  ecrireSauvegardes(lireSauvegardes().filter(x => x.id !== id)); listerSauvegardes(); delete btn.dataset.confirmer; btn.textContent = "Supprimer"; toast("Étude supprimée");
+});
+$("#btn-export-json").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(S, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "etude-" + norm(titreBien(calculer(S))).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+});
+$("#import-json").addEventListener("change", (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  f.text().then(t => { S = fusion(etatVide(), JSON.parse(t)); S.id = S.id || "e" + Date.now().toString(36); $("#liste-comparables").innerHTML = ""; versFormulaire(); rendre(); autoSauver(); toast("Étude importée"); }).catch(() => toast("Fichier illisible"));
+  e.target.value = "";
+});
+window.addEventListener("resize", ajusterZoom);
+
+/* ---------- Démarrage ---------- */
+remplirSelectCommunes();
+(function demarrer() {
+  let courante = null;
+  try { courante = JSON.parse(localStorage.getItem(CLE_COURANTE) || "null"); } catch (e) {}
+  if (courante) S = fusion(etatVide(), courante);
+  else {
+    S.annonce = EXEMPLE_ANNONCE;
+    const r = analyserAnnonce(S.annonce);
+    for (const [k, v] of Object.entries(r)) { if (k === "agence") S.dossier.agence = v; else if (k !== "terrain") S.bien[k] = v; }
+  }
+  versFormulaire(); rendre(); listerSauvegardes();
+  if (document.fonts) document.fonts.ready.then(ajusterZoom);
+})();
+</script>
+</body>
+</html>
