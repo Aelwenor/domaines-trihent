@@ -98,6 +98,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .champ textarea { resize: vertical; min-height: 70px; line-height: 1.45; }
 .champ .aide { font-size: 11.5px; color: var(--gris); }
 .cases { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.champ .cases label { text-transform: none; letter-spacing: 0; color: var(--encre); }
 .cases label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
 .cases input { accent-color: var(--vert); width: 15px; height: 15px; }
 .note { font-size: 12px; color: var(--gris); background: var(--creme-2); padding: 10px 12px; border-left: 2px solid var(--or); }
@@ -119,6 +120,34 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .resume-saisie { padding: 16px 20px; background: var(--vert); color: var(--creme); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .resume-saisie div span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--or-clair); }
 .resume-saisie div b { font-family: var(--serif); font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+details.sous > summary { cursor: pointer; font-size: 12.5px; color: var(--vert); padding: 2px 0 8px; }
+details.sous[open] > summary { padding-bottom: 6px; }
+.etape.avance > summary h2 small { font-family: var(--sans); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--gris); font-weight: 400; margin-left: 6px; }
+.corps-avance { padding-bottom: 8px; }
+.corps-avance .etape { border-bottom: 0; border-top: 1px solid var(--filet); margin: 0 12px; background: var(--creme-2); }
+.corps-avance .etape + .etape { margin-top: 6px; }
+.corps-avance .etape > summary h2 { font-size: 18px; }
+.case-label { display: inline-flex !important; align-items: center; gap: 6px; text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; color: var(--encre) !important; cursor: pointer; }
+.case-label input { accent-color: var(--vert); width: 15px; height: 15px; }
+.fenetre { margin: auto; border: 0; padding: 22px 24px 26px; width: min(880px, calc(100vw - 32px)); max-height: calc(100vh - 48px); background: var(--creme); color: var(--encre); box-shadow: 0 20px 60px rgba(22,41,31,.35); }
+.fenetre::backdrop { background: rgba(22,41,31,.45); }
+.fenetre h2 { font-size: 26px; }
+.fenetre h3 { font-size: 19px; margin: 18px 0 6px; }
+.fenetre .aide { font-size: 12.5px; color: var(--gris); max-width: 640px; }
+.fenetre-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+.tableau-defile { overflow-x: auto; margin-top: 10px; }
+.liste-etudes, .grille-menage { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.liste-etudes th, .grille-menage th { text-align: left; font-weight: 400; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--gris); padding: 6px 8px; border-bottom: 1px solid var(--vert); white-space: nowrap; }
+.liste-etudes td, .grille-menage td { padding: 6px 8px; border-bottom: 1px solid var(--filet); }
+.liste-etudes tr[data-id] { cursor: pointer; }
+.liste-etudes tr[data-id]:hover td { background: var(--blanc); }
+.liste-etudes tr.courante td { background: rgba(176,141,74,.12); }
+.grille-menage input { width: 100%; min-width: 60px; background: var(--blanc); border: 1px solid var(--filet); padding: 5px 6px; }
+.grille-menage td.total { font-weight: 500; color: var(--vert); white-space: nowrap; }
+.pastille { display: inline-block; font-size: 11px; padding: 2px 8px; background: var(--creme-2); color: var(--gris); white-space: nowrap; }
+.pastille.ok { background: rgba(47,107,69,.14); color: var(--positif); }
+.pastille.or { background: rgba(176,141,74,.18); color: #7A5F2C; }
+.pastille.non { background: rgba(154,91,30,.12); color: var(--alerte); }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--vert); color: var(--creme); padding: 10px 18px; font-size: 13px; z-index: 50; opacity: 0; transition: opacity .25s; pointer-events: none; }
 .toast.visible { opacity: 1; }
 
@@ -245,7 +274,8 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     <div><b>Étude de rentabilité</b><span>Courte durée vs année</span></div>
   </div>
   <button class="btn btn-ligne" id="btn-nouvelle" type="button">Nouvelle étude</button>
-  <button class="btn btn-ligne" id="btn-enregistrer" type="button">Enregistrer</button>
+  <button class="btn btn-ligne" id="btn-suivi" type="button">Mes études</button>
+  <button class="btn btn-ligne" id="btn-param" type="button">Paramètres</button>
   <button class="btn btn-or" id="btn-pdf" type="button">Exporter le PDF</button>
 </header>
 
@@ -261,16 +291,18 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
       <div class="champ">
         <label for="lien">Lien de l'annonce</label>
         <input id="lien" type="url" data-path="lien" placeholder="https://www.agence-exemple.fr/annonce/…">
-        <span class="aide">Le nom de l'agence est repris de l'adresse du site. Le navigateur ne peut pas lire la page elle-même : copiez aussi son texte ci-dessous.</span>
-      </div>
-      <div class="champ">
-        <label for="annonce">Texte de l'annonce (copier-coller)</label>
-        <textarea id="annonce" data-path="annonce" rows="7" placeholder="Collez ici le texte de l'annonce de l'agence…"></textarea>
       </div>
       <div class="ligne-btn">
-        <button class="btn btn-vert" type="button" id="btn-analyser">Analyser l'annonce</button>
-        <span class="aide" style="font-size:11.5px;color:var(--gris)">Remplit automatiquement la fiche du bien.</span>
+        <button class="btn btn-vert" type="button" id="btn-recuperer">Récupérer l'annonce</button>
+        <span class="aide" id="etat-recup" style="font-size:11.5px;color:var(--gris)">Prix, surface, pièces, terrain, année, DPE, charges et photo.</span>
       </div>
+      <details class="sous" id="bloc-texte">
+        <summary>Ou coller le texte de l'annonce</summary>
+        <div class="champ">
+          <textarea id="annonce" data-path="annonce" rows="6" placeholder="Collez ici le texte de l'annonce de l'agence…" aria-label="Texte de l'annonce"></textarea>
+        </div>
+        <div class="ligne-btn"><button class="btn btn-discret btn-mini" type="button" id="btn-analyser">Analyser le texte</button></div>
+      </details>
       <div class="detecte" id="detecte"></div>
       <div class="grille">
         <div class="champ"><label for="d-agence">Préparé pour (agence)</label><input id="d-agence" data-path="dossier.agence"></div>
@@ -295,7 +327,9 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <div class="champ"><label for="b-chambres">Chambres</label><input id="b-chambres" type="number" min="0" data-path="bien.chambres"></div>
         <div class="champ"><label for="b-surface">Surface (m²)</label><input id="b-surface" type="number" min="5" data-path="bien.surface"></div>
         <div class="champ"><label for="b-capacite">Voyageurs</label><input id="b-capacite" type="number" min="1" data-path="bien.capacite"></div>
-        <div class="champ plein"><label for="m-menage">Forfait ménage par séjour (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"><span class="aide">Tarif local du prestataire : ménage, linge et consommables. Facturé au voyageur à chaque séjour.</span></div>
+        <div class="champ"><label for="b-terrain">Terrain (m²)</label><input id="b-terrain" type="number" min="0" data-path="bien.terrain"></div>
+        <div class="champ"><label for="m-menage">Forfait ménage / séjour (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"></div>
+        <div class="champ plein"><span class="aide" id="aide-menage"></span></div>
         <div class="champ"><label for="b-prix">Prix de vente FAI (€)</label><input id="b-prix" type="number" min="0" step="1000" data-path="bien.prix"></div>
         <div class="champ"><label for="b-annee">Année de construction</label><input id="b-annee" type="number" min="1500" max="2030" data-path="bien.annee"></div>
         <div class="champ"><label for="b-etat">État</label>
@@ -323,9 +357,32 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     </div>
   </details>
 
+  <!-- 3. Mot & suivi -->
+  <details class="etape" open>
+    <summary><span class="num">3</span><h2>Mot personnalisé & suivi</h2><span class="chev">›</span></summary>
+    <div class="corps">
+      <div class="champ"><label for="d-mot">Mot personnalisé (page de synthèse)</label><textarea id="d-mot" rows="5" data-path="dossier.message"></textarea>
+        <div class="ligne-btn" style="margin-top:4px"><button class="btn btn-discret btn-mini" type="button" id="btn-mot-exemple">Remettre le mot d'exemple</button></div></div>
+      <div class="grille">
+        <div class="champ"><label class="case-label"><input type="checkbox" data-path="suivi.envoye"> Envoyée à l'agence</label><input id="s-date-envoi" type="date" data-path="suivi.dateEnvoi" aria-label="Date d'envoi"></div>
+        <div class="champ"><label class="case-label"><input type="checkbox" data-path="suivi.reponse"> L'agence a répondu</label><input id="s-date-rep" type="date" data-path="suivi.dateReponse" aria-label="Date de réponse"></div>
+        <div class="champ plein"><label for="s-retour">Retour</label>
+          <select id="s-retour" data-path="suivi.retour">
+            <option value="">Pas encore de retour</option><option value="interesse">Intéressée, à relancer</option><option value="rdv">Rendez-vous prévu</option>
+            <option value="client">Présentée à un investisseur</option><option value="signe">Contrat de conciergerie signé</option><option value="refus">Pas intéressée</option></select></div>
+        <div class="champ plein"><label for="s-notes">Notes de suivi</label><textarea id="s-notes" rows="2" data-path="suivi.notes"></textarea></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Réglages avancés -->
+  <details class="etape avance">
+    <summary><span class="num">+</span><h2>Réglages avancés <small>facultatif</small></h2><span class="chev">›</span></summary>
+    <div class="corps-avance">
+      <p class="note" style="margin:0 20px 12px">Marché, charges, location à l'année, financement : <b>tout est déjà rempli automatiquement</b> à partir de la commune et du bien. N'ouvrez ces rubriques que pour ajuster une valeur.</p>
   <!-- 3. Marché -->
   <details class="etape">
-    <summary><span class="num">3</span><h2>Marché courte durée</h2><span class="chev">›</span></summary>
+    <summary><span class="num">·</span><h2>Marché courte durée</h2><span class="chev">›</span></summary>
     <div class="corps">
       <div class="grille">
         <div class="champ"><label for="m-adr">Tarif de référence (€/nuit)</label><input id="m-adr" type="number" min="20" data-path="marche.adrBase"><span class="aide">Moyenne saison (juin, sept.)</span></div>
@@ -352,7 +409,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 4. Charges courte durée -->
   <details class="etape">
-    <summary><span class="num">4</span><h2>Charges courte durée</h2><span class="chev">›</span></summary>
+    <summary><span class="num">·</span><h2>Charges courte durée</h2><span class="chev">›</span></summary>
     <div class="corps">
       <div class="grille">
         <div class="champ"><label for="c-plat">Commission plateformes (%)</label><input id="c-plat" type="number" step="0.5" data-path="cd.plateformes"></div>
@@ -382,7 +439,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 5. Location à l'année -->
   <details class="etape">
-    <summary><span class="num">5</span><h2>Location à l'année</h2><span class="chev">›</span></summary>
+    <summary><span class="num">·</span><h2>Location à l'année</h2><span class="chev">›</span></summary>
     <div class="corps">
       <div class="grille">
         <div class="champ"><label for="l-mode">Type de bail</label>
@@ -407,7 +464,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 6. Financement & fiscalité -->
   <details class="etape">
-    <summary><span class="num">6</span><h2>Financement & impôts</h2><span class="chev">›</span></summary>
+    <summary><span class="num">·</span><h2>Financement & impôts</h2><span class="chev">›</span></summary>
     <div class="corps">
       <div class="cases"><label><input type="checkbox" data-path="fin.comptant"> Achat comptant (sans crédit)</label></div>
       <div class="grille">
@@ -426,7 +483,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 7. Comparables -->
   <details class="etape">
-    <summary><span class="num">7</span><h2>Annonces comparables</h2><span class="chev">›</span></summary>
+    <summary><span class="num">·</span><h2>Annonces comparables</h2><span class="chev">›</span></summary>
     <div class="corps">
       <p class="note">Ajoutez 3 à 5 logements concurrents relevés sur Airbnb, Booking ou PriceLabs (même capacité, même secteur). Ils apparaissent dans la page « Marché ».</p>
       <div id="liste-comparables" style="display:grid;gap:8px"></div>
@@ -434,19 +491,6 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     </div>
   </details>
 
-  <!-- 8. Dossier -->
-  <details class="etape">
-    <summary><span class="num">8</span><h2>Mot personnalisé & sauvegardes</h2><span class="chev">›</span></summary>
-    <div class="corps">
-      <div class="champ"><label for="d-mot">Mot personnalisé (page de synthèse)</label><textarea id="d-mot" rows="3" data-path="dossier.message"></textarea></div>
-      <div class="champ"><label for="sauvegardes">Études enregistrées</label><select id="sauvegardes"></select></div>
-      <div class="ligne-btn">
-        <button class="btn btn-discret btn-mini" type="button" id="btn-charger">Ouvrir</button>
-        <button class="btn btn-discret btn-mini" type="button" id="btn-supprimer">Supprimer</button>
-        <button class="btn btn-discret btn-mini" type="button" id="btn-export-json">Exporter (.json)</button>
-        <label class="btn btn-discret btn-mini" for="import-json">Importer (.json)</label>
-        <input type="file" id="import-json" accept="application/json" hidden>
-      </div>
     </div>
   </details>
 </aside>
@@ -454,6 +498,31 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 <main class="apercu" id="apercu"><div class="apercu-inner" id="dossier"></div></main>
 </div>
 <div class="toast" id="toast" role="status"></div>
+
+<dialog id="dlg-suivi" class="fenetre">
+  <div class="fenetre-tete"><h2>Mes études</h2><button class="btn btn-discret btn-mini" type="button" data-fermer>Fermer</button></div>
+  <p class="aide">Chaque étude est enregistrée automatiquement dans ce navigateur. Cliquez sur une ligne pour l'ouvrir.</p>
+  <div class="tableau-defile"><table class="liste-etudes" id="liste-etudes"></table></div>
+</dialog>
+
+<dialog id="dlg-param" class="fenetre">
+  <div class="fenetre-tete"><h2>Paramètres</h2><button class="btn btn-discret btn-mini" type="button" data-fermer>Fermer</button></div>
+  <h3>Grille des forfaits ménage</h3>
+  <p class="aide">Montants par séjour. Le forfait de chaque étude est choisi selon le nombre de chambres du bien ; vous pouvez toujours le modifier dans l'étude.</p>
+  <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
+  <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
+  <h3>Commission de conciergerie par défaut</h3>
+  <div class="grille" style="max-width:320px"><div class="champ"><label for="p-commission">Commission (%)</label><input id="p-commission" type="number" step="0.5" min="0"></div></div>
+  <h3>Données du marché (AirDNA, PriceLabs)</h3>
+  <p class="aide">AirDNA et PriceLabs ne proposent pas d'accès automatique avec un compte gratuit. Le marché de chaque étude est donc rempli à partir des données publiques intégrées à l'outil. Avec un compte payant, collez l'export mensuel dans « Réglages avancés › Marché courte durée ».</p>
+  <h3>Sauvegarde</h3>
+  <p class="aide">Pour retrouver vos études sur un autre ordinateur ou téléphone : exportez-les ici, puis importez le fichier sur l'autre appareil.</p>
+  <div class="ligne-btn">
+    <button class="btn btn-discret btn-mini" type="button" id="btn-export-tout">Exporter toutes les études</button>
+    <label class="btn btn-discret btn-mini" for="import-json">Importer un fichier</label>
+    <input type="file" id="import-json" accept="application/json" hidden>
+  </div>
+</dialog>
 
 <script>
 /* =========================================================
@@ -561,13 +630,14 @@ function etatVide() {
   return {
     id: "e" + Date.now().toString(36), annonce: "", lien: "",
     options: { taxeFonciere: false, cfe: false, entretien: false, comptable: false },
-    bien: { type: "appartement", commune: "plouezec", communeNom: "", secteur: "littoral", pieces: "", chambres: "", surface: "", capacite: "", prix: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
+    bien: { type: "appartement", commune: "plouezec", communeNom: "", secteur: "littoral", pieces: "", chambres: "", surface: "", capacite: "", prix: "", terrain: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
     marche: { adrBase: "", scenario: "realiste", dms: "", fraisMenage: "", saisonMode: "auto", mois: [], source: "" },
     cd: { plateformes: "", conciergerie: "", energie: "", internet: "", assurance: "", cfe: "", entretienPct: "", ameublement: "", regime: "reel" },
     ld: { mode: "meublee", loyer: "", vacance: "", gestion: "", gli: "", assurance: "", entretien: "", recup: "", regime: "auto" },
     fin: { comptant: false, notaire: "", apport: "", taux: "", duree: "", assurance: "" },
     fisc: { tmi: "30", ps: "" },
     comparables: [],
+    suivi: { envoye: false, dateEnvoi: "", reponse: false, dateReponse: "", retour: "", notes: "" },
     dossier: { agence: "", agent: "", investisseur: "", date: new Date().toISOString().slice(0, 10), message: "" }
   };
 }
@@ -610,10 +680,12 @@ function autos(s) {
   if (b.vueMer) f *= 1.15; if (b.plage) f *= 1.06; if (b.exterieur) f *= 1.04; if (b.parking) f *= 1.02; if (b.piscine) f *= 1.15;
   A["marche.adrBase"] = Math.round(base * f);
   A["marche.dms"] = Math.round(c.profil.dms * (maison ? 1.25 : 1) * 10) / 10;
-  A["marche.fraisMenage"] = surf < 40 ? 30 : surf < 70 ? 45 : surf < 110 ? 65 : 90;
+  const lm = ligneMenage(ch);
+  A["marche.fraisMenage"] = lm ? totalLigne(lm) : (surf < 40 ? 30 : surf < 70 ? 45 : surf < 110 ? 65 : 90);
+  A.ligneMenage = lm;
 
   A["cd.plateformes"] = 15;
-  A["cd.conciergerie"] = 20;
+  A["cd.conciergerie"] = num(PARAM.commission) || 20;
   A["cd.energie"] = arrondi(400 + surf * 17, 10);
   A["cd.internet"] = 360;
   A["cd.assurance"] = arrondi(150 + surf * 1.5, 10);
@@ -776,17 +848,21 @@ function pointMort(s) {
 /* ---------- Lecture d'annonce ---------- */
 const MOTS_NB = { un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8, neuf: 9, dix: 10 };
 const nbMot = (x) => MOTS_NB[x] ?? parseInt(x, 10);
-function analyserAnnonce(texte) {
+function analyserAnnonce(texte, opts = {}) {
   const t = norm(texte);
   const r = {};
+  const etiq = t.match(/prix(?: de vente)?(?: honoraires inclus| fai| net vendeur)?\s*[:\-]?\s*(\d{1,3}(?:[ .]\d{3})+|\d{5,7})\s*(?:€|eur)/);
   const NBRE = "(\\d+|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix)";
   // Prix : le plus grand montant plausible
   const prix = [];
   for (const m of t.matchAll(/(\d{1,3}(?:[ .]\d{3})+|\d{4,7})(?:[.,]\d{1,2})?\s*(?:€|eur\b|euros)/g)) { const v = parseInt(m[1].replace(/[ .]/g, ""), 10); if (v >= 15000 && v <= 8000000) prix.push(v); }
   const k = t.match(/(\d{2,4}(?:[.,]\d+)?)\s*k\s?€/); if (k) prix.push(Math.round(parseFloat(k[1].replace(",", ".")) * 1000));
-  if (prix.length) r.prix = Math.max(...prix);
+  if (etiq) r.prix = parseInt(etiq[1].replace(/[ .]/g, ""), 10);
+  else if (prix.length && !opts.prixEtiquete) r.prix = Math.max(...prix);
   // Surface habitable
-  let m = t.match(/(?:surface|habitable|superficie|carrez)[^\d]{0,25}(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)/) || t.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)(?!\s*de\s*terrain)/);
+  let m = t.match(/(?:surface habitable|habitable|surface|superficie|carrez)[^\d]{0,25}(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)/);
+  if (m && /terrain|parcelle/.test(t.slice(Math.max(0, m.index - 5), m.index + 25))) m = null;
+  if (!m) for (const x of t.matchAll(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²|m\s?carres?)/g)) { if (!/terrain|parcelle|jardin|piscine|garage|sejour|salon|cuisine|chambre/.test(t.slice(Math.max(0, x.index - 30), x.index))) { m = x; break; } }
   if (m) { const v = parseFloat(m[1].replace(",", ".")); if (v >= 8 && v <= 1500) r.surface = Math.round(v); }
   const terr = t.match(/terrain[^\d]{0,20}(\d[\d ]*)\s*(?:m2|m²)/); if (terr) r.terrain = parseInt(terr[1].replace(/ /g, ""), 10);
   // Pièces / chambres
@@ -799,7 +875,7 @@ function analyserAnnonce(texte) {
   if (/\b(maison|villa|longere|penty|propriete|chaumiere|pavillon|ti\s?bihan)\b/.test(t) && !/\bappartement\b/.test(t.slice(0, 120))) r.type = "maison";
   else if (/\b(appartement|studio|duplex|triplex)\b/.test(t)) r.type = "appartement";
   // Année
-  m = t.match(/(?:construction|construit|construite|batie?|annee|edifie|datant de|de)\s*(?:en|:|de|du)?\s*((?:18|19|20)\d{2})\b/); if (m) r.annee = parseInt(m[1], 10);
+  m = t.match(/(?:annee de construction|date de construction|construction|construit|construite|batie?|annee|edifie|datant de|de)\s*(?:en|:|de|du)?\s*:?\s*((?:18|19|20)\d{2})\b/); if (m) r.annee = parseInt(m[1], 10);
   // État
   if (/(a renover|travaux a prevoir|a rafraichir|a moderniser|rafraichissement)/.test(t)) r.etat = "a_rafraichir";
   else if (/(haut de gamme|prestations de qualite|standing|prestige|luxe)/.test(t)) r.etat = "premium";
@@ -856,6 +932,8 @@ function versFormulaire() {
     }
   });
   document.querySelectorAll("[data-autre]").forEach(el => el.hidden = S.bien.commune !== "autre");
+  const lm = A.ligneMenage;
+  $("#aide-menage").textContent = lm ? `Grille Tri Hent · ${lm.type || "—"} : ménage ${eur(num(lm.menage) || 0)}, consommables ${eur(num(lm.conso) || 0)}, linge ${eur(num(lm.linge) || 0)} = ${eur(totalLigne(lm))} par séjour. Grille modifiable dans Paramètres.` : "Renseignez votre grille de forfaits dans Paramètres.";
   const pr = communeDe(S.bien).profil;
   $("#aide-dms").textContent = pr.ete > 1.25 ? "Séjours plus longs en juillet-août" : "Séjours courts toute l'année";
   dessinerSaison();
@@ -1015,7 +1093,7 @@ function rendre() {
         <h3>Le bien</h3>
         <div class="fiche" style="grid-template-columns:1fr">
           <div><span>Type</span><b>${b.type === "maison" ? "Maison" : "Appartement"} · ${r.g("bien.pieces")} pièces · ${r.g("bien.chambres")} ch.</b></div>
-          <div><span>Surface</span><b>${nf0.format(r.surface)} m²</b></div>
+          <div><span>Surface</span><b>${nf0.format(r.surface)} m²${num(b.terrain) ? " · terrain " + nf0.format(num(b.terrain)) + " m²" : ""}</b></div>
           <div><span>Commune</span><b>${esc(c.nom)}</b></div>
           <div><span>Capacité d'accueil</span><b>${r.g("bien.capacite")} voyageurs</b></div>
           <div><span>Construction · état</span><b>${b.annee ? esc(b.annee) + " · " : ""}${ETAT[b.etat].nom}</b></div>
@@ -1032,7 +1110,6 @@ function rendre() {
           ${pm !== null ? `<li>Point d'équilibre : dès <b>${Math.round(pm)} %</b> d'occupation annuelle, la courte durée rapporte autant que la location à l'année.</li>` : ""}
           ${r.cd.net > 0 ? `<li>Rentabilisation : le projet de ${eurArr(r.cd.invest, 1000)} est couvert par les revenus nets en <b>${ans(r.cd.invest, r.cd.net)}</b> en courte durée, contre <b>${ans(r.ld.invest, r.ld.net)}</b> à l'année.</li>` : ""}
           <li>Fourchette selon les scénarios : de <b>${eurArr(P.cd.net)}</b> (prudent) à <b>${eurArr(O.cd.net)}</b> (optimiste) par an.</li>
-          <li>Le bien reste disponible pour le propriétaire hors réservations, et nous prenons en charge l'ensemble du quotidien.</li>
         </ul>
       </div>
     </div>
@@ -1192,23 +1269,183 @@ function ajusterZoom() {
   document.querySelectorAll("#dossier .page").forEach(p => p.style.zoom = z > 0 ? z : 1);
 }
 
-/* ---------- Sauvegarde locale ---------- */
+/* ---------- Paramètres (communs à toutes les études) ---------- */
+const CLE_PARAM = "trihent.parametres.v1";
+const GRILLE_DEFAUT = [
+  { type: "Studio / T1", chambres: 0, lits: 1, menage: 16, conso: 3, linge: 6 },
+  { type: "T2", chambres: 1, lits: 1, menage: 18, conso: 4, linge: 8 },
+  { type: "T3", chambres: 2, lits: 2, menage: 45, conso: 7, linge: 18 },
+  { type: "T4", chambres: 3, lits: 3, menage: 80, conso: 12, linge: 30 },
+  { type: "T5", chambres: 4, lits: 4, menage: 120, conso: 18, linge: 40 },
+  { type: "T6 et plus", chambres: 5, lits: 5, menage: 150, conso: 22, linge: 50 }
+];
+let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), commission: 20 };
+try { const p = JSON.parse(localStorage.getItem(CLE_PARAM) || "null"); if (p) PARAM = { ...PARAM, ...p }; } catch (e) {}
+function sauverParam() { try { localStorage.setItem(CLE_PARAM, JSON.stringify(PARAM)); } catch (e) {} }
+const totalLigne = (l) => (num(l.menage) || 0) + (num(l.conso) || 0) + (num(l.linge) || 0);
+function ligneMenage(chambres) {
+  const g = PARAM.grille.filter(l => !isNaN(num(l.chambres))).sort((x, y) => num(x.chambres) - num(y.chambres));
+  if (!g.length) return null;
+  let best = g[0];
+  for (const l of g) if (num(l.chambres) <= chambres) best = l;
+  return best;
+}
+function dessinerGrille() {
+  $("#grille-menage").innerHTML = `<thead><tr><th>Logement</th><th>Chambres</th><th>Lits</th><th>Ménage (€)</th><th>Consommables (€)</th><th>Linge (€)</th><th>Total / séjour</th><th></th></tr></thead><tbody>` +
+    PARAM.grille.map((l, i) => `<tr>
+      <td><input id="g-t-${i}" data-grille="${i}" data-k="type" value="${esc(l.type)}" aria-label="Logement"></td>
+      <td><input id="g-c-${i}" type="number" min="0" data-grille="${i}" data-k="chambres" value="${esc(l.chambres)}" aria-label="Chambres"></td>
+      <td><input id="g-l-${i}" type="number" min="0" data-grille="${i}" data-k="lits" value="${esc(l.lits)}" aria-label="Lits"></td>
+      <td><input id="g-m-${i}" type="number" min="0" data-grille="${i}" data-k="menage" value="${esc(l.menage)}" aria-label="Ménage"></td>
+      <td><input id="g-o-${i}" type="number" min="0" data-grille="${i}" data-k="conso" value="${esc(l.conso)}" aria-label="Consommables"></td>
+      <td><input id="g-n-${i}" type="number" min="0" data-grille="${i}" data-k="linge" value="${esc(l.linge)}" aria-label="Linge"></td>
+      <td class="total" id="g-tot-${i}">${eur(totalLigne(l))}</td>
+      <td><button class="btn btn-discret btn-mini" type="button" data-suppr-grille="${i}">Retirer</button></td></tr>`).join("") + `</tbody>`;
+  $("#p-commission").value = PARAM.commission;
+}
+
+/* ---------- Sauvegarde locale : chaque étude est enregistrée automatiquement ---------- */
 const CLE = "trihent.etudes.v1", CLE_COURANTE = "trihent.etude.courante.v1";
 function lireSauvegardes() { try { return JSON.parse(localStorage.getItem(CLE) || "[]"); } catch (e) { return []; } }
-function ecrireSauvegardes(l) { try { localStorage.setItem(CLE, JSON.stringify(l)); return true; } catch (e) { toast("Stockage plein : retirez la photo ou supprimez d'anciennes études."); return false; } }
+function ecrireSauvegardes(l) { try { localStorage.setItem(CLE, JSON.stringify(l)); return true; } catch (e) { toast("Stockage plein : supprimez d'anciennes études ou exportez-les."); return false; } }
 let minuteurAuto;
-function autoSauver() { clearTimeout(minuteurAuto); minuteurAuto = setTimeout(() => { try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {} }, 400); }
-function listerSauvegardes() {
-  const l = lireSauvegardes();
-  $("#sauvegardes").innerHTML = l.length ? l.map(x => `<option value="${esc(x.id)}">${esc(x.nom)} — ${esc(dateFr(x.date))}</option>`).join("") : `<option value="">Aucune étude enregistrée</option>`;
+function enregistrerCourante() {
+  try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {}
+  if (!S.lien && !S.annonce && !num(S.bien.prix)) return;
+  const r = calculer(S);
+  const l = lireSauvegardes().filter(x => x.id !== S.id);
+  l.unshift({ id: S.id, nom: titreBien(r), agence: S.dossier.agence, date: S.dossier.date, gain: r.cd.net - r.ld.net, data: S });
+  ecrireSauvegardes(l);
 }
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("visible"); clearTimeout(t._m); t._m = setTimeout(() => t.classList.remove("visible"), 2600); }
+function autoSauver() { clearTimeout(minuteurAuto); minuteurAuto = setTimeout(enregistrerCourante, 500); }
+const RETOURS = { "": ["En attente", ""], interesse: ["À relancer", "or"], rdv: ["Rendez-vous", "or"], client: ["Chez un investisseur", "or"], signe: ["Signé", "ok"], refus: ["Pas intéressée", "non"] };
+function dessinerSuivi() {
+  const l = lireSauvegardes();
+  if (!l.length) { $("#liste-etudes").innerHTML = `<tbody><tr><td>Aucune étude pour l'instant. Collez le lien d'une annonce pour commencer.</td></tr></tbody>`; return; }
+  $("#liste-etudes").innerHTML = `<thead><tr><th>Bien</th><th>Agence</th><th>Étude</th><th>Envoyée</th><th>Réponse</th><th>Retour</th><th>Gain / an</th><th></th></tr></thead><tbody>` +
+    l.map(x => {
+      const su = (x.data && x.data.suivi) || {};
+      const rt = RETOURS[su.retour || ""] || RETOURS[""];
+      return `<tr data-id="${esc(x.id)}" class="${x.id === S.id ? "courante" : ""}">
+        <td>${esc(x.nom)}</td><td>${esc(x.agence || "—")}</td><td>${esc(dateFr(x.date))}</td>
+        <td>${su.envoye ? `<span class="pastille ok">${su.dateEnvoi ? esc(dateFr(su.dateEnvoi)) : "Oui"}</span>` : `<span class="pastille">Non</span>`}</td>
+        <td>${su.reponse ? `<span class="pastille ok">${su.dateReponse ? esc(dateFr(su.dateReponse)) : "Oui"}</span>` : `<span class="pastille">Non</span>`}</td>
+        <td><span class="pastille ${rt[1]}">${rt[0]}</span></td>
+        <td style="white-space:nowrap">${isFinite(x.gain) ? signe(arrondi(x.gain, 100)) : "—"}</td>
+        <td><button class="btn btn-discret btn-mini" type="button" data-suppr-etude="${esc(x.id)}">Supprimer</button></td></tr>`;
+    }).join("") + `</tbody>`;
+}
+function ouvrirEtude(id) {
+  const x = lireSauvegardes().find(x => x.id === id); if (!x) return;
+  S = fusion(etatVide(), JSON.parse(JSON.stringify(x.data)));
+  $("#liste-comparables").innerHTML = ""; $("#detecte").innerHTML = "";
+  versFormulaire(); rendre(); try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {}
+  toast("Étude ouverte");
+}
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("visible"); clearTimeout(t._m); t._m = setTimeout(() => t.classList.remove("visible"), 3200); }
 function fusion(base, data) {
   for (const k of Object.keys(data || {})) {
     if (data[k] && typeof data[k] === "object" && !Array.isArray(data[k]) && base[k] && typeof base[k] === "object") fusion(base[k], data[k]);
     else base[k] = data[k];
   }
   return base;
+}
+function motExemple() {
+  const a = S.dossier.agent ? `Bonjour ${S.dossier.agent},` : "Bonjour,";
+  return `${a}\nSuite à notre échange, voici l'étude de rentabilité que nous avons réalisée pour ce bien. Elle compare, chiffres à l'appui, la location courte durée et la location à l'année, pour aider vos clients investisseurs à se projeter.\nNous serions heureux de vous la présenter ou de rencontrer vos acquéreurs pour leur détailler notre accompagnement.\nBien cordialement,\nLes Domaines de Tri Hent`;
+}
+
+/* ---------- Récupération de l'annonce depuis son lien ---------- */
+const RELAIS = "annonce.php";
+function jsonLdObjets(doc) {
+  const out = [];
+  const visiter = (o) => { if (!o || typeof o !== "object") return; if (Array.isArray(o)) { o.forEach(visiter); return; } out.push(o); for (const v of Object.values(o)) if (v && typeof v === "object") visiter(v); };
+  doc.querySelectorAll('script[type="application/ld+json"]').forEach(sc => { try { visiter(JSON.parse(sc.textContent)); } catch (e) {} });
+  return out;
+}
+function lireAnnonceHtml(html, url) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const meta = (n) => (doc.querySelector(`meta[property="${n}"]`) || doc.querySelector(`meta[name="${n}"]`))?.getAttribute("content") || "";
+  const ld = jsonLdObjets(doc);
+  const champ = (k) => { for (const o of ld) if (o[k] !== undefined && o[k] !== null && o[k] !== "") return o[k]; return undefined; };
+  const valeur = (v) => (v && typeof v === "object" ? (v.value ?? v.amount ?? v.price) : v);
+  const r = {};
+  // Données structurées (schema.org) quand le site en publie
+  const prixLd = num(valeur(champ("price")) ?? meta("product:price:amount") ?? meta("og:price:amount"));
+  if (prixLd >= 15000) r.prix = Math.round(prixLd);
+  const surfLd = num(valeur(champ("floorSize")));
+  if (surfLd >= 8) r.surface = Math.round(surfLd);
+  const piecesLd = num(valeur(champ("numberOfRooms"))); if (piecesLd >= 1) r.pieces = piecesLd;
+  const chLd = num(valeur(champ("numberOfBedrooms"))); if (chLd >= 0) r.chambres = chLd;
+  const anLd = num(champ("yearBuilt")); if (anLd > 1500) r.annee = anLd;
+  // Texte : titre et description d'abord, puis le reste de la page
+  const titre = [meta("og:title"), doc.title, champ("name")].filter(x => typeof x === "string").join(" — ");
+  const descr = [meta("og:description"), meta("description"), typeof champ("description") === "string" ? champ("description") : ""].join("\n");
+  doc.querySelectorAll("script,style,noscript,svg,nav,footer,header,form,iframe").forEach(n => n.remove());
+  doc.querySelectorAll("br,p,li,div,h1,h2,h3,h4,h5,td,th,tr,dt,dd,section,article,span").forEach(n => n.append("\n"));
+  const corps = (doc.body ? doc.body.textContent : "").replace(/[ \t ]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
+  const principal = analyserAnnonce(titre + "\n" + descr);
+  const page = analyserAnnonce(corps, { prixEtiquete: true });
+  const res = { ...page, ...principal, ...r };
+  if (!res.prix && page.prix) res.prix = page.prix;
+  // Photo principale
+  let photo = meta("og:image") || meta("twitter:image");
+  if (!photo) { const im = champ("image"); photo = Array.isArray(im) ? (typeof im[0] === "string" ? im[0] : im[0]?.url) : (typeof im === "string" ? im : im?.url); }
+  if (photo) { try { photo = new URL(photo, url).href; } catch (e) {} }
+  const texte = (titre + "\n" + descr).trim() || corps.slice(0, 3000);
+  return { res, photo, texte };
+}
+async function photoEnDataUrl(urlImage) {
+  const rep = await fetch(RELAIS + "?type=image&url=" + encodeURIComponent(urlImage));
+  if (!rep.ok) throw new Error("photo");
+  const blob = await rep.blob();
+  const bmp = await createImageBitmap(blob);
+  const k = Math.min(1, 1600 / bmp.width), cv = document.createElement("canvas");
+  cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+  cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
+  return cv.toDataURL("image/jpeg", 0.8);
+}
+function appliquerResultats(r, origine) {
+  const libs = { type: "Type", commune: "Commune", communeNom: "Nom", pieces: "Pièces", chambres: "Chambres", surface: "Surface", terrain: "Terrain", prix: "Prix", annee: "Construction", etat: "État", dpe: "DPE", chargesCopro: "Charges", taxeFonciere: "Taxe foncière", agence: "Agence", reference: "Réf." };
+  const agLien = S.lien ? agenceDepuisLien(S.lien) : "";
+  if (agLien) r.agence = agLien;
+  const out = [];
+  for (const [k, v] of Object.entries(r)) {
+    if (["vueMer", "plage", "exterieur", "parking", "piscine"].includes(k)) continue; // les atouts restent à cocher
+    if (k === "agence") { if (v) S.dossier.agence = v; }
+    else S.bien[k] = v;
+    const aff = k === "commune" ? COMMUNES[v].nom : k === "etat" ? ETAT[v].nom : ["prix", "chargesCopro", "taxeFonciere"].includes(k) ? eur(v) : k === "surface" || k === "terrain" ? nf0.format(v) + " m²" : v;
+    if (libs[k] && aff !== "") out.push(`<span>${libs[k]} : <b>${esc(aff)}</b></span>`);
+  }
+  if (r.chambres === undefined && r.pieces) S.bien.chambres = "";
+  S.bien.titre = "";
+  S.marche.fraisMenage = "";
+  $("#detecte").innerHTML = out.length ? out.join("") : `<span>Aucune information reconnue. Complétez la fiche du bien à la main.</span>`;
+  versFormulaire(); rendre(); autoSauver();
+  return out.length;
+}
+async function recupererAnnonce() {
+  const url = $("#lien").value.trim();
+  const etat = $("#etat-recup");
+  if (!/^https?:\/\//i.test(url)) { toast("Collez d'abord le lien complet de l'annonce (https://…)."); $("#lien").focus(); return; }
+  S.lien = url;
+  if (location.protocol === "file:") { etat.textContent = "La récupération fonctionne une fois l'outil en ligne sur votre site. En attendant, collez le texte de l'annonce."; $("#bloc-texte").open = true; return; }
+  const btn = $("#btn-recuperer"); btn.disabled = true; etat.textContent = "Lecture de l'annonce…";
+  try {
+    const rep = await fetch(RELAIS + "?url=" + encodeURIComponent(url));
+    const data = await rep.json().catch(() => ({ ok: false, erreur: "Réponse illisible." }));
+    if (!data.ok) throw new Error(data.erreur || "Lecture impossible.");
+    const { res, photo, texte } = lireAnnonceHtml(data.html, data.url || url);
+    S.annonce = texte; $("#annonce").value = texte;
+    const n = appliquerResultats(res, "lien");
+    etat.textContent = n ? n + " informations reprises. Vérifiez-les, puis cochez les atouts." : "Page lue, mais aucune information reconnue : collez le texte de l'annonce.";
+    if (photo) {
+      try { S.bien.photo = await photoEnDataUrl(photo); maj(); } catch (e) { etat.textContent += " Photo non récupérée : ajoutez-la à la main."; }
+    }
+  } catch (e) {
+    etat.textContent = "Le site de l'agence n'a pas pu être lu (" + e.message + "). Collez le texte de l'annonce ci-dessous.";
+    $("#bloc-texte").open = true;
+  } finally { btn.disabled = false; }
 }
 
 /* ---------- Événements ---------- */
@@ -1220,41 +1457,46 @@ document.addEventListener("input", (e) => {
   if (el.dataset.path) {
     ecrire(S, el.dataset.path, el.type === "checkbox" ? el.checked : el.value);
     if (el.dataset.path === "lien") { const ag = agenceDepuisLien(el.value.trim()); if (ag) { S.dossier.agence = ag; $("#d-agence").value = ag; } }
+    if (el.dataset.path === "suivi.envoye" && el.checked && !S.suivi.dateEnvoi) S.suivi.dateEnvoi = new Date().toISOString().slice(0, 10);
+    if (el.dataset.path === "suivi.reponse" && el.checked && !S.suivi.dateReponse) S.suivi.dateReponse = new Date().toISOString().slice(0, 10);
     maj();
   }
   else if (el.dataset.mois !== undefined) {
     if (S.marche.saisonMode !== "manuel") { S.marche.mois = moisEffectifs(S, autos(S)); S.marche.saisonMode = "manuel"; }
     S.marche.mois[+el.dataset.mois][el.dataset.k] = el.value; maj();
   } else if (el.dataset.comp !== undefined) { S.comparables[+el.dataset.comp][el.dataset.k] = el.value; maj(); }
+  else if (el.dataset.grille !== undefined) {
+    const l = PARAM.grille[+el.dataset.grille]; l[el.dataset.k] = el.dataset.k === "type" ? el.value : el.value;
+    $("#g-tot-" + el.dataset.grille).textContent = eur(totalLigne(l)); sauverParam(); maj();
+  } else if (el.id === "p-commission") { PARAM.commission = num(el.value) || 0; sauverParam(); maj(); }
 });
 document.addEventListener("change", (e) => { if (e.target.dataset.path && e.target.tagName === "SELECT") { ecrire(S, e.target.dataset.path, e.target.value); maj(); } });
 document.addEventListener("click", (e) => {
   const sup = e.target.closest("[data-suppr-comp]");
-  if (sup) { S.comparables.splice(+sup.dataset.supprComp, 1); $("#liste-comparables").innerHTML = ""; dessinerComparables(); maj(); }
+  if (sup) { S.comparables.splice(+sup.dataset.supprComp, 1); $("#liste-comparables").innerHTML = ""; dessinerComparables(); maj(); return; }
+  const supG = e.target.closest("[data-suppr-grille]");
+  if (supG) { PARAM.grille.splice(+supG.dataset.supprGrille, 1); sauverParam(); dessinerGrille(); maj(); return; }
+  const supE = e.target.closest("[data-suppr-etude]");
+  if (supE) {
+    if (!supE.dataset.confirmer) { supE.dataset.confirmer = "1"; supE.textContent = "Confirmer"; setTimeout(() => { if (supE.isConnected) { delete supE.dataset.confirmer; supE.textContent = "Supprimer"; } }, 3000); return; }
+    ecrireSauvegardes(lireSauvegardes().filter(x => x.id !== supE.dataset.supprEtude)); dessinerSuivi(); toast("Étude supprimée"); return;
+  }
+  const ligne = e.target.closest("#liste-etudes tr[data-id]");
+  if (ligne) { ouvrirEtude(ligne.dataset.id); $("#dlg-suivi").close(); return; }
+  const fermer = e.target.closest("[data-fermer]");
+  if (fermer) fermer.closest("dialog").close();
 });
 
+$("#btn-recuperer").addEventListener("click", recupererAnnonce);
+$("#lien").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); recupererAnnonce(); } });
 $("#btn-analyser").addEventListener("click", () => {
   S.annonce = $("#annonce").value;
-  const r = analyserAnnonce(S.annonce);
   const url = S.annonce.match(/https?:\/\/[^\s"<>]+/i);
   if (url && !S.lien) S.lien = url[0];
-  const agLien = S.lien ? agenceDepuisLien(S.lien) : "";
-  if (agLien) r.agence = agLien;
-  const libs = { type: "Type", commune: "Commune", communeNom: "Nom", pieces: "Pièces", chambres: "Chambres", surface: "Surface", prix: "Prix", annee: "Construction", etat: "État", dpe: "DPE", chargesCopro: "Charges", taxeFonciere: "Taxe foncière", vueMer: "Vue mer", plage: "Plage", exterieur: "Extérieur", parking: "Parking", piscine: "Piscine", agence: "Agence", reference: "Réf." };
-  const out = [];
-  for (const [k, v] of Object.entries(r)) {
-    if (k === "terrain") continue;
-    if (k === "agence") { if (v) S.dossier.agence = v; }
-    else S.bien[k] = v;
-    const aff = k === "commune" ? COMMUNES[v].nom : k === "etat" ? ETAT[v].nom : k === "prix" || k === "chargesCopro" || k === "taxeFonciere" ? eur(v) : k === "surface" ? v + " m²" : v === true ? "oui" : v;
-    if (libs[k] && aff !== "") out.push(`<span>${libs[k]} : <b>${esc(aff)}</b></span>`);
-  }
-  if (r.chambres === undefined && r.pieces) S.bien.chambres = "";
-  S.bien.titre = "";
-  $("#detecte").innerHTML = out.length ? out.join("") : `<span>Aucune information reconnue. Complétez la fiche du bien à la main.</span>`;
-  toast(out.length ? out.length + " informations reprises de l'annonce" : "Annonce non reconnue");
-  versFormulaire(); rendre(); autoSauver();
+  const n = appliquerResultats(analyserAnnonce(S.annonce), "texte");
+  toast(n ? n + " informations reprises de l'annonce" : "Annonce non reconnue");
 });
+$("#btn-mot-exemple").addEventListener("click", () => { S.dossier.message = motExemple(); $("#d-mot").value = S.dossier.message; maj(); });
 $("#btn-reset-saison").addEventListener("click", () => { S.marche.saisonMode = "auto"; S.marche.mois = []; maj(); });
 $("#btn-importer").addEventListener("click", () => {
   const txt = $("#m-import").value;
@@ -1308,34 +1550,37 @@ $("#btn-pdf").addEventListener("click", () => {
   setTimeout(() => document.title = ancien, 1000);
 });
 $("#btn-nouvelle").addEventListener("click", () => {
-  S = etatVide(); $("#detecte").innerHTML = ""; $("#liste-comparables").innerHTML = "";
-  versFormulaire(); rendre(); autoSauver(); toast("Nouvelle étude");
-  $("#annonce").focus();
+  enregistrerCourante();
+  S = etatVide(); S.dossier.message = motExemple();
+  $("#detecte").innerHTML = ""; $("#liste-comparables").innerHTML = ""; $("#etat-recup").textContent = "Prix, surface, pièces, terrain, année, DPE, charges et photo.";
+  versFormulaire(); rendre(); try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {}
+  toast("Nouvelle étude : collez le lien de l'annonce");
+  $("#lien").focus();
 });
-$("#btn-enregistrer").addEventListener("click", () => {
-  const l = lireSauvegardes().filter(x => x.id !== S.id);
-  l.unshift({ id: S.id, nom: titreBien(calculer(S)) + (S.dossier.agence ? " · " + S.dossier.agence : ""), date: S.dossier.date, data: S });
-  if (ecrireSauvegardes(l)) { listerSauvegardes(); toast("Étude enregistrée dans ce navigateur"); }
-});
-$("#btn-charger").addEventListener("click", () => {
-  const x = lireSauvegardes().find(x => x.id === $("#sauvegardes").value); if (!x) return;
-  S = fusion(etatVide(), JSON.parse(JSON.stringify(x.data))); $("#liste-comparables").innerHTML = ""; versFormulaire(); rendre(); autoSauver(); toast("Étude ouverte");
-});
-$("#btn-supprimer").addEventListener("click", () => {
-  const id = $("#sauvegardes").value; if (!id) return;
-  const btn = $("#btn-supprimer");
-  if (!btn.dataset.confirmer) { btn.dataset.confirmer = "1"; btn.textContent = "Confirmer la suppression"; setTimeout(() => { delete btn.dataset.confirmer; btn.textContent = "Supprimer"; }, 3000); return; }
-  ecrireSauvegardes(lireSauvegardes().filter(x => x.id !== id)); listerSauvegardes(); delete btn.dataset.confirmer; btn.textContent = "Supprimer"; toast("Étude supprimée");
-});
-$("#btn-export-json").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(S, null, 1)], { type: "application/json" });
+$("#btn-suivi").addEventListener("click", () => { enregistrerCourante(); dessinerSuivi(); $("#dlg-suivi").showModal(); });
+$("#btn-param").addEventListener("click", () => { dessinerGrille(); $("#dlg-param").showModal(); });
+$("#btn-ajout-ligne").addEventListener("click", () => { PARAM.grille.push({ type: "", chambres: "", lits: "", menage: "", conso: "", linge: "" }); sauverParam(); dessinerGrille(); });
+$("#btn-export-tout").addEventListener("click", () => {
+  enregistrerCourante();
+  const blob = new Blob([JSON.stringify({ format: "trihent-etudes", parametres: PARAM, etudes: lireSauvegardes() })], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-  a.download = "etude-" + norm(titreBien(calculer(S))).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".json";
+  a.download = "etudes-tri-hent-" + new Date().toISOString().slice(0, 10) + ".json";
   document.body.appendChild(a); a.click(); a.remove();
 });
 $("#import-json").addEventListener("change", (e) => {
   const f = e.target.files[0]; if (!f) return;
-  f.text().then(t => { S = fusion(etatVide(), JSON.parse(t)); S.id = S.id || "e" + Date.now().toString(36); $("#liste-comparables").innerHTML = ""; versFormulaire(); rendre(); autoSauver(); toast("Étude importée"); }).catch(() => toast("Fichier illisible"));
+  f.text().then(t => {
+    const d = JSON.parse(t);
+    if (d.format === "trihent-etudes") {
+      const ids = new Set(d.etudes.map(x => x.id));
+      ecrireSauvegardes([...d.etudes, ...lireSauvegardes().filter(x => !ids.has(x.id))]);
+      if (d.parametres) { PARAM = { ...PARAM, ...d.parametres }; sauverParam(); dessinerGrille(); }
+      toast(d.etudes.length + " études importées"); maj();
+    } else {
+      S = fusion(etatVide(), d); S.id = S.id || "e" + Date.now().toString(36);
+      $("#liste-comparables").innerHTML = ""; versFormulaire(); rendre(); autoSauver(); toast("Étude importée");
+    }
+  }).catch(() => toast("Fichier illisible"));
   e.target.value = "";
 });
 window.addEventListener("resize", ajusterZoom);
@@ -1349,9 +1594,10 @@ remplirSelectCommunes();
   else {
     S.annonce = EXEMPLE_ANNONCE;
     const r = analyserAnnonce(S.annonce);
-    for (const [k, v] of Object.entries(r)) { if (k === "agence") S.dossier.agence = v; else if (k !== "terrain") S.bien[k] = v; }
+    for (const [k, v] of Object.entries(r)) { if (k === "agence") S.dossier.agence = v; else S.bien[k] = v; }
+    S.dossier.message = motExemple();
   }
-  versFormulaire(); rendre(); listerSauvegardes();
+  versFormulaire(); rendre();
   if (document.fonts) document.fonts.ready.then(ajusterZoom);
 })();
 </script>
