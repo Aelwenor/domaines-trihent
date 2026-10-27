@@ -256,8 +256,13 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 1. Annonce -->
   <details class="etape" open>
-    <summary><span class="num">1</span><h2>L'annonce</h2><span class="chev">›</span></summary>
+    <summary><span class="num">1</span><h2>L'annonce & le dossier</h2><span class="chev">›</span></summary>
     <div class="corps">
+      <div class="champ">
+        <label for="lien">Lien de l'annonce</label>
+        <input id="lien" type="url" data-path="lien" placeholder="https://www.agence-exemple.fr/annonce/…">
+        <span class="aide">Le nom de l'agence est repris de l'adresse du site. Le navigateur ne peut pas lire la page elle-même : copiez aussi son texte ci-dessous.</span>
+      </div>
       <div class="champ">
         <label for="annonce">Texte de l'annonce (copier-coller)</label>
         <textarea id="annonce" data-path="annonce" rows="7" placeholder="Collez ici le texte de l'annonce de l'agence…"></textarea>
@@ -267,6 +272,12 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <span class="aide" style="font-size:11.5px;color:var(--gris)">Remplit automatiquement la fiche du bien.</span>
       </div>
       <div class="detecte" id="detecte"></div>
+      <div class="grille">
+        <div class="champ"><label for="d-agence">Préparé pour (agence)</label><input id="d-agence" data-path="dossier.agence"></div>
+        <div class="champ"><label for="d-agent">À l'attention de</label><input id="d-agent" data-path="dossier.agent"></div>
+        <div class="champ"><label for="d-invest">Investisseur (facultatif)</label><input id="d-invest" data-path="dossier.investisseur"></div>
+        <div class="champ"><label for="d-date">Date de l'étude</label><input id="d-date" type="date" data-path="dossier.date"></div>
+      </div>
     </div>
   </details>
 
@@ -278,10 +289,13 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <div class="champ"><label for="b-type">Type</label>
           <select id="b-type" data-path="bien.type"><option value="appartement">Appartement</option><option value="maison">Maison</option></select></div>
         <div class="champ"><label for="b-commune">Commune</label><select id="b-commune" data-path="bien.commune"></select></div>
+        <div class="champ" data-autre hidden><label for="b-commune-nom">Nom de la commune</label><input id="b-commune-nom" data-path="bien.communeNom" placeholder="ex. Lorient"></div>
+        <div class="champ" data-autre hidden><label for="b-secteur">Type de marché</label><select id="b-secteur" data-path="bien.secteur"></select></div>
         <div class="champ"><label for="b-pieces">Pièces</label><input id="b-pieces" type="number" min="1" data-path="bien.pieces"></div>
         <div class="champ"><label for="b-chambres">Chambres</label><input id="b-chambres" type="number" min="0" data-path="bien.chambres"></div>
         <div class="champ"><label for="b-surface">Surface (m²)</label><input id="b-surface" type="number" min="5" data-path="bien.surface"></div>
         <div class="champ"><label for="b-capacite">Voyageurs</label><input id="b-capacite" type="number" min="1" data-path="bien.capacite"></div>
+        <div class="champ plein"><label for="m-menage">Forfait ménage par séjour (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"><span class="aide">Tarif local du prestataire : ménage, linge et consommables. Facturé au voyageur à chaque séjour.</span></div>
         <div class="champ"><label for="b-prix">Prix de vente FAI (€)</label><input id="b-prix" type="number" min="0" step="1000" data-path="bien.prix"></div>
         <div class="champ"><label for="b-annee">Année de construction</label><input id="b-annee" type="number" min="1500" max="2030" data-path="bien.annee"></div>
         <div class="champ"><label for="b-etat">État</label>
@@ -317,8 +331,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <div class="champ"><label for="m-adr">Tarif de référence (€/nuit)</label><input id="m-adr" type="number" min="20" data-path="marche.adrBase"><span class="aide">Moyenne saison (juin, sept.)</span></div>
         <div class="champ"><label for="m-scenario">Scénario du dossier</label>
           <select id="m-scenario" data-path="marche.scenario"><option value="prudent">Prudent</option><option value="realiste">Réaliste</option><option value="optimiste">Optimiste</option></select></div>
-        <div class="champ"><label for="m-dms">Durée moyenne de séjour (nuits)</label><input id="m-dms" type="number" min="1" step="0.1" data-path="marche.dms"><span class="aide">×1,5 en juillet-août</span></div>
-        <div class="champ"><label for="m-menage">Frais de ménage voyageur (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"></div>
+        <div class="champ plein"><label for="m-dms">Durée moyenne de séjour (nuits)</label><input id="m-dms" type="number" min="1" step="0.1" data-path="marche.dms"><span class="aide" id="aide-dms">Plus longue en juillet-août sur le littoral</span></div>
       </div>
       <div class="ligne-btn" style="justify-content:space-between">
         <span>Saisonnalité <span class="mode" id="mode-saison">Auto</span></span>
@@ -344,17 +357,23 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
       <div class="grille">
         <div class="champ"><label for="c-plat">Commission plateformes (%)</label><input id="c-plat" type="number" step="0.5" data-path="cd.plateformes"></div>
         <div class="champ"><label for="c-conc">Commission conciergerie (%)</label><input id="c-conc" type="number" step="0.5" data-path="cd.conciergerie"><span class="aide">Sur les nuitées nettes</span></div>
-        <div class="champ"><label for="c-menage">Coût ménage + linge / séjour (€)</label><input id="c-menage" type="number" data-path="cd.menageCout"></div>
-        <div class="champ"><label for="c-conso">Accueil & consommables / séjour (€)</label><input id="c-conso" type="number" data-path="cd.consommables"></div>
         <div class="champ"><label for="c-energie">Énergie & eau (€/an)</label><input id="c-energie" type="number" data-path="cd.energie"></div>
         <div class="champ"><label for="c-internet">Internet & TV (€/an)</label><input id="c-internet" type="number" data-path="cd.internet"></div>
         <div class="champ"><label for="c-assu">Assurance (€/an)</label><input id="c-assu" type="number" data-path="cd.assurance"></div>
         <div class="champ"><label for="c-cfe">CFE (€/an)</label><input id="c-cfe" type="number" data-path="cd.cfe"></div>
         <div class="champ"><label for="c-entretien">Entretien & renouvellement (% CA)</label><input id="c-entretien" type="number" step="0.5" data-path="cd.entretienPct"></div>
         <div class="champ"><label for="c-amb">Équipement initial (€)</label><input id="c-amb" type="number" step="100" data-path="cd.ameublement"></div>
+        <div class="champ plein"><label>Charges à inclure selon la situation</label>
+          <div class="cases">
+            <label><input type="checkbox" data-path="options.taxeFonciere"> Taxe foncière</label>
+            <label><input type="checkbox" data-path="options.cfe"> CFE</label>
+            <label><input type="checkbox" data-path="options.entretien"> Entretien</label>
+            <label><input type="checkbox" data-path="options.comptable"> Expert-comptable</label>
+          </div>
+          <span class="aide">À cocher seulement quand ces frais s'appliquent (achat en société, régime au réel…). Ils sont alors comptés des deux côtés du comparatif.</span></div>
         <div class="champ plein"><label for="c-regime">Fiscalité courte durée</label>
           <select id="c-regime" data-path="cd.regime">
-            <option value="reel">LMNP au réel (amortissements)</option>
+            <option value="reel">LMNP au réel : loueur en meublé non professionnel (amortissements)</option>
             <option value="classe">Micro-BIC meublé de tourisme classé (50 %)</option>
             <option value="nonclasse">Micro-BIC meublé non classé (30 %)</option></select></div>
       </div>
@@ -417,15 +436,9 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
   <!-- 8. Dossier -->
   <details class="etape">
-    <summary><span class="num">8</span><h2>Destinataires & dossiers</h2><span class="chev">›</span></summary>
+    <summary><span class="num">8</span><h2>Mot personnalisé & sauvegardes</h2><span class="chev">›</span></summary>
     <div class="corps">
-      <div class="grille">
-        <div class="champ"><label for="d-agence">Agence immobilière</label><input id="d-agence" data-path="dossier.agence"></div>
-        <div class="champ"><label for="d-agent">À l'attention de</label><input id="d-agent" data-path="dossier.agent"></div>
-        <div class="champ"><label for="d-invest">Investisseur (facultatif)</label><input id="d-invest" data-path="dossier.investisseur"></div>
-        <div class="champ"><label for="d-date">Date de l'étude</label><input id="d-date" type="date" data-path="dossier.date"></div>
-        <div class="champ plein"><label for="d-mot">Mot personnalisé (page de synthèse)</label><textarea id="d-mot" rows="3" data-path="dossier.message"></textarea></div>
-      </div>
+      <div class="champ"><label for="d-mot">Mot personnalisé (page de synthèse)</label><textarea id="d-mot" rows="3" data-path="dossier.message"></textarea></div>
       <div class="champ"><label for="sauvegardes">Études enregistrées</label><select id="sauvegardes"></select></div>
       <div class="ligne-btn">
         <button class="btn btn-discret btn-mini" type="button" id="btn-charger">Ouvrir</button>
@@ -444,49 +457,113 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 
 <script>
 /* =========================================================
-   Référentiels marché — Côte du Goëlo & Trégor (relevés oct. 2026)
-   adrCoef : indice de prix nuitée vs Plouézec ; ldCoef : indice loyer à l'année
+   Référentiels marché — Bretagne & Nantes (relevés oct. 2026)
+   t2 : tarif de référence d'un T2 (1 chambre) en moyenne saison, €/nuit
+   loyer : loyer à l'année d'un appartement de 45-65 m², €/m²/mois hors charges
    marche : chiffres publics tous logements confondus (€ ; $ convertis à 0,86)
    ========================================================= */
-const COMMUNES = {
-  plouezec:     { nom: "Plouézec", cp: "22470", adrCoef: 1.00, ldCoef: 1.00, marche: { adr: 103, occ: 52, annonces: "≈ 210", src: "AirDNA 2026 (AirROI : 93 €, 38 %)" } },
-  paimpol:      { nom: "Paimpol", cp: "22500", adrCoef: 1.04, ldCoef: 1.05, marche: { adr: 105, occ: 50, annonces: "—", src: "GuestFavorites 2025-26 (Airbtics : 103 €, 57 %)" } },
-  ploubazlanec: { nom: "Ploubazlanec", cp: "22620", adrCoef: 1.12, ldCoef: 1.00, marche: { adr: 125, occ: 53, annonces: "≈ 140 à 240", src: "GuestFavorites avr. 2026 (AirDNA : 56 %)" } },
-  plehedel:     { nom: "Pléhédel", cp: "22290", adrCoef: 0.95, ldCoef: 0.92, marche: { adr: 98, occ: null, annonces: "—", src: "AirROI 2026 (médiane)" } },
-  lanloup:      { nom: "Lanloup", cp: "22580", adrCoef: 1.02, ldCoef: 0.95 },
-  plourivo:     { nom: "Plourivo", cp: "22860", adrCoef: 0.93, ldCoef: 0.92 },
-  kerfot:       { nom: "Kerfot", cp: "22500", adrCoef: 0.92, ldCoef: 0.92 },
-  yvias:        { nom: "Yvias", cp: "22930", adrCoef: 0.92, ldCoef: 0.90 },
-  plouha:       { nom: "Plouha", cp: "22580", adrCoef: 1.00, ldCoef: 0.95 },
-  lezardrieux:  { nom: "Lézardrieux", cp: "22740", adrCoef: 1.00, ldCoef: 0.95 },
-  brehat:       { nom: "Île-de-Bréhat", cp: "22870", adrCoef: 1.35, ldCoef: 1.00 },
-  saintquay:    { nom: "Saint-Quay-Portrieux", cp: "22410", adrCoef: 1.06, ldCoef: 1.05 },
-  treguier:     { nom: "Tréguier", cp: "22220", adrCoef: 1.00, ldCoef: 0.98 }
+const PROFILS = {
+  littoral:  { nom: "Station balnéaire",            occ: [22, 28, 30, 45, 52, 58, 82, 92, 58, 38, 20, 26], adr: [0.85, 0.85, 0.87, 0.95, 0.98, 1.00, 1.25, 1.35, 1.00, 0.92, 0.85, 0.92], dms: 3.2, ete: 1.5 },
+  ville_mer: { nom: "Ville touristique littorale",  occ: [38, 45, 48, 60, 66, 70, 86, 93, 70, 55, 40, 45], adr: [0.85, 0.85, 0.88, 0.97, 1.00, 1.02, 1.22, 1.30, 1.02, 0.93, 0.85, 0.92], dms: 2.8, ete: 1.4 },
+  metropole: { nom: "Grande ville",                 occ: [52, 58, 62, 64, 66, 66, 62, 58, 66, 66, 60, 55], adr: [0.92, 0.95, 0.97, 1.00, 1.02, 1.03, 1.00, 0.95, 1.02, 1.00, 0.97, 0.98], dms: 2.2, ete: 1.2 },
+  port:      { nom: "Ville portuaire",              occ: [40, 45, 48, 55, 58, 62, 70, 74, 60, 52, 42, 40], adr: [0.92, 0.92, 0.94, 0.98, 1.00, 1.03, 1.12, 1.15, 1.02, 0.97, 0.92, 0.95], dms: 2.4, ete: 1.3 },
+  interieur: { nom: "Bretagne intérieure",          occ: [28, 32, 35, 42, 48, 50, 62, 66, 48, 38, 30, 28], adr: [0.95, 0.95, 0.95, 0.98, 1.00, 1.00, 1.08, 1.10, 1.00, 0.97, 0.95, 0.95], dms: 2.5, ete: 1.3 }
 };
-const VOISINES = ["plouezec", "paimpol", "ploubazlanec", "plehedel"];
+const SECTEURS = {
+  goelo: { nom: "Côte du Goëlo", profil: "littoral", voisines: ["plouezec", "paimpol", "ploubazlanec", "plehedel", "saintquay"],
+    intro: "Entre Paimpol, l'archipel de Bréhat et les falaises de Plouha, la côte du Goëlo attire une clientèle fidèle : familles en été, randonneurs du GR 34 au printemps et à l'automne, courts séjours le week-end toute l'année.",
+    demande: ["<b>Juillet-août</b> : occupation proche du complet et prix majorés de 25 à 35 %.", "<b>Avril-juin et septembre</b> : ponts de mai, randonnée, Bréhat, séjours de seniors.", "<b>Hiver</b> : week-ends, vacances scolaires, déplacements professionnels."] },
+  penthievre: { nom: "Côte de Penthièvre", profil: "littoral", voisines: ["pleneuf", "saintquay"],
+    intro: "Du Val-André au cap d'Erquy, la côte de Penthièvre mise sur ses grandes plages de sable, son golf et le sentier des douaniers. Une destination familiale, très prisée des Rennais et des Parisiens le week-end.",
+    demande: ["<b>Juillet-août</b> : plages, voile, marchés : la côte affiche complet.", "<b>Printemps et arrière-saison</b> : golf, randonnée sur le GR 34, week-ends prolongés.", "<b>Hiver</b> : courts séjours et vacances scolaires, demande plus calme."] },
+  emeraude: { nom: "Côte d'Émeraude", profil: "ville_mer", voisines: ["saintmalo"],
+    intro: "Cité corsaire à 2 h 15 de Paris en TGV, Saint-Malo attire visiteurs français et étrangers toute l'année : remparts, plages, Mont-Saint-Michel à proximité, ferries vers les îles anglo-normandes et grands événements nautiques.",
+    demande: ["<b>Été</b> : intra-muros, plages et festivals, prix au plus haut.", "<b>Printemps et automne</b> : week-ends, clientèle étrangère, événements comme la Route du Rhum.", "<b>Hiver</b> : courts séjours citadins, thalassothérapie, déplacements professionnels."],
+    vigilance: "Saint-Malo encadre fortement les meublés de tourisme (autorisations et quotas par quartier) : vérifier en mairie qu'une autorisation peut être obtenue avant l'achat." },
+  golfe: { nom: "Golfe du Morbihan", profil: "ville_mer", voisines: ["vannes"],
+    intro: "Ville d'art et d'histoire au fond du golfe du Morbihan, Vannes conjugue tourisme et activité économique : remparts et port, îles du golfe en bateau, clientèle d'affaires et étudiante en semaine.",
+    demande: ["<b>Été</b> : îles du golfe, croisières, festivals : forte demande familiale.", "<b>Printemps et automne</b> : week-ends, séminaires, tourisme culturel.", "<b>Toute l'année</b> : déplacements professionnels et familles en visite."],
+    vigilance: "Comme dans la plupart des villes du golfe, la location d'une résidence secondaire peut être soumise à autorisation de changement d'usage : à vérifier en mairie." },
+  nantes: { nom: "Métropole nantaise", profil: "metropole", voisines: ["nantes"],
+    intro: "Métropole dynamique à 2 h de Paris, Nantes attire une clientèle régulière toute l'année : déplacements professionnels, congrès, étudiants et familles, et l'été les visiteurs du Voyage à Nantes et des Machines de l'Île.",
+    demande: ["<b>En semaine</b> : clientèle d'affaires, congrès, missions au CHU et dans les entreprises.", "<b>Week-ends</b> : tourisme urbain, événements (La Folle Journée, matchs, concerts).", "<b>Été</b> : Voyage à Nantes ; moins de saisonnalité qu'en bord de mer."],
+    vigilance: "À Nantes, la location d'une résidence secondaire en meublé de tourisme demande une autorisation de changement d'usage : à vérifier avant l'achat." },
+  rennes: { nom: "Métropole rennaise", profil: "metropole", voisines: ["rennes"],
+    intro: "Capitale de la Bretagne à 1 h 25 de Paris en TGV, Rennes offre une demande régulière toute l'année : déplacements professionnels, salons du Parc Expo, étudiants, patients et familles du CHU, visiteurs de passage.",
+    demande: ["<b>En semaine</b> : clientèle professionnelle et formations.", "<b>Week-ends</b> : tourisme urbain, Trans Musicales en décembre, Tombées de la Nuit l'été.", "<b>Toute l'année</b> : familles d'étudiants, rendez-vous médicaux, mutations."],
+    vigilance: "À Rennes, la location d'une résidence secondaire en meublé de tourisme est soumise à autorisation de changement d'usage, souvent avec compensation : à vérifier avant l'achat." },
+  brest: { nom: "Brest et le Finistère nord", profil: "port", voisines: ["brest"],
+    intro: "Ville maritime à la pointe de la Bretagne, Brest vit de la Marine nationale, de la recherche (Ifremer, université) et de son CHU. Elle sert aussi de porte d'entrée vers la presqu'île de Crozon, Ouessant et les Abers.",
+    demande: ["<b>En semaine</b> : missions professionnelles, Marine, chantiers, recherche.", "<b>Été</b> : Océanopolis, Ouessant, Crozon : la demande touristique prend le relais.", "<b>Événements</b> : fêtes maritimes, congrès et salons."] },
+  centre: { nom: "Centre Bretagne", profil: "interieur", voisines: ["loudeac"],
+    intro: "Au carrefour des grands axes du centre de la Bretagne, Loudéac accueille surtout une clientèle de passage : salariés en déplacement, entreprises agroalimentaires et du bâtiment, familles en visite, cyclistes de la voie verte.",
+    demande: ["<b>En semaine</b> : missions de chantier et déplacements professionnels, séjours de plusieurs nuits.", "<b>Week-ends</b> : familles, mariages et événements, randonnée et vélo.", "<b>Été</b> : étape pratique pour rejoindre les côtes nord et sud."] },
+  autre: { nom: "", profil: "littoral", voisines: [], intro: "", demande: [] }
+};
+const COMMUNES = {
+  plouezec:     { nom: "Plouézec", cp: "22470", secteur: "goelo", t2: 72, loyer: 11, marche: { adr: 103, occ: 52, annonces: "≈ 210", src: "AirDNA 2026 (AirROI : 93 €, 38 %)" } },
+  paimpol:      { nom: "Paimpol", cp: "22500", secteur: "goelo", t2: 75, loyer: 11.5, marche: { adr: 105, occ: 50, annonces: "—", src: "GuestFavorites 2025-26 (Airbtics : 103 €, 57 %)" } },
+  ploubazlanec: { nom: "Ploubazlanec", cp: "22620", secteur: "goelo", t2: 80, loyer: 11, marche: { adr: 125, occ: 53, annonces: "≈ 140 à 240", src: "GuestFavorites avr. 2026 (AirDNA : 56 %)" } },
+  plehedel:     { nom: "Pléhédel", cp: "22290", secteur: "goelo", t2: 68, loyer: 10, marche: { adr: 98, occ: null, annonces: "—", src: "AirROI 2026 (médiane)" } },
+  lanloup:      { nom: "Lanloup", cp: "22580", secteur: "goelo", t2: 73, loyer: 10.5 },
+  plourivo:     { nom: "Plourivo", cp: "22860", secteur: "goelo", t2: 67, loyer: 10 },
+  kerfot:       { nom: "Kerfot", cp: "22500", secteur: "goelo", t2: 66, loyer: 10 },
+  yvias:        { nom: "Yvias", cp: "22930", secteur: "goelo", t2: 66, loyer: 10 },
+  plouha:       { nom: "Plouha", cp: "22580", secteur: "goelo", t2: 72, loyer: 10.5 },
+  lezardrieux:  { nom: "Lézardrieux", cp: "22740", secteur: "goelo", t2: 72, loyer: 10.5 },
+  brehat:       { nom: "Île-de-Bréhat", cp: "22870", secteur: "goelo", t2: 97, loyer: 11 },
+  treguier:     { nom: "Tréguier", cp: "22220", secteur: "goelo", t2: 72, loyer: 10.5 },
+  saintquay:    { nom: "Saint-Quay-Portrieux", cp: "22410", secteur: "goelo", t2: 78, loyer: 11.5, marche: { adr: 112, occ: 50, annonces: "≈ 50", src: "AirDNA 2026 (AirROI : 118 €, 35 %)" } },
+  pleneuf:      { nom: "Pléneuf-Val-André", cp: "22370", secteur: "penthievre", t2: 82, loyer: 11.5, marche: { adr: 117, occ: 49, annonces: "≈ 500", src: "GuestFavorites mai 2026 (AirROI : 126 €, 37 %)" } },
+  saintmalo:    { nom: "Saint-Malo", cp: "35400", secteur: "emeraude", t2: 85, loyer: 13.5, marche: { adr: 115, occ: 58, annonces: "≈ 1 400 à 1 750", src: "GuestFavorites mars 2026 (Airbtics : 106 €, 67 %)" } },
+  vannes:       { nom: "Vannes", cp: "56000", secteur: "golfe", t2: 75, loyer: 13.5, marche: { adr: 88, occ: 60, annonces: "≈ 750 à 1 450", src: "GuestFavorites 2026 (Airbtics : 86 €, 67 %)" } },
+  nantes:       { nom: "Nantes", cp: "44000", secteur: "nantes", t2: 68, loyer: 14, marche: { adr: 79, occ: 59, annonces: "≈ 1 600 à 2 400", src: "GuestFavorites 2025-26 (Airbtics : 71 €, 67 %)" } },
+  rennes:       { nom: "Rennes", cp: "35000", secteur: "rennes", t2: 66, loyer: 15, marche: { adr: 73, occ: 65, annonces: "≈ 1 000 à 1 550", src: "GuestFavorites avr. 2026 (Airbtics : 71 €, 73 %)" } },
+  brest:        { nom: "Brest", cp: "29200", secteur: "brest", t2: 56, loyer: 10.5, marche: { adr: 59, occ: 55, annonces: "—", src: "Airbtics 2025 : 65 % (AirDNA : 41 %)" } },
+  loudeac:      { nom: "Loudéac", cp: "22600", secteur: "centre", t2: 52, loyer: 8.5, marche: { adr: 70, occ: null, annonces: "≈ 40", src: "Likibu, HomeToGo, Airbtics (61 € hors ménage)" } },
+  autre:        { nom: "Autre commune", cp: "", secteur: "autre", t2: 70, loyer: 11 }
+};
+const T2_SECTEUR = { littoral: 72, ville_mer: 78, metropole: 66, port: 58, interieur: 52 };
+const LOYER_SECTEUR = { littoral: 10.5, ville_mer: 13, metropole: 14, port: 10.5, interieur: 8.5 };
+function communeDe(b) {
+  const c = COMMUNES[b.commune] || COMMUNES.plouezec;
+  if (b.commune !== "autre") return { ...c, cle: b.commune, sect: SECTEURS[c.secteur], profil: PROFILS[SECTEURS[c.secteur].profil] };
+  const pk = PROFILS[b.secteur] ? b.secteur : "littoral";
+  return { ...c, cle: "autre", nom: b.communeNom || "Commune à préciser", t2: T2_SECTEUR[pk], loyer: LOYER_SECTEUR[pk], sect: { ...SECTEURS.autre, profil: pk }, profil: PROFILS[pk] };
+}
 
 const MOIS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 const MOIS_C = ["Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."];
 const JOURS = [31,28,31,30,31,30,31,31,30,31,30,31];
-/* Saisonnalité type d'un logement confié à une conciergerie sur la côte du Goëlo (moy. ≈ 45 %) */
-const SAISON_OCC = [22, 28, 30, 45, 52, 58, 82, 92, 58, 38, 20, 26];
-const SAISON_ADR = [0.85, 0.85, 0.87, 0.95, 0.98, 1.00, 1.25, 1.35, 1.00, 0.92, 0.85, 0.92];
 const SCENARIOS = { prudent: { occ: 0.85, adr: 0.95, nom: "Prudent" }, realiste: { occ: 1, adr: 1, nom: "Réaliste" }, optimiste: { occ: 1.10, adr: 1.05, nom: "Optimiste" } };
-/* Tarif de référence par typologie (€/nuit, moyenne saison, Plouézec) */
-const ADR_APPART = [62, 72, 95, 118, 138];
-const ADR_MAISON = [80, 95, 118, 145, 180, 220];
+/* Indice de prix par typologie, base 1 = T2 (1 chambre) */
+const ADR_APPART = [0.86, 1, 1.32, 1.64, 1.92];
+const ADR_MAISON = [1.11, 1.32, 1.64, 2.01, 2.5, 3.05];
 const ETAT = { a_rafraichir: { adr: 0.92, ld: 0.95, nom: "À rafraîchir" }, bon: { adr: 1, ld: 1, nom: "Bon état" }, renove: { adr: 1.06, ld: 1.03, nom: "Rénové" }, premium: { adr: 1.15, ld: 1.06, nom: "Haut de gamme" } };
 const AGENCES = ["Optimo", "Orpi", "Century 21", "Laforêt", "Square Habitat", "Guy Hoquet", "Stéphane Plaza", "Nestenn", "iad", "Safti", "Capifrance", "Foncia", "Citya", "Le Tuc", "ERA", "Agence du Goëlo", "Cabinet Sainte-Anne", "Bretagne Sud Immobilier", "Kermarrec", "Immo de France", "Notaire"];
 const PLAFOND_NONCLASSE = 15000, PLAFOND_CLASSE = 83600, PLAFOND_FONCIER = 15000, PLAFOND_MICROBIC_LD = 83600;
 
 /* ---------- État ---------- */
+const PORTAILS = ["leboncoin", "seloger", "bienici", "logic-immo", "pap", "figaro", "paruvendu", "ouestfrance-immo", "green-acres", "avendrealouer", "superimmo", "meilleursagents", "google", "facebook", "airbnb", "booking"];
+const AGENCES_DOMAINES = { optimo: "Optimo Immobilier", orpi: "Orpi", century21: "Century 21", laforet: "Laforêt", squarehabitat: "Square Habitat", "guy-hoquet": "Guy Hoquet", guyhoquet: "Guy Hoquet", stephaneplazaimmobilier: "Stéphane Plaza Immobilier", nestenn: "Nestenn", iadfrance: "iad", safti: "Safti", capifrance: "Capifrance", foncia: "Foncia", citya: "Citya", erafrance: "ERA Immobilier", "immobilier-bretagne": "Immobilier Bretagne", kermarrec: "Kermarrec Habitation", "kermarrec-habitation": "Kermarrec Habitation" };
+function agenceDepuisLien(lien) {
+  let h;
+  try { h = new URL(/^https?:/i.test(lien) ? lien : "https://" + lien).hostname.toLowerCase(); } catch (e) { return ""; }
+  h = h.replace(/^www\d?\./, "");
+  const parts = h.split(".");
+  const base = parts.length > 2 && !["co", "com"].includes(parts[parts.length - 2]) ? parts[parts.length - 2] : parts[0];
+  if (PORTAILS.some(x => base.includes(x))) return "";
+  for (const [k, v] of Object.entries(AGENCES_DOMAINES)) if (base.replace(/-/g, "").includes(k.replace(/-/g, ""))) return v;
+  return base.split(/[-_]/).filter(Boolean).map(w => w === "immo" ? "Immobilier" : w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
 const EXEMPLE_ANNONCE = "EXEMPLE — Agence Optimo — Plouézec (22470)\nAppartement 2 pièces de 30 m², construction 2000, entièrement refait à neuf : séjour avec cuisine équipée, une chambre, salle d'eau. Proche du bourg et des plages de la côte du Goëlo, à 10 minutes de Paimpol.\nPrix : 129 000 € honoraires inclus.";
 function etatVide() {
   return {
-    id: "e" + Date.now().toString(36), annonce: "",
-    bien: { type: "appartement", commune: "plouezec", pieces: "", chambres: "", surface: "", capacite: "", prix: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
+    id: "e" + Date.now().toString(36), annonce: "", lien: "",
+    options: { taxeFonciere: false, cfe: false, entretien: false, comptable: false },
+    bien: { type: "appartement", commune: "plouezec", communeNom: "", secteur: "littoral", pieces: "", chambres: "", surface: "", capacite: "", prix: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
     marche: { adrBase: "", scenario: "realiste", dms: "", fraisMenage: "", saisonMode: "auto", mois: [], source: "" },
-    cd: { plateformes: "", conciergerie: "", menageCout: "", consommables: "", energie: "", internet: "", assurance: "", cfe: "", entretienPct: "", ameublement: "", regime: "reel" },
+    cd: { plateformes: "", conciergerie: "", energie: "", internet: "", assurance: "", cfe: "", entretienPct: "", ameublement: "", regime: "reel" },
     ld: { mode: "meublee", loyer: "", vacance: "", gestion: "", gli: "", assurance: "", entretien: "", recup: "", regime: "auto" },
     fin: { comptant: false, notaire: "", apport: "", taux: "", duree: "", assurance: "" },
     fisc: { tmi: "30", ps: "" },
@@ -516,7 +593,7 @@ const arrondi = (v, pas) => Math.round(v / pas) * pas;
 function autos(s) {
   const A = {};
   const b = s.bien, maison = b.type === "maison";
-  const c = COMMUNES[b.commune] || COMMUNES.plouezec;
+  const c = communeDe(b);
   const pieces = num(b.pieces) || (maison ? 4 : 2);
   A["bien.pieces"] = pieces;
   A["bien.chambres"] = Math.max(0, maison ? pieces - 1 : pieces - 1);
@@ -528,17 +605,15 @@ function autos(s) {
   A["bien.chargesCopro"] = maison ? 0 : arrondi(surf * 24, 10);
   A["bien.taxeFonciere"] = arrondi(surf * (maison ? 11 : 16), 10);
 
-  const base = maison ? ADR_MAISON[Math.min(ch, 5)] : ADR_APPART[Math.min(ch, 4)];
-  let f = c.adrCoef * ETAT[b.etat || "bon"].adr;
+  const base = c.t2 * (maison ? ADR_MAISON[Math.min(ch, 5)] : ADR_APPART[Math.min(ch, 4)]);
+  let f = ETAT[b.etat || "bon"].adr;
   if (b.vueMer) f *= 1.15; if (b.plage) f *= 1.06; if (b.exterieur) f *= 1.04; if (b.parking) f *= 1.02; if (b.piscine) f *= 1.15;
   A["marche.adrBase"] = Math.round(base * f);
-  A["marche.dms"] = maison ? 4 : 3.2;
-  A["marche.fraisMenage"] = surf < 40 ? 45 : surf < 70 ? 60 : surf < 110 ? 80 : 110;
+  A["marche.dms"] = Math.round(c.profil.dms * (maison ? 1.25 : 1) * 10) / 10;
+  A["marche.fraisMenage"] = surf < 40 ? 30 : surf < 70 ? 45 : surf < 110 ? 65 : 90;
 
   A["cd.plateformes"] = 15;
   A["cd.conciergerie"] = 20;
-  A["cd.menageCout"] = A["marche.fraisMenage"];
-  A["cd.consommables"] = 4;
   A["cd.energie"] = arrondi(400 + surf * 17, 10);
   A["cd.internet"] = 360;
   A["cd.assurance"] = arrondi(150 + surf * 1.5, 10);
@@ -546,8 +621,8 @@ function autos(s) {
   A["cd.entretienPct"] = 4;
   A["cd.ameublement"] = arrondi(2200 + surf * 45, 100);
 
-  const eurM2 = surf <= 30 ? 14 : surf <= 45 ? 12.5 : surf <= 65 ? 11 : surf <= 90 ? 10 : 9;
-  A["ld.loyer"] = arrondi(surf * eurM2 * c.ldCoef * ETAT[b.etat || "bon"].ld * (s.ld.mode === "meublee" ? 1.08 : 1), 5);
+  const taille = surf <= 30 ? 1.27 : surf <= 45 ? 1.12 : surf <= 65 ? 1 : surf <= 90 ? 0.9 : 0.82;
+  A["ld.loyer"] = arrondi(surf * c.loyer * taille * ETAT[b.etat || "bon"].ld * (s.ld.mode === "meublee" ? 1.08 : 1), 5);
   A["ld.vacance"] = s.ld.mode === "meublee" ? 6 : 4;
   A["ld.gestion"] = 7;
   A["ld.gli"] = 2.5;
@@ -562,7 +637,6 @@ function autos(s) {
   A["fin.assurance"] = 0.30;
   A["fisc.ps"] = 17.2;
 
-  A.mois = SAISON_OCC.map((o, i) => ({ adr: Math.round(A["marche.adrBase"] * SAISON_ADR[i]), occ: o }));
   return A;
 }
 function V(s, A, p) {
@@ -576,7 +650,8 @@ function V(s, A, p) {
 function moisEffectifs(s, A) {
   const adrBase = V(s, A, "marche.adrBase");
   if (s.marche.saisonMode === "manuel" && s.marche.mois.length === 12) return s.marche.mois.map(m => ({ adr: num(m.adr) || 0, occ: num(m.occ) || 0 }));
-  return SAISON_OCC.map((o, i) => ({ adr: Math.round(adrBase * SAISON_ADR[i]), occ: o }));
+  const pr = communeDe(s.bien).profil;
+  return pr.occ.map((o, i) => ({ adr: Math.round(adrBase * pr.adr[i]), occ: o }));
 }
 
 /* ---------- Calculs ---------- */
@@ -607,17 +682,19 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
   const b = s.bien;
   const surface = g("bien.surface"), prix = g("bien.prix");
   const dms = g("marche.dms"), fraisMen = g("marche.fraisMenage");
+  const ete = communeDe(b).profil.ete;
   const mois = moisEffectifs(s, A).map((m, i) => {
-    const occ = Math.min(0.97, (m.occ / 100) * sc.occ * facteurOcc);
-    const adr = m.adr * sc.adr;
-    const nuits = JOURS[i] * occ;
-    const sejours = nuits / (dms * (i === 6 || i === 7 ? 1.5 : 1));
-    return { i, occ, adr, nuits, sejours, caNuits: nuits * adr, caMenage: sejours * fraisMen };
+    const adr = Math.round(m.adr * sc.adr);
+    const nuits = Math.round(JOURS[i] * Math.min(0.97, (m.occ / 100) * sc.occ * facteurOcc));
+    const sejours = nuits ? Math.max(1, Math.round(nuits / (dms * (i === 6 || i === 7 ? ete : 1)))) : 0;
+    return { i, occ: nuits / JOURS[i], adr, nuits, sejours, caNuits: nuits * adr, caMenage: sejours * fraisMen };
   });
   const T = mois.reduce((a, m) => ({ nuits: a.nuits + m.nuits, sejours: a.sejours + m.sejours, caNuits: a.caNuits + m.caNuits, caMenage: a.caMenage + m.caMenage }), { nuits: 0, sejours: 0, caNuits: 0, caMenage: 0 });
   T.occ = T.nuits / 365; T.adr = T.nuits ? T.caNuits / T.nuits : 0;
 
-  const copro = g("bien.chargesCopro"), tf = g("bien.taxeFonciere");
+  const copro = g("bien.chargesCopro");
+  const opt = s.options || {};
+  const tf = opt.taxeFonciere ? g("bien.taxeFonciere") : 0;
   const tauxImpot = (num(s.fisc.tmi) || 0) / 100 + g("fisc.ps") / 100;
   const comptant = !!s.fin.comptant;
   const notaire = prix * g("fin.notaire") / 100;
@@ -628,17 +705,16 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
   cd.lignes = [
     ["Commission plateformes (Airbnb, Booking…)", cd.recettes * g("cd.plateformes") / 100],
     ["Conciergerie Les Domaines de Tri Hent", T.caNuits * (1 - g("cd.plateformes") / 100) * g("cd.conciergerie") / 100],
-    ["Ménage hôtelier & linge", T.sejours * g("cd.menageCout")],
-    ["Accueil & consommables", T.sejours * g("cd.consommables")],
+    ["Forfait ménage", T.caMenage],
     ["Énergie & eau", g("cd.energie")],
     ["Internet & TV", g("cd.internet")],
     ["Assurance", g("cd.assurance")],
-    ["Charges de copropriété", copro],
-    ["Taxe foncière", tf],
-    ["CFE", g("cd.cfe")],
-    ["Entretien", cd.recettes * g("cd.entretienPct") / 100]
+    ["Charges de copropriété", copro]
   ];
-  if (s.cd.regime === "reel") cd.lignes.push(["Expert-comptable LMNP", 450]);
+  if (opt.taxeFonciere) cd.lignes.push(["Taxe foncière", tf]);
+  if (opt.cfe) cd.lignes.push(["CFE", g("cd.cfe")]);
+  if (opt.entretien) cd.lignes.push(["Entretien", cd.recettes * g("cd.entretienPct") / 100]);
+  if (opt.comptable) cd.lignes.push(["Expert-comptable", 450]);
   cd.charges = cd.lignes.reduce((a, l) => a + l[1], 0);
   cd.net = cd.recettes - cd.charges;
   cd.equipement = g("cd.ameublement");
@@ -655,16 +731,16 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
     ["Honoraires de l'agence", ld.recettes * g("ld.gestion") / 100],
     ["Garantie loyers impayés", ld.recettes * g("ld.gli") / 100],
     ["Assurance", g("ld.assurance")],
-    ["Charges de copropriété", copro * (1 - g("ld.recup") / 100)],
-    ["Taxe foncière", tf],
-    ["Entretien", g("ld.entretien")]
+    ["Charges de copropriété", copro * (1 - g("ld.recup") / 100)]
   ];
-  if (meublee) ld.lignes.push(["CFE", g("cd.cfe")]);
+  if (opt.taxeFonciere) ld.lignes.push(["Taxe foncière", tf]);
+  if (opt.cfe && meublee) ld.lignes.push(["CFE", g("cd.cfe")]);
+  if (opt.entretien) ld.lignes.push(["Entretien", g("ld.entretien")]);
+  if (opt.comptable) ld.lignes.push(["Expert-comptable", 450]);
   let regimeLd = s.ld.regime;
   if (regimeLd === "auto") regimeLd = meublee ? (s.cd.regime === "reel" ? "reel" : "microbic") : (s.cd.regime === "reel" ? "foncierreel" : "microfoncier");
   if (!meublee && (regimeLd === "reel" || regimeLd === "microbic")) regimeLd = regimeLd === "reel" ? "foncierreel" : "microfoncier";
   if (meublee && (regimeLd === "foncierreel" || regimeLd === "microfoncier")) regimeLd = regimeLd === "foncierreel" ? "reel" : "microbic";
-  if (regimeLd === "reel") ld.lignes.push(["Expert-comptable LMNP", 450]);
   ld.charges = ld.lignes.reduce((a, l) => a + l[1], 0);
   ld.vacance = vac;
   ld.net = ld.recettes - ld.charges;
@@ -743,13 +819,18 @@ function analyserAnnonce(texte) {
   // Commune : celle qui revient le plus, à égalité la première citée
   let best = null;
   for (const [cle, c] of Object.entries(COMMUNES)) {
+    if (cle === "autre") continue;
     const n = norm(c.nom).replace(/-/g, "[- ]");
     const re = new RegExp("\\b" + n + "\\b", "g");
     const hits = [...t.matchAll(re)];
     const viaCp = t.includes(c.cp) && cle !== "kerfot" ? 1 : 0;
     if (hits.length || viaCp) { const score = hits.length + viaCp * 2; const pos = hits.length ? hits[0].index : 99999; if (!best || score > best.score || (score === best.score && pos < best.pos)) best = { cle, score, pos }; }
   }
-  if (best) r.commune = best.cle;
+  if (best && best.cle !== "autre") r.commune = best.cle;
+  else {
+    const mc = texte.match(/([A-ZÉÈÎ][A-Za-zÀ-ÿ'’]+(?:[- ](?:sur|en|de|du|la|le|les|[A-ZÉÈÎ][A-Za-zÀ-ÿ'’]+)){0,4})\s*\(?\b(\d{5})\b\)?/);
+    if (mc) { r.commune = "autre"; r.communeNom = mc[1]; }
+  }
   // Agence & référence
   for (const a of AGENCES) if (t.includes(norm(a))) { r.agence = a === "Notaire" ? "" : (a === "Optimo" ? "Optimo Immobilier" : a); break; }
   m = texte.match(/\br[ée]f(?:[ée]rence)?(?:\s+annonce)?\s*[.:n°#]+\s*([A-Z0-9][A-Z0-9-]{2,})/i); if (m) r.reference = m[1];
@@ -758,7 +839,10 @@ function analyserAnnonce(texte) {
 
 /* ---------- Synchronisation formulaire ---------- */
 function remplirSelectCommunes() {
-  $("#b-commune").innerHTML = Object.entries(COMMUNES).map(([k, c]) => `<option value="${k}">${esc(c.nom)}</option>`).join("");
+  const groupes = Object.entries(SECTEURS).filter(([k]) => k !== "autre").map(([sk, sect]) =>
+    `<optgroup label="${esc(sect.nom)}">${Object.entries(COMMUNES).filter(([, c]) => c.secteur === sk).map(([k, c]) => `<option value="${k}">${esc(c.nom)}</option>`).join("")}</optgroup>`).join("");
+  $("#b-commune").innerHTML = groupes + `<optgroup label="Ailleurs"><option value="autre">Autre commune…</option></optgroup>`;
+  $("#b-secteur").innerHTML = Object.entries(PROFILS).map(([k, pr]) => `<option value="${k}">${esc(pr.nom)}</option>`).join("");
 }
 function versFormulaire() {
   const A = autos(S);
@@ -771,6 +855,9 @@ function versFormulaire() {
       el.placeholder = a !== undefined ? "≈ " + (typeof a === "number" ? String(a).replace(".", ",") : a) : (el.getAttribute("data-ph") || el.placeholder);
     }
   });
+  document.querySelectorAll("[data-autre]").forEach(el => el.hidden = S.bien.commune !== "autre");
+  const pr = communeDe(S.bien).profil;
+  $("#aide-dms").textContent = pr.ete > 1.25 ? "Séjours plus longs en juillet-août" : "Séjours courts toute l'année";
   dessinerSaison();
   dessinerComparables();
 }
@@ -859,7 +946,7 @@ function titreBien(r) {
   const b = S.bien;
   if (b.titre) return b.titre;
   const pieces = r.g("bien.pieces");
-  const c = COMMUNES[b.commune]?.nom || "";
+  const c = communeDe(b).nom;
   return `${b.type === "maison" ? "Maison" : "Appartement"} ${pieces} pièce${pieces > 1 ? "s" : ""} — ${nf0.format(r.surface)} m² — ${c}`;
 }
 function dateFr(d) { try { return new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return d; } }
@@ -868,8 +955,9 @@ function rendre() {
   const r = calculer(S);
   const P = calculer(S, "prudent"), O = calculer(S, "optimiste");
   const pm = pointMort(S);
-  const b = S.bien, c = COMMUNES[b.commune] || COMMUNES.plouezec;
+  const b = S.bien, c = communeDe(b), sect = c.sect;
   const titre = titreBien(r);
+  const ans = (x, net) => net > 0 ? Math.round(x / net) + " ans" : "—";
   const gain = r.cd.net - r.ld.net;
   const gainPct = r.ld.net > 0 ? gain / r.ld.net * 100 : 0;
   const gainNet = r.cd.netApresImpot - r.ld.netApresImpot;
@@ -892,7 +980,7 @@ function rendre() {
       <p class="kicker">Étude de marché · Location courte durée</p>
       <h1>Étude de rentabilité <em>locative</em></h1>
       <div class="bien">
-        <div><h2>${esc(titre)}</h2><p>${esc(c.nom)} (${c.cp}) · ${b.annee ? "Construction " + esc(b.annee) + " · " : ""}${ETAT[b.etat].nom}${atouts.length ? " · " + atouts.join(", ") : ""}${b.reference ? " · Réf. " + esc(b.reference) : ""}</p></div>
+        <div><h2>${esc(titre)}</h2><p>${esc(c.nom)}${c.cp ? " (" + c.cp + ")" : ""} · ${b.annee ? "Construction " + esc(b.annee) + " · " : ""}${ETAT[b.etat].nom}${atouts.length ? " · " + atouts.join(", ") : ""}${b.reference ? " · Réf. " + esc(b.reference) : ""}</p></div>
         <div class="prix">${eur(r.prix)}</div>
       </div>
       <div class="chiffres-couv">
@@ -942,6 +1030,7 @@ function rendre() {
           <li>Rendement net avant impôt : <b>${pct(r.cd.rdtNet, 1)}</b> en courte durée, contre <b>${pct(r.ld.rdtNet, 1)}</b> à l'année.</li>
           <li>Après impôt (${regimeNom[S.cd.regime]}) : <b>${eurArr(r.cd.netApresImpot)}</b> contre <b>${eurArr(r.ld.netApresImpot)}</b>, soit ${signe(arrondi(gainNet, 100))} par an.</li>
           ${pm !== null ? `<li>Point d'équilibre : dès <b>${Math.round(pm)} %</b> d'occupation annuelle, la courte durée rapporte autant que la location à l'année.</li>` : ""}
+          ${r.cd.net > 0 ? `<li>Rentabilisation : le projet de ${eurArr(r.cd.invest, 1000)} est couvert par les revenus nets en <b>${ans(r.cd.invest, r.cd.net)}</b> en courte durée, contre <b>${ans(r.ld.invest, r.ld.net)}</b> à l'année.</li>` : ""}
           <li>Fourchette selon les scénarios : de <b>${eurArr(P.cd.net)}</b> (prudent) à <b>${eurArr(O.cd.net)}</b> (optimiste) par an.</li>
           <li>Le bien reste disponible pour le propriétaire hors réservations, et nous prenons en charge l'ensemble du quotidien.</li>
         </ul>
@@ -953,32 +1042,35 @@ function rendre() {
     ${pied(2, TOTAL)}</section>`);
 
   /* 3. Marché */
-  const lignesMarche = VOISINES.map(k => ({ k, c: COMMUNES[k] })).filter(x => x.c.marche);
-  if (!COMMUNES[b.commune].marche) lignesMarche.unshift({ k: b.commune, c: COMMUNES[b.commune], estime: true });
+  const lignesMarche = (sect.voisines || []).map(k => ({ k, c: COMMUNES[k] })).filter(x => x.c.marche);
+  if (!c.marche) lignesMarche.unshift({ k: c.cle, c, estime: true });
+  const zone = sect.nom || c.profil.nom;
+  const introMarche = sect.intro || `Marché de type « ${c.profil.nom.toLowerCase()} » : la projection s'appuie sur la saisonnalité observée dans les communes bretonnes comparables, à affiner avec les données PriceLabs ou AirDNA de ${c.nom}.`;
+  const demande = sect.demande && sect.demande.length ? sect.demande : (c.profil.ete > 1.25 ? ["<b>Été</b> : pic de fréquentation et prix au plus haut.", "<b>Printemps et automne</b> : week-ends et vacances scolaires.", "<b>Hiver</b> : demande plus calme, courts séjours."] : ["<b>En semaine</b> : déplacements professionnels.", "<b>Week-ends</b> : tourisme et familles en visite.", "<b>Toute l'année</b> : une demande régulière, peu saisonnière."]);
   const comps = S.comparables.filter(x => x.titre || x.prix);
   pages.push(`<section class="page">${entete("Le marché local")}
-    <p class="kicker">Côte du Goëlo · ${esc(c.nom)} et alentours</p>
+    <p class="kicker">${esc(zone)} · ${esc(c.nom)}${lignesMarche.length > 1 ? " et alentours" : ""}</p>
     <h2 class="titre">Le marché de la location courte durée</h2>
-    <p class="intro">Entre Paimpol, l'archipel de Bréhat et les falaises de Plouha, la côte du Goëlo attire une clientèle fidèle : familles en été, randonneurs du GR 34 au printemps et à l'automne, courts séjours le week-end toute l'année.</p>
+    <p class="intro">${esc(introMarche)}</p>
     <table class="t">
       <thead><tr><th>Commune</th><th class="n">Prix moyen / nuit</th><th class="n">Occupation</th><th class="n">Annonces actives</th><th>Source</th></tr></thead>
       <tbody>
         ${lignesMarche.map(x => x.estime
-          ? `<tr class="hl"><td>${esc(x.c.nom)}</td><td class="n">≈ ${eur(103 * x.c.adrCoef)}</td><td class="n">—</td><td class="n">—</td><td>Estimation Tri Hent (indice vs Plouézec)</td></tr>`
+          ? `<tr class="hl"><td>${esc(x.c.nom)}</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td>Pas de donnée publique fiable : voir la projection ci-dessous</td></tr>`
           : `<tr class="${x.k === b.commune ? "hl" : ""}"><td>${esc(x.c.nom)}</td><td class="n">${eur(x.c.marche.adr)}</td><td class="n">${x.c.marche.occ ? x.c.marche.occ + " %" : "—"}</td><td class="n">${esc(x.c.marche.annonces)}</td><td>${esc(x.c.marche.src)}</td></tr>`).join("")}
         <tr class="total"><td>Votre bien (projection)</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">—</td><td>Scénario ${scNom}, ${r.g("bien.capacite")} voyageurs</td></tr>
       </tbody>
     </table>
-    <p class="petit" style="margin-top:1.5mm">Moyennes tous logements confondus (studios aux grandes maisons), relevées en octobre 2026. Les annonces de particuliers peu actives tirent l'occupation moyenne vers le bas.</p>
+    <p class="petit" style="margin-top:1.5mm">Prix moyens par nuit hors frais de ménage pour votre bien. Les moyennes de marché couvrent tous les logements (du studio à la grande maison), relevées en octobre 2026 ; selon la source, elles peuvent intégrer une part des frais de ménage. Les annonces de particuliers peu actives tirent l'occupation moyenne vers le bas.</p>
     <h3>Saisonnalité projetée pour votre bien</h3>
     ${graphSaison(r)}
-    <div class="legende"><span><i style="background:#9DB0A3"></i>Taux d'occupation</span><span><i style="background:#1E3A2B"></i>Haute saison</span><span><i style="background:#B08D4A;height:2px;vertical-align:3px"></i>Prix moyen par nuit (échelle de droite)</span></div>
+    <div class="legende"><span><i style="background:#9DB0A3"></i>Taux d'occupation</span><span><i style="background:#1E3A2B"></i>Juillet-août</span><span><i style="background:#B08D4A;height:2px;vertical-align:3px"></i>Prix moyen par nuit (échelle de droite)</span></div>
     ${S.marche.source ? `<p class="petit" style="margin-top:1mm">Données saisonnières : ${esc(S.marche.source)}.</p>` : ""}
     ${comps.length ? `<h3>Annonces comparables</h3>
     <table class="t"><thead><tr><th>Annonce</th><th>Commune</th><th class="n">Voyageurs</th><th class="n">Prix / nuit</th><th class="n">Note</th><th class="n">Occupation</th></tr></thead><tbody>
       ${comps.slice(0, 6).map(x => `<tr><td>${esc(x.titre)}</td><td>${esc(x.commune)}</td><td class="n">${esc(x.voyageurs)}</td><td class="n">${num(x.prix) ? eur(num(x.prix)) : "—"}</td><td class="n">${num(x.note) ? String(x.note).replace(".", ",") + (x.avis ? " (" + esc(x.avis) + ")" : "") : "—"}</td><td class="n">${num(x.occ) ? num(x.occ) + " %" : "—"}</td></tr>`).join("")}
     </tbody></table>` : `<div class="deux-col" style="margin-top:4mm">
-      <div><h3 style="margin-top:0">Ce qui porte la demande</h3><ul class="puces"><li><b>Juillet-août</b> : occupation proche du complet et prix majorés de 25 à 35 %.</li><li><b>Avril-juin et septembre</b> : ponts de mai, randonnée, Bréhat, séjours de seniors.</li><li><b>Hiver</b> : week-ends, vacances scolaires, déplacements professionnels.</li></ul></div>
+      <div><h3 style="margin-top:0">Ce qui porte la demande</h3><ul class="puces">${demande.map(x => `<li>${x}</li>`).join("")}</ul></div>
       <div><h3 style="margin-top:0">Ce qui fait la différence</h3><ul class="puces"><li>Photos professionnelles et annonce soignée sur plusieurs plateformes.</li><li>Prix ajustés chaque jour selon la demande (outils de tarification dynamique).</li><li>Ménage hôtelier et accueil réactif : notes élevées, meilleur classement.</li></ul></div>
     </div>`}
     ${pied(3, TOTAL)}</section>`);
@@ -987,9 +1079,9 @@ function rendre() {
   pages.push(`<section class="page">${entete("Projection courte durée")}
     <p class="kicker">Scénario ${scNom}</p>
     <h2 class="titre">Douze mois de location courte durée</h2>
-    <p class="intro">Projection mois par mois des nuits louées et des recettes. Séjours moyens de ${nf1.format(r.g("marche.dms"))} nuits, plus longs en juillet-août ; frais de ménage de ${eur(r.g("marche.fraisMenage"))} facturés à chaque séjour.</p>
+    <p class="intro">Projection mois par mois des nuits louées et des recettes. Prix par nuit hors ménage ; séjours moyens de ${nf1.format(r.g("marche.dms"))} nuits${c.profil.ete > 1.25 ? ", plus longs en juillet-août" : ""} ; forfait ménage de ${eur(r.g("marche.fraisMenage"))} facturé au voyageur à chaque séjour.</p>
     <table class="t">
-      <thead><tr><th>Mois</th><th class="n">Prix / nuit</th><th class="n">Occupation</th><th class="n">Nuits louées</th><th class="n">Séjours</th><th class="n">Nuitées</th><th class="n">Ménage</th><th class="n">Recettes</th></tr></thead>
+      <thead><tr><th>Mois</th><th class="n">Prix / nuit</th><th class="n">Occupation</th><th class="n">Nuits louées</th><th class="n">Séjours</th><th class="n">Nuitées</th><th class="n">Forfaits ménage</th><th class="n">Recettes</th></tr></thead>
       <tbody>${r.mois.map(m => `<tr><td>${MOIS[m.i]}</td><td class="n">${eur(m.adr)}</td><td class="n">${Math.round(m.occ * 100)} %</td><td class="n">${nf0.format(m.nuits)}</td><td class="n">${nf0.format(m.sejours)}</td><td class="n">${eur(m.caNuits)}</td><td class="n">${eur(m.caMenage)}</td><td class="n">${eur(m.caNuits + m.caMenage)}</td></tr>`).join("")}
       <tr class="total"><td>Année</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">${nf0.format(r.T.nuits)}</td><td class="n">${nf0.format(r.T.sejours)}</td><td class="n">${eur(r.T.caNuits)}</td><td class="n">${eur(r.T.caMenage)}</td><td class="n">${eur(r.cd.recettes)}</td></tr></tbody>
     </table>
@@ -1003,7 +1095,7 @@ function rendre() {
   const credLigne = S.fin.comptant ? "" : L("Remboursement du crédit (assurance incluse)", moins(r.cd.credit.annuite), moins(r.ld.credit.annuite));
   const lignesCharges = [];
   const labels = new Set([...r.cd.lignes.map(l => l[0]), ...r.ld.lignes.map(l => l[0])]);
-  const ordre = ["Commission plateformes (Airbnb, Booking…)", "Conciergerie Les Domaines de Tri Hent", "Honoraires de l'agence", "Garantie loyers impayés", "Ménage hôtelier & linge", "Accueil & consommables", "Énergie & eau", "Internet & TV", "Assurance", "Charges de copropriété", "Taxe foncière", "CFE", "Entretien", "Expert-comptable LMNP"];
+  const ordre = ["Commission plateformes (Airbnb, Booking…)", "Conciergerie Les Domaines de Tri Hent", "Honoraires de l'agence", "Garantie loyers impayés", "Forfait ménage", "Énergie & eau", "Internet & TV", "Assurance", "Charges de copropriété", "Taxe foncière", "CFE", "Entretien", "Expert-comptable"];
   for (const lbl of ordre) if (labels.has(lbl)) {
     const a = r.cd.lignes.find(l => l[0] === lbl), z = r.ld.lignes.find(l => l[0] === lbl);
     lignesCharges.push(L(lbl === "Charges de copropriété" ? "Charges de copropriété (part non récupérable à l'année)" : lbl, a ? moins(a[1]) : "—", z ? moins(z[1]) : "—"));
@@ -1033,7 +1125,7 @@ function rendre() {
         ${S.fin.comptant ? "" : L("Trésorerie mensuelle après crédit et impôt", signe(r.cd.cashflow / 12), signe(r.ld.cashflow / 12), "total")}
       </tbody>
     </table>
-    <p class="petit" style="margin-top:2mm">${S.fin.comptant ? "Achat comptant." : `Crédit de ${eurArr(r.cd.emprunt, 1000)} sur ${r.g("fin.duree")} ans à ${nf1.format(r.g("fin.taux"))} %, apport de ${r.g("fin.apport")} %.`} Frais de notaire de ${nf1.format(r.g("fin.notaire"))} %. ${S.cd.regime === "reel" || r.ld.regime === "reel" ? "Au réel, l'amortissement du bien (85 % sur 30 ans) et du mobilier (7 ans) réduit la base imposable ; depuis 2025, les amortissements sont réintégrés dans le calcul de la plus-value à la revente." : ""} ${alertes.map(esc).join(" ")}</p>
+    <p class="petit" style="margin-top:2mm">${S.fin.comptant ? "Achat comptant." : `Crédit de ${eurArr(r.cd.emprunt, 1000)} sur ${r.g("fin.duree")} ans à ${nf1.format(r.g("fin.taux"))} %, apport de ${r.g("fin.apport")} %.`} Frais de notaire de ${nf1.format(r.g("fin.notaire"))} %. ${S.cd.regime === "reel" || r.ld.regime === "reel" ? "LMNP : loueur en meublé non professionnel, le statut fiscal de la location meublée tant que les recettes restent sous 23 000 € par an ou sous les autres revenus d'activité du foyer. Au réel, l'amortissement du bien (85 % sur 30 ans) et du mobilier (7 ans) réduit la base imposable ; depuis 2025, les amortissements sont réintégrés dans le calcul de la plus-value à la revente." : ""} ${alertes.map(esc).join(" ")}</p>
     ${pied(5, TOTAL)}</section>`);
 
   /* 6. Scénarios & cadre réglementaire */
@@ -1042,16 +1134,16 @@ function rendre() {
     <h2 class="titre">Trois scénarios, un point d'équilibre</h2>
     <p class="intro">Le scénario prudent retient 15 % d'occupation et 5 % de prix en moins ; l'optimiste, 10 % d'occupation et 5 % de prix en plus. Revenus nets annuels avant impôt.</p>
     <table class="t">
-      <thead><tr><th>Scénario</th><th class="n">Occupation</th><th class="n">Prix moyen</th><th class="n">Recettes</th><th class="n">Net avant impôt</th><th class="n">Écart vs année</th><th class="n">Sur 10 ans</th></tr></thead>
-      <tbody>${scs.map(([n, x]) => { const d = x.cd.net - x.ld.net; return `<tr class="${x === r ? "hl" : ""}"><td>${n}</td><td class="n">${Math.round(x.T.occ * 100)} %</td><td class="n">${eur(x.T.adr)}</td><td class="n">${eurArr(x.cd.recettes)}</td><td class="n">${eurArr(x.cd.net)}</td><td class="n ${d >= 0 ? "pos" : "neg"}">${signe(arrondi(d, 100))}</td><td class="n ${d >= 0 ? "pos" : "neg"}">${signe(arrondi(d * 10, 1000))}</td></tr>`; }).join("")}
-      <tr><td>Location à l'année</td><td class="n">${Math.round(100 - r.g("ld.vacance"))} %</td><td class="n">${eur(r.ld.loyerM)}/mois</td><td class="n">${eurArr(r.ld.recettes)}</td><td class="n">${eurArr(r.ld.net)}</td><td class="n">—</td><td class="n">—</td></tr></tbody>
+      <thead><tr><th>Scénario</th><th class="n">Occupation</th><th class="n">Prix moyen</th><th class="n">Recettes</th><th class="n">Net avant impôt</th><th class="n">Écart vs année</th><th class="n">Projet couvert en</th></tr></thead>
+      <tbody>${scs.map(([n, x]) => { const d = x.cd.net - x.ld.net; return `<tr class="${x === r ? "hl" : ""}"><td>${n}</td><td class="n">${Math.round(x.T.occ * 100)} %</td><td class="n">${eur(x.T.adr)}</td><td class="n">${eurArr(x.cd.recettes)}</td><td class="n">${eurArr(x.cd.net)}</td><td class="n ${d >= 0 ? "pos" : "neg"}">${signe(arrondi(d, 100))}</td><td class="n">${ans(x.cd.invest, x.cd.net)}</td></tr>`; }).join("")}
+      <tr><td>Location à l'année</td><td class="n">${Math.round(100 - r.g("ld.vacance"))} %</td><td class="n">${eur(r.ld.loyerM)}/mois</td><td class="n">${eurArr(r.ld.recettes)}</td><td class="n">${eurArr(r.ld.net)}</td><td class="n">—</td><td class="n">${ans(r.ld.invest, r.ld.net)}</td></tr></tbody>
     </table>
     ${pm !== null ? `<div class="encadre vert" style="margin-top:5mm;display:grid;grid-template-columns:auto 1fr;gap:6mm;align-items:center"><div style="font-family:var(--serif);font-size:32pt;color:var(--or-clair);font-weight:600;line-height:1">${Math.round(pm)} %</div><p>C'est le taux d'occupation annuel à partir duquel la courte durée devient plus rentable que la location à l'année, soit environ <b>${Math.round(pm * 3.65)} nuits louées par an</b>. Notre projection réaliste en retient ${Math.round(r.T.nuits)}.</p></div>` : ""}
-    <h3>Rendements sur le projet total</h3>
+    <div class="encadre" style="margin-top:4mm"><p><b style="color:var(--vert);font-weight:500">En combien de temps l'achat est-il rentabilisé&nbsp;?</b> Projet de ${eurArr(r.cd.invest)} (prix de ${eur(r.prix)}, notaire et équipement) : les revenus nets avant impôt le couvrent en <b>${ans(scs[0][1].cd.invest, scs[0][1].cd.net)}</b> dans le scénario prudent, <b>${ans(scs[1][1].cd.invest, scs[1][1].cd.net)}</b> dans le réaliste et <b>${ans(scs[2][1].cd.invest, scs[2][1].cd.net)}</b> dans l'optimiste, contre <b>${ans(r.ld.invest, r.ld.net)}</b> en location à l'année, hors revalorisation des loyers et plus-value à la revente.</p></div>
+    <h3>Rendements sur le projet</h3>
     <table class="t">
       <thead><tr><th></th><th class="n cd">Courte durée</th><th class="n">À l'année</th></tr></thead>
       <tbody>
-        ${L("Projet total (prix, notaire, équipement)", eur(r.cd.invest), eur(r.ld.invest))}
         ${L("Rendement brut", pct(r.cd.rdtBrut, 1), pct(r.ld.rdtBrut, 1))}
         ${L("Rendement net avant impôt", pct(r.cd.rdtNet, 1), pct(r.ld.rdtNet, 1))}
         ${L("Rendement net après impôt", pct(r.cd.rdtNetNet, 1), pct(r.ld.rdtNetNet, 1))}
@@ -1063,7 +1155,8 @@ function rendre() {
       <li><b>Classement du meublé</b> (1 à 5 étoiles) : il ouvre le micro-BIC à 50 % jusqu'à ${nf0.format(PLAFOND_CLASSE)} € de recettes, contre 30 % et 15 000 € pour un meublé non classé.</li>
       <li><b>Copropriété</b> : vérifier que le règlement autorise la location meublée de tourisme ; depuis la loi Le Meur, une interdiction peut, sous conditions, être votée à la majorité des deux tiers.</li>
       <li><b>DPE</b> : classe E au minimum exigée là où un changement d'usage est requis ; classe D pour tous les meublés de tourisme à partir de 2034.</li>
-      <li><b>Taxe de séjour</b> : payée par les voyageurs et reversée à Guingamp-Paimpol Agglomération, en général collectée directement par les plateformes.</li>
+      <li><b>Taxe de séjour</b> : payée par les voyageurs et reversée à la commune ou à l'intercommunalité, en général collectée directement par les plateformes.</li>
+      ${sect.vigilance ? `<li><b>${esc(c.nom)}</b> : ${esc(sect.vigilance)}</li>` : ""}
     </ul>
     ${pied(6, TOTAL)}</section>`);
 
@@ -1083,7 +1176,7 @@ function rendre() {
     <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. La commission retenue dans cette étude est de ${nf1.format(r.g("cd.conciergerie"))} %.</p></div>
     <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO(null)}</div></div>
     <h3>Méthode et sources</h3>
-    <p class="petit">Données de marché publiques consultées le 27 octobre 2026 : AirDNA (Plouézec, Paimpol, Ploubazlanec), AirROI, GuestFavorites, Airbtics, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon la saisonnalité de la côte du Goëlo${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
+    <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
     <p class="petit">Étude indicative, non contractuelle : les revenus dépendent du marché, de la qualité du bien et de la réglementation en vigueur. Les éléments fiscaux sont donnés à titre d'information et doivent être confirmés par un expert-comptable. SIRET 939 823 001 00010.</p>
     ${pied(7, TOTAL)}</section>`);
 
@@ -1124,7 +1217,11 @@ function maj() { clearTimeout(minuteurRendu); minuteurRendu = setTimeout(() => {
 
 document.addEventListener("input", (e) => {
   const el = e.target;
-  if (el.dataset.path) { ecrire(S, el.dataset.path, el.type === "checkbox" ? el.checked : el.value); maj(); }
+  if (el.dataset.path) {
+    ecrire(S, el.dataset.path, el.type === "checkbox" ? el.checked : el.value);
+    if (el.dataset.path === "lien") { const ag = agenceDepuisLien(el.value.trim()); if (ag) { S.dossier.agence = ag; $("#d-agence").value = ag; } }
+    maj();
+  }
   else if (el.dataset.mois !== undefined) {
     if (S.marche.saisonMode !== "manuel") { S.marche.mois = moisEffectifs(S, autos(S)); S.marche.saisonMode = "manuel"; }
     S.marche.mois[+el.dataset.mois][el.dataset.k] = el.value; maj();
@@ -1139,7 +1236,11 @@ document.addEventListener("click", (e) => {
 $("#btn-analyser").addEventListener("click", () => {
   S.annonce = $("#annonce").value;
   const r = analyserAnnonce(S.annonce);
-  const libs = { type: "Type", commune: "Commune", pieces: "Pièces", chambres: "Chambres", surface: "Surface", prix: "Prix", annee: "Construction", etat: "État", dpe: "DPE", chargesCopro: "Charges", taxeFonciere: "Taxe foncière", vueMer: "Vue mer", plage: "Plage", exterieur: "Extérieur", parking: "Parking", piscine: "Piscine", agence: "Agence", reference: "Réf." };
+  const url = S.annonce.match(/https?:\/\/[^\s"<>]+/i);
+  if (url && !S.lien) S.lien = url[0];
+  const agLien = S.lien ? agenceDepuisLien(S.lien) : "";
+  if (agLien) r.agence = agLien;
+  const libs = { type: "Type", commune: "Commune", communeNom: "Nom", pieces: "Pièces", chambres: "Chambres", surface: "Surface", prix: "Prix", annee: "Construction", etat: "État", dpe: "DPE", chargesCopro: "Charges", taxeFonciere: "Taxe foncière", vueMer: "Vue mer", plage: "Plage", exterieur: "Extérieur", parking: "Parking", piscine: "Piscine", agence: "Agence", reference: "Réf." };
   const out = [];
   for (const [k, v] of Object.entries(r)) {
     if (k === "terrain") continue;
