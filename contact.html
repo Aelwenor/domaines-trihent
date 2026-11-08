@@ -112,6 +112,11 @@
         </div>
 
         <div class="champ">
+          <label class="etiquette-champ" for="localisation">Où se trouve votre bien ? <span class="obligatoire">*</span></label>
+          <input type="text" name="localisation" id="localisation" placeholder="Ville ou commune — ex. Paimpol, Tréguier, Dinan…" required>
+        </div>
+
+        <div class="champ">
           <label class="etiquette-champ" for="type-bien">Type de bien <span class="obligatoire">*</span></label>
           <select name="type-bien" id="type-bien" required>
             <option value="Appartement">Appartement</option>
@@ -123,6 +128,33 @@
             <option value="Mobile home / chalet">Mobile home / chalet</option>
             <option value="Autre">Autre</option>
           </select>
+        </div>
+
+        <div class="champ">
+          <span class="etiquette-champ">Louez-vous déjà ce bien en courte durée ? <span class="obligatoire">*</span></span>
+          <div class="radios">
+            <label><input type="radio" name="deja-loue" value="Oui, déjà en location" required> Oui, déjà en location</label>
+            <label><input type="radio" name="deja-loue" value="Non, j'y réfléchis"> Non, j'y réfléchis</label>
+            <label><input type="radio" name="deja-loue" value="Pas encore / en projet"> Pas encore / en projet</label>
+          </div>
+        </div>
+
+        <div class="champ">
+          <label class="etiquette-champ" for="source">Comment nous avez-vous connus ?</label>
+          <select name="source" id="source">
+            <option value="">— Choisir —</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Facebook">Facebook</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Bouche-à-oreille">Bouche-à-oreille</option>
+            <option value="Recherche Google">Recherche Google</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="champ" id="champ-source-autre" hidden>
+          <label class="etiquette-champ" for="source-autre">Si « Autre », précisez</label>
+          <input type="text" name="source-autre" id="source-autre">
         </div>
 
         <div class="champ">
@@ -191,5 +223,17 @@
 </footer>
 
 <script src="script.js?v=3"></script>
+<script>
+  // Affiche le champ "précisez" uniquement si "Autre" est choisi dans "Comment nous avez-vous connus ?"
+  (function () {
+    var src = document.getElementById('source');
+    var autre = document.getElementById('champ-source-autre');
+    if (src && autre) {
+      src.addEventListener('change', function () {
+        autre.hidden = (src.value !== 'Autre');
+      });
+    }
+  })();
+</script>
 </body>
 </html>
