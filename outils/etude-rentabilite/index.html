@@ -572,7 +572,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
   <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
   <h3>Barème de commission</h3>
-  <p class="aide">Appliqué chaque mois sur les revenus locatifs du propriétaire, hors frais de plateformes et hors ménage.</p>
+  <p class="aide">Chaque mois, un seul taux s'applique à tous les revenus locatifs du propriétaire (hors frais de plateformes et hors ménage), selon le palier atteint ce mois-là.</p>
   <div class="grille trois" style="max-width:560px">
     <div class="champ"><label for="p-s1">Jusqu'à (€/mois)</label><input id="p-s1" type="number" min="0" data-bareme="s1" aria-label="Premier palier"></div>
     <div class="champ"><label for="p-t1">Taux</label><input id="p-t1" type="number" step="0.5" data-bareme="t1"></div><div></div>
@@ -580,10 +580,6 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     <div class="champ"><label for="p-t2">Taux</label><input id="p-t2" type="number" step="0.5" data-bareme="t2"></div><div></div>
     <div class="champ"><label>Au-delà</label><input type="text" value="—" disabled aria-label="Au-delà du deuxième palier"></div>
     <div class="champ"><label for="p-t3">Taux</label><input id="p-t3" type="number" step="0.5" data-bareme="t3"></div><div></div>
-  </div>
-  <div class="cases" style="margin-top:8px">
-    <label><input type="radio" name="p-mode" value="tranches" data-bareme="mode"> Par tranches (chaque tranche à son taux)</label>
-    <label><input type="radio" name="p-mode" value="palier" data-bareme="mode"> Taux unique selon le palier atteint</label>
   </div>
   <p class="aide" id="p-exemple" style="margin-top:6px"></p>
   <h3>Données du marché (AirDNA, PriceLabs)</h3>
@@ -1343,7 +1339,7 @@ function rendre() {
       <div><h4>Entretien du bien</h4><p>Suivi régulier, petites interventions, réseau d'artisans locaux de confiance.</p></div>
       <div><h4>Démarches</h4><p>Déclaration en mairie, dossier de classement, taxe de séjour : nous vous guidons à chaque étape.</p></div>
     </div>
-    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Barème appliqué chaque mois sur les revenus locatifs hors plateformes et ménage : ${baremeTexte()}, soit ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année pour ce bien.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
+    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Le taux est fixé chaque mois selon les revenus locatifs du mois, hors plateformes et ménage : ${baremeTexte()}. Pour ce bien, cela représente ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année pour ce bien.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
     <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO(null)}</div></div>
     <h3>Méthode et sources</h3>
     <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
@@ -1372,23 +1368,24 @@ const GRILLE_DEFAUT = [
   { type: "T5", chambres: 4, lits: 4, menage: 120, conso: 18, linge: 40 },
   { type: "T6 et plus", chambres: 5, lits: 5, menage: 150, conso: 22, linge: 50 }
 ];
-let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23, mode: "tranches" } };
+let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 } };
 try { const p = JSON.parse(localStorage.getItem(CLE_PARAM) || "null"); if (p) PARAM = { ...PARAM, ...p }; } catch (e) {}
-if (!PARAM.bareme || typeof PARAM.bareme !== "object") PARAM.bareme = { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23, mode: "tranches" };
+if (!PARAM.bareme || typeof PARAM.bareme !== "object") PARAM.bareme = { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 };
 /* Commission mensuelle selon le barème progressif (base : revenus locatifs hors plateformes et ménage) */
+/* Taux unique du mois selon le palier atteint */
+function tauxBareme(base) { const B = PARAM.bareme; return base <= B.s1 ? B.t1 : base <= B.s2 ? B.t2 : B.t3; }
 function commissionBareme(base) {
   const B = PARAM.bareme;
   if (base <= 0) return 0;
-  if (B.mode === "palier") return base * (base <= B.s1 ? B.t1 : base <= B.s2 ? B.t2 : B.t3) / 100;
-  return (Math.min(base, B.s1) * B.t1 + Math.max(0, Math.min(base, B.s2) - B.s1) * B.t2 + Math.max(0, base - B.s2) * B.t3) / 100;
+  return base * tauxBareme(base) / 100;
 }
 function baremeTexte() {
   const B = PARAM.bareme;
-  return `${nf0.format(B.t1)} % jusqu'à ${nf0.format(B.s1)} € par mois, ${nf0.format(B.t2)} % jusqu'à ${nf0.format(B.s2)} €, ${nf0.format(B.t3)} % au-delà${B.mode === "palier" ? " (taux unique selon le palier atteint)" : " (par tranches)"}`;
+  return `${nf0.format(B.t1)} % si le mois rapporte jusqu'à ${nf0.format(B.s1)} €, ${nf0.format(B.t2)} % jusqu'à ${nf0.format(B.s2)} €, ${nf0.format(B.t3)} % au-delà`;
 }
 function exempleBareme() {
-  const ex = 2000, c = commissionBareme(ex);
-  $("#p-exemple").textContent = `Exemple : pour ${eur(ex)} de revenus locatifs dans le mois, la commission est de ${eur(c)}, soit ${nf1.format(c / ex * 100)} %.`;
+  const ex = [500, 1200, 2000].map(v => `${eur(v)} → ${nf0.format(tauxBareme(v))} %, soit ${eur(commissionBareme(v))}`);
+  $("#p-exemple").textContent = "Exemples pour un mois : " + ex.join(" · ") + ".";
 }
 function sauverParam() { try { localStorage.setItem(CLE_PARAM, JSON.stringify(PARAM)); } catch (e) {} }
 const totalLigne = (l) => (num(l.menage) || 0) + (num(l.conso) || 0) + (num(l.linge) || 0);
@@ -1412,7 +1409,6 @@ function dessinerGrille() {
       <td><button class="btn btn-discret btn-mini" type="button" data-suppr-grille="${i}">Retirer</button></td></tr>`).join("") + `</tbody>`;
   const B = PARAM.bareme;
   for (const k of ["s1", "s2", "t1", "t2", "t3"]) $("#p-" + k).value = B[k];
-  document.querySelectorAll('input[name="p-mode"]').forEach(r => r.checked = r.value === B.mode);
   exempleBareme();
 }
 
@@ -1581,7 +1577,7 @@ document.addEventListener("input", (e) => {
     const l = PARAM.grille[+el.dataset.grille]; l[el.dataset.k] = el.dataset.k === "type" ? el.value : el.value;
     $("#g-tot-" + el.dataset.grille).textContent = eur(totalLigne(l)); sauverParam(); maj();
   } else if (el.dataset.bareme) {
-    PARAM.bareme[el.dataset.bareme] = el.dataset.bareme === "mode" ? el.value : (num(el.value) || 0);
+    PARAM.bareme[el.dataset.bareme] = num(el.value) || 0;
     sauverParam(); exempleBareme(); maj(); if (window.majExpress) majExpress();
   }
 });
@@ -1772,7 +1768,7 @@ function majExpress() {
       </tbody>
     </table></div>
     ${graphExpress(R)}
-    <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, calculée chaque mois.</p>`;
+    <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, le taux du mois s'appliquant à tous ses revenus.</p>`;
 }
 window.majExpress = majExpress;
 document.addEventListener("input", (e) => {
