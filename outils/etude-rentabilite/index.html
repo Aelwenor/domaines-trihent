@@ -362,6 +362,18 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <div class="champ"><label for="b-terrain">Terrain (m²)</label><input id="b-terrain" type="number" min="0" data-path="bien.terrain"></div>
         <div class="champ"><label for="m-menage">Forfait ménage / séjour (€)</label><input id="m-menage" type="number" min="0" data-path="marche.fraisMenage"></div>
         <div class="champ plein"><span class="aide" id="aide-menage"></span></div>
+        <details class="sous champ plein" id="r-bloc">
+          <summary>Chiffres AirDNA / PriceLabs (facultatif)</summary>
+          <p class="aide">Estimation gratuite faite sur leur site pour ce bien (AirDNA Rentalizer, PriceLabs Revenue Estimator, Airbtics…).</p>
+          <div class="grille">
+            <div class="champ"><label for="r-src">Outil</label><select id="r-src" data-path="ref.source"><option>AirDNA</option><option>PriceLabs</option><option>Airbtics</option><option>Liwango</option><option>Autre outil</option></select></div>
+            <div class="champ"><label for="r-adr">Prix moyen / nuit (€)</label><input id="r-adr" type="number" min="0" inputmode="numeric" data-path="ref.adr"></div>
+            <div class="champ"><label for="r-occ">Taux d'occupation (%)</label><input id="r-occ" type="number" min="0" max="100" inputmode="numeric" data-path="ref.occ"></div>
+            <div class="champ"><label for="r-rev">Revenu brut annuel (€)</label><input id="r-rev" type="number" min="0" inputmode="numeric" data-path="ref.revenu"></div>
+            <div class="champ plein"><label class="case-label"><input type="checkbox" data-path="ref.caler"> Caler l'estimation sur ces chiffres</label>
+              <span class="aide">Sinon, ils sont seulement affichés pour comparaison.</span></div>
+          </div>
+        </details>
         <div class="champ"><label for="b-prix">Prix de vente FAI (€)</label><input id="b-prix" type="number" min="0" step="1000" data-path="bien.prix"></div>
         <div class="champ"><label for="b-annee">Année de construction</label><input id="b-annee" type="number" min="1500" max="2030" data-path="bien.annee"></div>
         <div class="champ"><label for="b-etat">État</label>
@@ -553,6 +565,18 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
           <select id="x-canal"><option value="15.5">Airbnb (15,5 %)</option><option value="18">Booking (18 %)</option><option value="17">Airbnb + Booking (17 %)</option><option value="">Autre taux</option></select></div>
         <div class="champ"><label for="x-plateformes">Frais de plateformes (%)</label><input id="x-plateformes" type="number" min="0" step="0.5" inputmode="decimal" data-x="plateformes"></div>
         <div class="champ plein"><label for="x-menage">Forfait ménage par séjour (€)</label><input id="x-menage" type="number" min="0" inputmode="numeric" data-x="menage"><span class="aide" id="x-aide-menage"></span></div>
+        <details class="sous champ plein" id="xr-bloc">
+          <summary>Chiffres AirDNA / PriceLabs (facultatif)</summary>
+          <p class="aide">Estimation gratuite faite sur leur site pour ce bien (AirDNA Rentalizer, PriceLabs Revenue Estimator, Airbtics…).</p>
+          <div class="grille">
+            <div class="champ"><label for="xr-src">Outil</label><select id="xr-src" data-x="refSource"><option>AirDNA</option><option>PriceLabs</option><option>Airbtics</option><option>Liwango</option><option>Autre outil</option></select></div>
+            <div class="champ"><label for="xr-adr">Prix moyen / nuit (€)</label><input id="xr-adr" type="number" min="0" inputmode="numeric" data-x="refAdr"></div>
+            <div class="champ"><label for="xr-occ">Taux d'occupation (%)</label><input id="xr-occ" type="number" min="0" max="100" inputmode="numeric" data-x="refOcc"></div>
+            <div class="champ"><label for="xr-rev">Revenu brut annuel (€)</label><input id="xr-rev" type="number" min="0" inputmode="numeric" data-x="refRevenu"></div>
+            <div class="champ plein"><label class="case-label"><input type="checkbox" data-x="refCaler"> Caler l'estimation sur ces chiffres</label>
+              <span class="aide">Sinon, ils sont seulement affichés pour comparaison.</span></div>
+          </div>
+        </details>
         <div class="champ plein"><label>Les plus du bien</label>
           <div class="cases" id="x-atouts"></div></div>
       </div>
@@ -592,7 +616,8 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   </div>
   <p class="aide" id="p-exemple" style="margin-top:6px"></p>
   <h3>Données du marché (AirDNA, PriceLabs)</h3>
-  <p class="aide">AirDNA et PriceLabs ne proposent pas d'accès automatique avec un compte gratuit. Le marché de chaque étude est donc rempli à partir des données publiques intégrées à l'outil. Avec un compte payant, collez l'export mensuel dans « Réglages avancés › Marché courte durée ».</p>
+  <p class="aide">L'outil ne peut pas interroger AirDNA ou PriceLabs tout seul : leurs accès automatiques sont réservés aux abonnements payants. Par défaut, il utilise donc les données publiques intégrées pour chaque ville.</p>
+  <p class="aide">Pour plus de précision, faites l'estimation gratuite du bien sur leur site : AirDNA Rentalizer (adresse, chambres, lits) ou PriceLabs Revenue Estimator (adresse, chambres). Reportez ensuite le prix par nuit, l'occupation ou le revenu annuel dans « Chiffres AirDNA / PriceLabs », dans l'estimation express ou dans l'étude. Cochez « Caler l'estimation » pour que toute la projection s'aligne dessus.</p>
   <h3>Sauvegarde</h3>
   <p class="aide">Pour retrouver vos études sur un autre ordinateur ou téléphone : exportez-les ici, puis importez le fichier sur l'autre appareil.</p>
   <div class="ligne-btn">
@@ -675,6 +700,16 @@ const COMMUNES = {
 };
 const T2_SECTEUR = { littoral: 72, ville_mer: 78, metropole: 66, port: 58, interieur: 52 };
 const LOYER_SECTEUR = { littoral: 10.5, ville_mer: 13, metropole: 14, port: 10.5, interieur: 8.5 };
+/* Prix moyens par nuit : basse (nov.-mars), moyenne (avril-juin, sept.-oct.), haute saison (juillet-août) */
+function prixSaisons(r) {
+  const moy = (idx) => { let n = 0, ca = 0; for (const i of idx) { n += r.mois[i].nuits; ca += r.mois[i].caNuits; } return n ? ca / n : (idx.reduce((a, i) => a + r.mois[i].adr, 0) / idx.length); };
+  return { basse: moy([0, 1, 2, 10, 11]), moyenne: moy([3, 4, 5, 8, 9]), haute: moy([6, 7]) };
+}
+function refTexte(ref) {
+  if (!ref) return "";
+  const parts = [num(ref.adr) > 0 && eur(num(ref.adr)) + " par nuit", num(ref.occ) > 0 && num(ref.occ) + " % d'occupation", num(ref.revenu) > 0 && eurArr(num(ref.revenu)) + " brut par an"].filter(Boolean);
+  return parts.length ? `${ref.source || "Outil externe"} : ${parts.join(", ")}` : "";
+}
 /* Taux d'occupation moyen du secteur : saisi, sinon celui de la commune, sinon la moyenne des communes voisines */
 function occSecteur(b) {
   const saisi = num(b.occSecteur);
@@ -745,6 +780,7 @@ function etatVide() {
     fin: { comptant: false, notaire: "", apport: "", taux: "", duree: "", assurance: "" },
     fisc: { tmi: "30", ps: "" },
     comparables: [],
+    ref: { source: "AirDNA", adr: "", occ: "", revenu: "", caler: false },
     suivi: { envoye: false, dateEnvoi: "", reponse: false, dateReponse: "", retour: "", notes: "" },
     dossier: { agence: "", agent: "", investisseur: "", date: new Date().toISOString().slice(0, 10), message: "" }
   };
@@ -835,7 +871,27 @@ function moisEffectifs(s, A) {
   if (s.marche.saisonMode === "manuel" && s.marche.mois.length === 12) return s.marche.mois.map(m => ({ adr: num(m.adr) || 0, occ: num(m.occ) || 0 }));
   const pr = communeDe(s.bien).profil;
   const oc = communeDe(s.bien).occCoef || 1;
-  return pr.occ.map((o, i) => ({ adr: Math.round(adrBase * pr.adr[i]), occ: Math.round(o * oc) }));
+  let mois = pr.occ.map((o, i) => ({ adr: adrBase * pr.adr[i], occ: o * oc }));
+  const ref = s.ref || {};
+  if (ref.caler) {
+    // Calage sur un outil externe : occupation annuelle, prix moyen pondéré, ou revenu brut annuel
+    const nuits = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100, 0);
+    const ca = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100 * m.adr, 0);
+    const rOcc = num(ref.occ), rAdr = num(ref.adr), rRev = num(ref.revenu);
+    if (rOcc > 0) {
+      const cible = Math.min(rOcc, 95) / 100 * 365;
+      for (let it = 0; it < 12; it++) {
+        const libres = mois.reduce((a, m, i) => a + (m.occ < 97 ? JOURS[i] * m.occ / 100 : 0), 0);
+        const bloques = nuits() - libres;
+        if (libres <= 0 || Math.abs(nuits() - cible) < 0.5) break;
+        const k = Math.max(0, (cible - bloques) / libres);
+        mois = mois.map(m => (m.occ < 97 ? { ...m, occ: Math.min(97, m.occ * k) } : m));
+      }
+    }
+    if (rAdr > 0) { const k = rAdr / (ca() / nuits()); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
+    else if (rRev > 0) { const k = rRev / ca(); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
+  }
+  return mois.map(m => ({ adr: Math.round(m.adr), occ: Math.round(m.occ) }));
 }
 
 /* ---------- Calculs ---------- */
@@ -1262,6 +1318,7 @@ function rendre() {
           ? `<tr class="hl"><td>${esc(x.c.nom)}</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td>Pas de donnée publique fiable : voir la projection ci-dessous</td></tr>`
           : `<tr class="${x.k === b.commune ? "hl" : ""}"><td>${esc(x.c.nom)}</td><td class="n">${eur(x.c.marche.adr)}</td><td class="n">${x.c.marche.occ ? x.c.marche.occ + " %" : "—"}</td><td class="n">${esc(x.c.marche.annonces)}</td><td>${esc(x.c.marche.src)}</td></tr>`).join("")}
         ${!isNaN(num(b.occSecteur)) ? `<tr class="hl"><td>${esc(c.nom)} et alentours</td><td class="n">—</td><td class="n">${num(b.occSecteur)} %</td><td class="n">—</td><td>${esc(S.marche.source || "Donnée saisie (AirDNA, PriceLabs)")}</td></tr>` : ""}
+        ${refTexte(S.ref) ? `<tr class="hl"><td>Votre bien selon ${esc(S.ref.source)}</td><td class="n">${num(S.ref.adr) > 0 ? eur(num(S.ref.adr)) : "—"}</td><td class="n">${num(S.ref.occ) > 0 ? num(S.ref.occ) + " %" : "—"}</td><td class="n">—</td><td>${num(S.ref.revenu) > 0 ? "Revenu brut estimé : " + eurArr(num(S.ref.revenu)) + " par an" : "Estimation de l'outil"}${S.ref.caler ? " · projection calée dessus" : ""}</td></tr>` : ""}
         <tr class="total"><td>Votre bien (projection)</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">—</td><td>Scénario ${scNom}, ${r.g("bien.capacite")} voyageurs</td></tr>
       </tbody>
     </table>
@@ -1283,7 +1340,7 @@ function rendre() {
   pages.push(`<section class="page">${entete("Projection courte durée")}
     <p class="kicker">Scénario ${scNom}</p>
     <h2 class="titre">Douze mois de location courte durée</h2>
-    <p class="intro">Projection mois par mois des nuits louées et des recettes. Prix par nuit hors ménage ; séjours moyens de ${nf1.format(r.g("marche.dms"))} nuits${c.profil.ete > 1.25 ? ", plus longs en juillet-août" : ""} ; forfait ménage de ${eur(r.g("marche.fraisMenage"))} facturé au voyageur à chaque séjour.</p>
+    <p class="intro">Projection mois par mois des nuits louées et des recettes. Prix par nuit hors ménage : ${(() => { const ps = prixSaisons(r); return `${eur(ps.basse)} en basse saison, ${eur(ps.moyenne)} en moyenne saison, ${eur(ps.haute)} en haute saison`; })()} ; séjours moyens de ${nf1.format(r.g("marche.dms"))} nuits${c.profil.ete > 1.25 ? ", plus longs en juillet-août" : ""} ; forfait ménage de ${eur(r.g("marche.fraisMenage"))} facturé au voyageur à chaque séjour.</p>
     <table class="t">
       <thead><tr><th>Mois</th><th class="n">Prix / nuit</th><th class="n">Occupation</th><th class="n">Nuits louées</th><th class="n">Séjours</th><th class="n">Nuitées</th><th class="n">Forfaits ménage</th><th class="n">Recettes</th></tr></thead>
       <tbody>${r.mois.map(m => `<tr><td>${MOIS[m.i]}</td><td class="n">${eur(m.adr)}</td><td class="n">${Math.round(m.occ * 100)} %</td><td class="n">${nf0.format(m.nuits)}</td><td class="n">${nf0.format(m.sejours)}</td><td class="n">${eur(m.caNuits)}</td><td class="n">${eur(m.caMenage)}</td><td class="n">${eur(m.caNuits + m.caMenage)}</td></tr>`).join("")}
@@ -1353,6 +1410,7 @@ function rendre() {
         ${L("Rendement net après impôt", pct(r.cd.rdtNetNet, 1), pct(r.ld.rdtNetNet, 1))}
       </tbody>
     </table>
+    <p class="petit" style="margin-top:3mm;border-left:2px solid var(--or);padding-left:3mm"><b style="color:var(--vert);font-weight:500">Une estimation, pas une garantie.</b> Ces chiffres sont des projections : le revenu réel peut varier à la hausse comme à la baisse selon la saison, la météo, les événements locaux, la réglementation, la qualité de l'annonce et la concurrence. C'est pourquoi nous présentons toujours une fourchette.</p>
     <h3>Le cadre réglementaire en 2026</h3>
     <ul class="puces">
       <li><b>Déclaration et numéro d'enregistrement</b> : obligatoires pour tout meublé de tourisme depuis le 20 mai 2026 (loi Le Meur), numéro à afficher sur chaque annonce.</li>
@@ -1380,7 +1438,7 @@ function rendre() {
     <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Le taux est fixé chaque mois selon les revenus locatifs du mois, hors plateformes et forfaits ménage compris : ${baremeTexte()}. Pour ce bien, cela représente ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année. La commission porte aussi sur le ménage, car nous recrutons et encadrons les prestataires, contrôlons chaque ménage et fournissons les consommables.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
     <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO(null)}</div></div>
     <h3>Méthode et sources</h3>
-    <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
+    <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.ref && S.ref.caler && refTexte(S.ref) ? ", et calé sur l'estimation " + esc(S.ref.source) + " du bien" : ""}${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
     <p class="petit">Étude indicative, non contractuelle : les revenus dépendent du marché, de la qualité du bien et de la réglementation en vigueur. Les éléments fiscaux sont donnés à titre d'information et doivent être confirmés par un expert-comptable. SIRET 939 823 001 00010.</p>
     ${pied(7, TOTAL)}</section>`);
 
@@ -1744,7 +1802,7 @@ window.addEventListener("resize", ajusterZoom);
 
 /* ---------- Estimation express (pendant un appel) ---------- */
 const CLE_EXPRESS = "trihent.express.v1";
-const expressVide = () => ({ type: "appartement", commune: "paimpol", communeNom: "", secteur: "littoral", chambres: "", capacite: "", surface: "", etat: "bon", menage: "", plateformes: "", occSecteur: "", atouts: {} });
+const expressVide = () => ({ type: "appartement", commune: "paimpol", communeNom: "", secteur: "littoral", chambres: "", capacite: "", surface: "", etat: "bon", menage: "", plateformes: "", occSecteur: "", refSource: "AirDNA", refAdr: "", refOcc: "", refRevenu: "", refCaler: false, atouts: {} });
 let E = expressVide();
 try { const x = JSON.parse(localStorage.getItem(CLE_EXPRESS) || "null"); if (x) E = { ...E, ...x }; } catch (e) {}
 function etudeDepuisExpress() {
@@ -1758,12 +1816,13 @@ function etudeDepuisExpress() {
   st.marche.fraisMenage = E.menage;
   st.cd.plateformes = E.plateformes;
   st.bien.occSecteur = E.occSecteur;
+  st.ref = { source: E.refSource || "AirDNA", adr: E.refAdr, occ: E.refOcc, revenu: E.refRevenu, caler: !!E.refCaler };
   return st;
 }
 function preparerExpress() {
   $("#x-secteur").innerHTML = $("#b-secteur").innerHTML;
   $("#x-atouts").innerHTML = Object.entries(ATOUTS).map(([k, a]) => `<label><input type="checkbox" data-x-atout="${k}"> ${esc(a.nom.charAt(0).toUpperCase() + a.nom.slice(1))}</label>`).join("");
-  document.querySelectorAll("[data-x]").forEach(el => { el.value = E[el.dataset.x] ?? ""; });
+  document.querySelectorAll("[data-x]").forEach(el => { if (el.type === "checkbox") el.checked = !!E[el.dataset.x]; else el.value = E[el.dataset.x] ?? ""; });
   $("#x-commune").value = E.commune === "autre" ? E.communeNom : (COMMUNES[E.commune]?.nom || "");
   document.querySelectorAll("[data-x-atout]").forEach(el => { el.checked = !!E.atouts[el.dataset.xAtout]; });
 }
@@ -1810,7 +1869,9 @@ function majExpress() {
       <div><span>Nuits louées / an</span><b>${nf0.format(R.T.nuits)}</b></div>
       <div><span>Séjours / an</span><b>${nf0.format(R.T.sejours)}</b></div>
     </div>
-    <div style="overflow-x:auto"><table class="express-detail">
+    ${(() => { const ps = prixSaisons(R); return `<p class="mi">Prix par nuit : basse saison ${eur(ps.basse)}, moyenne saison ${eur(ps.moyenne)}, haute saison ${eur(ps.haute)}.</p>`; })()}
+    ${refTexte(st.ref) ? `<p class="mi" style="margin-top:6px"><b style="color:var(--or-clair);font-weight:500">${esc(refTexte(st.ref))}</b>${st.ref.caler ? " · estimation calée sur ces chiffres" : ` · notre estimation : ${eur(R.T.adr)}, ${Math.round(R.T.occ * 100)} %, ${eurArr(R.cd.recettes)} brut par an`}.</p>` : ""}
+    <div style="overflow-x:auto;margin-top:12px"><table class="express-detail">
       <thead><tr><th>Par an</th><th>Prudent</th><th>Réaliste</th><th>Optimiste</th></tr></thead>
       <tbody>
         ${ligne("Nuitées payées par les voyageurs", x => eur(x.T.caNuits))}
@@ -1823,12 +1884,13 @@ function majExpress() {
       </tbody>
     </table></div>
     ${graphExpress(R)}
+    <p class="note-x" style="color:var(--creme);border-left:2px solid var(--or-clair);padding-left:8px">À dire au propriétaire : c'est une estimation, pas une garantie. Le revenu réel peut varier à la hausse comme à la baisse selon la saison, la météo, les événements locaux, la réglementation et le niveau de prix.</p>
     <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, le taux du mois s'appliquant à tous ses revenus locatifs, forfaits ménage compris.</p>`;
 }
 window.majExpress = majExpress;
 document.addEventListener("input", (e) => {
   const el = e.target;
-  if (el.dataset.x) { E[el.dataset.x] = el.value; majExpress(); }
+  if (el.dataset.x) { E[el.dataset.x] = el.type === "checkbox" ? el.checked : el.value; majExpress(); }
   else if (el.dataset.xAtout) { E.atouts[el.dataset.xAtout] = el.checked; majExpress(); }
 });
 document.addEventListener("change", (e) => { const el = e.target; if (el.dataset.x && el.tagName === "SELECT") { E[el.dataset.x] = el.value; majExpress(); } });
