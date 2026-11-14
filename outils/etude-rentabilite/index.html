@@ -171,6 +171,10 @@ details.sous[open] > summary { padding-bottom: 6px; }
   .express-detail td, .express-detail th { padding: 4px 3px; }
   .express-detail td small { display: none; }
 }
+.express-occ { margin-top: 14px; padding: 12px 14px; background: rgba(250,246,239,.08); border-left: 2px solid var(--or-clair); }
+.express-occ b { font-family: var(--serif); font-size: 34px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.express-occ small { font-size: 13px; color: rgba(250,246,239,.8); }
+.express-occ .etiq { display: block; }
 .express-detail { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
 .express-detail th { font-weight: 400; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--or-clair); text-align: right; padding: 4px 6px; }
 .express-detail th:first-child, .express-detail td:first-child { text-align: left; }
@@ -866,6 +870,50 @@ function V(s, A, p) {
   if (p === "marche.adrBase" || A[p] === undefined) return A[p] ?? raw;
   return A[p];
 }
+/* Taux d'occupation estimé du bien : celui du secteur, ajusté selon la taille, l'état et les atouts */
+const OCC_CHAMBRES = [1, 1, 0.97, 0.93, 0.88, 0.84];
+const OCC_ETAT = { a_rafraichir: 0.9, bon: 1, renove: 1.04, premium: 1.06 };
+const OCC_ATOUTS = { bordMer: 1.05, piscine: 1.05, jacuzzi: 1.04, vueMer: 1.03, plage: 1.03, cheminee: 1.02, exterieur: 1.02, parking: 1.01 };
+function texteOccupation(b, r) {
+  const ref = (r && r.s && r.s.ref) || {};
+  if (ref.caler && num(ref.occ) > 0) return `Calée sur ${ref.source} : ${num(ref.occ)} %.`;
+  const oe = occupationEstimee(b);
+  if (!oe) return `Pas de taux public pour cette commune : estimation d'après les communes comparables (type « ${communeDe(b).profil.nom.toLowerCase()} »). Saisissez l'occupation du secteur pour affiner.`;
+  return `À partir des ${oe.secteur.occ} % du secteur (${oe.secteur.libelle})${oe.raisons.length ? ", ajusté : " + oe.raisons.join(", ") : ", sans ajustement"}.`;
+}
+function occupationEstimee(b) {
+  const os = occSecteur(b);
+  if (!os.occ) return null;
+  const c = communeDe(b);
+  const ch = num(b.chambres);
+  const raisons = [];
+  let f = 1;
+  const pct = (x) => (x >= 1 ? "+" : "−") + Math.round(Math.abs(x - 1) * 100) + " %";
+  if (isNaN(num(b.occSecteur)) && (c.occCoef || 1) !== 1) { f *= c.occCoef; raisons.push(`commune moins touristique (${pct(c.occCoef)})`); }
+  if (!isNaN(ch)) { const k = OCC_CHAMBRES[Math.min(Math.max(ch, 0), 5)]; if (k !== 1) { f *= k; raisons.push(`${ch} chambres${ch >= 3 ? ", grand logement" : ""} (${pct(k)})`); } }
+  const ke = OCC_ETAT[b.etat || "bon"]; if (ke !== 1) { f *= ke; raisons.push(`${ETAT[b.etat].nom.toLowerCase()} (${pct(ke)})`); }
+  let ka = 1; const at = [];
+  for (const [k, v] of Object.entries(OCC_ATOUTS)) if (b[k]) { ka *= v; at.push(ATOUTS[k].nom); }
+  ka = Math.min(ka, 1.15); if (ka !== 1) { f *= ka; raisons.push(`${at.join(", ")} (${pct(ka)})`); }
+  return { occ: Math.max(15, Math.min(85, Math.round(os.occ * f))), secteur: os, raisons };
+}
+function calerMois(mois, rOcc, rAdr, rRev) {
+  const nuits = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100, 0);
+  const ca = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100 * m.adr, 0);
+  if (rOcc > 0) {
+    const cible = Math.min(rOcc, 95) / 100 * 365;
+    for (let it = 0; it < 12; it++) {
+      const libres = mois.reduce((a, m, i) => a + (m.occ < 97 ? JOURS[i] * m.occ / 100 : 0), 0);
+      const bloques = nuits() - libres;
+      if (libres <= 0 || Math.abs(nuits() - cible) < 0.5) break;
+      const k = Math.max(0, (cible - bloques) / libres);
+      mois = mois.map(m => (m.occ < 97 ? { ...m, occ: Math.min(97, m.occ * k) } : m));
+    }
+  }
+  if (rAdr > 0) { const k = rAdr / (ca() / nuits()); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
+  else if (rRev > 0) { const k = rRev / ca(); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
+  return mois;
+}
 function moisEffectifs(s, A) {
   const adrBase = V(s, A, "marche.adrBase");
   if (s.marche.saisonMode === "manuel" && s.marche.mois.length === 12) return s.marche.mois.map(m => ({ adr: num(m.adr) || 0, occ: num(m.occ) || 0 }));
@@ -873,24 +921,11 @@ function moisEffectifs(s, A) {
   const oc = communeDe(s.bien).occCoef || 1;
   let mois = pr.occ.map((o, i) => ({ adr: adrBase * pr.adr[i], occ: o * oc }));
   const ref = s.ref || {};
-  if (ref.caler) {
-    // Calage sur un outil externe : occupation annuelle, prix moyen pondéré, ou revenu brut annuel
-    const nuits = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100, 0);
-    const ca = () => mois.reduce((a, m, i) => a + JOURS[i] * m.occ / 100 * m.adr, 0);
-    const rOcc = num(ref.occ), rAdr = num(ref.adr), rRev = num(ref.revenu);
-    if (rOcc > 0) {
-      const cible = Math.min(rOcc, 95) / 100 * 365;
-      for (let it = 0; it < 12; it++) {
-        const libres = mois.reduce((a, m, i) => a + (m.occ < 97 ? JOURS[i] * m.occ / 100 : 0), 0);
-        const bloques = nuits() - libres;
-        if (libres <= 0 || Math.abs(nuits() - cible) < 0.5) break;
-        const k = Math.max(0, (cible - bloques) / libres);
-        mois = mois.map(m => (m.occ < 97 ? { ...m, occ: Math.min(97, m.occ * k) } : m));
-      }
-    }
-    if (rAdr > 0) { const k = rAdr / (ca() / nuits()); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
-    else if (rRev > 0) { const k = rRev / ca(); mois = mois.map(m => ({ ...m, adr: m.adr * k })); }
-  }
+  const refOcc = ref.caler ? num(ref.occ) : NaN;
+  // Occupation : celle de l'outil externe si calée, sinon celle estimée à partir du secteur
+  const oe = occupationEstimee(s.bien);
+  const cibleOcc = refOcc > 0 ? refOcc : (oe ? oe.occ : NaN);
+  mois = calerMois(mois, cibleOcc, ref.caler ? num(ref.adr) : NaN, ref.caler ? num(ref.revenu) : NaN);
   return mois.map(m => ({ adr: Math.round(m.adr), occ: Math.round(m.occ) }));
 }
 
@@ -1013,7 +1048,7 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
     o.rdtNet = o.net / o.invest * 100;
     o.rdtNetNet = o.netApresImpot / o.invest * 100;
   }
-  return { A, g, sc, mois, T, cd, ld, prix, notaire, surface, tauxImpot };
+  return { s, A, g, sc, mois, T, cd, ld, prix, notaire, surface, tauxImpot };
 }
 function pointMort(s) {
   const ref = calculer(s, "realiste");
@@ -1112,7 +1147,7 @@ function versFormulaire() {
   if (document.activeElement !== $("#b-commune")) $("#b-commune").value = S.bien.commune === "autre" ? S.bien.communeNom : (COMMUNES[S.bien.commune]?.nom || "");
   const os = occSecteur(S.bien);
   $("#b-occ").placeholder = os.occ ? "≈ " + os.occ : "à saisir";
-  $("#aide-commune").textContent = (S.bien.commune === "autre" ? (S.bien.communeNom ? `« ${S.bien.communeNom} » n'est pas dans la liste : choisissez le type de marché le plus proche. ` : "Tapez le nom de la commune. ") : `Secteur : ${communeDe(S.bien).sect.nom}. `) + `Occupation du secteur : ${os.occ ? os.occ + " % (" + os.libelle + ")" : os.libelle}.`;
+  $("#aide-commune").textContent = (S.bien.commune === "autre" ? (S.bien.communeNom ? `« ${S.bien.communeNom} » n'est pas dans la liste : choisissez le type de marché le plus proche. ` : "Tapez le nom de la commune. ") : `Secteur : ${communeDe(S.bien).sect.nom}. `) + `Occupation du secteur : ${os.occ ? os.occ + " % (" + os.libelle + ")" : os.libelle}. Occupation estimée du bien : ${Math.round(calculer(S, "realiste").T.occ * 100)} %. ${texteOccupation(S.bien, { s: S })}`;
   const lm = A.ligneMenage;
   $("#aide-menage").textContent = lm ? `Grille Tri Hent · ${lm.type || "—"} : ménage ${eur(num(lm.menage) || 0)}, consommables ${eur(num(lm.conso) || 0)}, linge ${eur(num(lm.linge) || 0)} = ${eur(totalLigne(lm))} par séjour. Grille modifiable dans Paramètres.` : "Renseignez votre grille de forfaits dans Paramètres.";
   const pr = communeDe(S.bien).profil;
@@ -1322,7 +1357,7 @@ function rendre() {
         <tr class="total"><td>Votre bien (projection)</td><td class="n">${eur(r.T.adr)}</td><td class="n">${Math.round(r.T.occ * 100)} %</td><td class="n">—</td><td>Scénario ${scNom}, ${r.g("bien.capacite")} voyageurs</td></tr>
       </tbody>
     </table>
-    <p class="petit" style="margin-top:1.5mm">Prix moyens par nuit hors frais de ménage pour votre bien. Les moyennes de marché couvrent tous les logements (du studio à la grande maison), relevées en octobre 2026 ; selon la source, elles peuvent intégrer une part des frais de ménage. Les annonces de particuliers peu actives tirent l'occupation moyenne vers le bas.</p>
+    <p class="petit" style="margin-top:1.5mm"><b style="color:var(--vert);font-weight:500">Taux d'occupation de votre bien : ${Math.round(r.T.occ * 100)} %.</b> ${esc(texteOccupation(b, r))} Prix moyens par nuit hors frais de ménage pour votre bien. Les moyennes de marché couvrent tous les logements (du studio à la grande maison), relevées en octobre 2026 ; selon la source, elles peuvent intégrer une part des frais de ménage. Les annonces de particuliers peu actives tirent l'occupation moyenne vers le bas.</p>
     <h3>Saisonnalité projetée pour votre bien</h3>
     ${graphSaison(r)}
     <div class="legende"><span><i style="background:#9DB0A3"></i>Taux d'occupation</span><span><i style="background:#1E3A2B"></i>Juillet-août</span><span><i style="background:#B08D4A;height:2px;vertical-align:3px"></i>Prix moyen par nuit (échelle de droite)</span></div>
@@ -1862,6 +1897,9 @@ function majExpress() {
     <p class="fourchette">${eurArr(P.T.proprio / 12, 10)} à ${eurArr(O.T.proprio / 12, 10)} <small>par mois en moyenne</small></p>
     <p class="annee">${eurArr(P.T.proprio)} à ${eurArr(O.T.proprio)} par an</p>
     <p class="mi">Scénario réaliste : ${eurArr(R.T.proprio / 12, 10)} par mois, ${eurArr(R.T.proprio)} par an${c.profil.ete > 1.25 ? ` · environ ${eurArr(ete, 10)} par mois en juillet-août, ${eurArr(hiver, 10)} en hiver` : ""}.</p>
+    <div class="express-occ"><span class="etiq">Taux d'occupation estimé</span>
+      <b>${Math.round(R.T.occ * 100)} %</b> <small>fourchette ${Math.round(P.T.occ * 100)} à ${Math.round(O.T.occ * 100)} % · ${nf0.format(R.T.nuits)} nuits par an</small>
+      <p class="mi">${esc(texteOccupation(st.bien, R))}</p></div>
     <div class="express-cles">
       <div><span>Prix moyen / nuit</span><b>${eur(R.T.adr)}</b></div>
       <div><span>Occupation du bien</span><b>${Math.round(R.T.occ * 100)} %</b></div>
