@@ -28,6 +28,7 @@
   --sans: 'Jost', 'Segoe UI', sans-serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { height: 100%; }
 body { font-family: var(--sans); font-weight: 300; color: var(--encre); background: #E6E0D4; font-size: 14px; line-height: 1.5; }
 h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--vert); line-height: 1.15; text-wrap: balance; }
@@ -148,6 +149,35 @@ details.sous[open] > summary { padding-bottom: 6px; }
 .pastille.ok { background: rgba(47,107,69,.14); color: var(--positif); }
 .pastille.or { background: rgba(176,141,74,.18); color: #7A5F2C; }
 .pastille.non { background: rgba(154,91,30,.12); color: var(--alerte); }
+.fenetre.express { width: min(1180px, calc(100vw - 24px)); }
+.express-grille { display: grid; grid-template-columns: minmax(300px, 420px) 1fr; gap: 24px; margin-top: 12px; align-items: start; }
+.express-grille > * { min-width: 0; }
+@media (max-width: 860px) { .express-grille { grid-template-columns: 1fr; } .express-resultat { order: -1; } }
+.express-resultat { background: var(--vert); color: var(--creme); padding: 20px 22px; }
+.express-resultat h3 { color: var(--creme); font-size: 18px; margin: 0 0 4px; }
+.express-resultat .etiq { font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--or-clair); }
+.express-resultat .fourchette { font-family: var(--serif); font-size: clamp(30px, 5vw, 44px); font-weight: 600; line-height: 1.05; font-variant-numeric: tabular-nums; margin: 4px 0 2px; }
+.express-resultat .fourchette small { font-size: .45em; font-weight: 500; color: rgba(250,246,239,.75); }
+.express-resultat .annee { font-family: var(--serif); font-size: 24px; color: var(--or-clair); font-variant-numeric: tabular-nums; }
+.express-resultat .mi { font-size: 13px; color: rgba(250,246,239,.8); margin-top: 2px; }
+.express-cles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; padding: 12px 0; border-top: 1px solid rgba(201,169,110,.35); border-bottom: 1px solid rgba(201,169,110,.35); }
+.express-cles div span { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--or-clair); }
+.express-cles div b { font-family: var(--serif); font-size: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) {
+  .express-cles { grid-template-columns: 1fr 1fr; }
+  .fenetre.express { padding: 16px 14px 20px; width: calc(100vw - 12px); max-height: calc(100vh - 12px); }
+  .express-resultat { padding: 16px 14px; }
+  .express-detail { font-size: 12px; }
+  .express-detail td, .express-detail th { padding: 4px 3px; }
+  .express-detail td small { display: none; }
+}
+.express-detail { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.express-detail th { font-weight: 400; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--or-clair); text-align: right; padding: 4px 6px; }
+.express-detail th:first-child, .express-detail td:first-child { text-align: left; }
+.express-detail td { padding: 5px 6px; border-bottom: 1px solid rgba(250,246,239,.12); text-align: right; white-space: nowrap; }
+.express-detail tr.fin td { border-bottom: 0; border-top: 1px solid var(--or-clair); font-weight: 500; color: var(--or-clair); }
+.express-mois { width: 100%; height: auto; display: block; margin-top: 14px; }
+.express-resultat .note-x { font-size: 11.5px; color: rgba(250,246,239,.7); margin-top: 10px; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--vert); color: var(--creme); padding: 10px 18px; font-size: 13px; z-index: 50; opacity: 0; transition: opacity .25s; pointer-events: none; }
 .toast.visible { opacity: 1; }
 
@@ -273,10 +303,11 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" fill="#16291F"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#B08D4A" stroke-width="1.5"/><text x="32" y="41.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="29" fill="#C9A96E">TH</text></svg>
     <div><b>Étude de rentabilité</b><span>Courte durée vs année</span></div>
   </div>
+  <button class="btn btn-or" id="btn-express" type="button">Estimation express</button>
   <button class="btn btn-ligne" id="btn-nouvelle" type="button">Nouvelle étude</button>
   <button class="btn btn-ligne" id="btn-suivi" type="button">Mes études</button>
   <button class="btn btn-ligne" id="btn-param" type="button">Paramètres</button>
-  <button class="btn btn-or" id="btn-pdf" type="button">Exporter le PDF</button>
+  <button class="btn btn-ligne" id="btn-pdf" type="button">Exporter le PDF</button>
 </header>
 
 <div class="app">
@@ -347,6 +378,9 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
             <label><input type="checkbox" data-path="bien.exterieur"> Balcon / terrasse / jardin</label>
             <label><input type="checkbox" data-path="bien.parking"> Parking</label>
             <label><input type="checkbox" data-path="bien.piscine"> Piscine</label>
+            <label><input type="checkbox" data-path="bien.bordMer"> Bord de mer</label>
+            <label><input type="checkbox" data-path="bien.jacuzzi"> Jacuzzi / spa</label>
+            <label><input type="checkbox" data-path="bien.cheminee"> Cheminée / poêle</label>
           </div></div>
         <div class="champ plein"><label for="b-titre">Titre du bien (dossier)</label><input id="b-titre" data-path="bien.titre"></div>
         <div class="champ"><label for="b-ref">Référence annonce</label><input id="b-ref" data-path="bien.reference"></div>
@@ -413,7 +447,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
     <div class="corps">
       <div class="grille">
         <div class="champ"><label for="c-plat">Commission plateformes (%)</label><input id="c-plat" type="number" step="0.5" data-path="cd.plateformes"></div>
-        <div class="champ"><label for="c-conc">Commission conciergerie (%)</label><input id="c-conc" type="number" step="0.5" data-path="cd.conciergerie"><span class="aide">Sur les nuitées nettes</span></div>
+        <div class="champ"><label for="c-conc">Commission conciergerie (%)</label><input id="c-conc" type="number" step="0.5" data-path="cd.conciergerie"><span class="aide">Vide = votre barème progressif (Paramètres)</span></div>
         <div class="champ"><label for="c-energie">Énergie & eau (€/an)</label><input id="c-energie" type="number" data-path="cd.energie"></div>
         <div class="champ"><label for="c-internet">Internet & TV (€/an)</label><input id="c-internet" type="number" data-path="cd.internet"></div>
         <div class="champ"><label for="c-assu">Assurance (€/an)</label><input id="c-assu" type="number" data-path="cd.assurance"></div>
@@ -499,6 +533,32 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<dialog id="dlg-express" class="fenetre express">
+  <div class="fenetre-tete"><div><h2>Estimation express</h2><p class="aide">Pendant l'appel : renseignez le bien, la fourchette se met à jour aussitôt.</p></div><button class="btn btn-discret btn-mini" type="button" data-fermer>Fermer</button></div>
+  <div class="express-grille">
+    <form class="express-saisie" id="form-express" autocomplete="off">
+      <div class="grille">
+        <div class="champ"><label for="x-type">Type de bien</label><select id="x-type" data-x="type"><option value="appartement">Appartement</option><option value="maison">Maison</option></select></div>
+        <div class="champ"><label for="x-commune">Localisation</label><select id="x-commune" data-x="commune"></select></div>
+        <div class="champ" data-x-autre hidden><label for="x-commune-nom">Commune</label><input id="x-commune-nom" data-x="communeNom" placeholder="ex. Erquy"></div>
+        <div class="champ" data-x-autre hidden><label for="x-secteur">Type de marché</label><select id="x-secteur" data-x="secteur"></select></div>
+        <div class="champ"><label for="x-chambres">Chambres</label><input id="x-chambres" type="number" min="0" inputmode="numeric" data-x="chambres"></div>
+        <div class="champ"><label for="x-capacite">Capacité (voyageurs)</label><input id="x-capacite" type="number" min="1" inputmode="numeric" data-x="capacite"></div>
+        <div class="champ"><label for="x-surface">Surface (m², facultatif)</label><input id="x-surface" type="number" min="5" inputmode="numeric" data-x="surface"></div>
+        <div class="champ"><label for="x-etat">État</label><select id="x-etat" data-x="etat"><option value="a_rafraichir">À rafraîchir</option><option value="bon">Bon état</option><option value="renove">Rénové</option><option value="premium">Haut de gamme</option></select></div>
+        <div class="champ plein"><label for="x-menage">Forfait ménage par séjour (€)</label><input id="x-menage" type="number" min="0" inputmode="numeric" data-x="menage"><span class="aide" id="x-aide-menage"></span></div>
+        <div class="champ plein"><label>Les plus du bien</label>
+          <div class="cases" id="x-atouts"></div></div>
+      </div>
+      <div class="ligne-btn" style="margin-top:14px">
+        <button class="btn btn-vert" type="button" id="btn-x-etude">Créer l'étude complète</button>
+        <button class="btn btn-discret" type="button" id="btn-x-reset">Effacer</button>
+      </div>
+    </form>
+    <section class="express-resultat" id="x-resultat" aria-live="polite"></section>
+  </div>
+</dialog>
+
 <dialog id="dlg-suivi" class="fenetre">
   <div class="fenetre-tete"><h2>Mes études</h2><button class="btn btn-discret btn-mini" type="button" data-fermer>Fermer</button></div>
   <p class="aide">Chaque étude est enregistrée automatiquement dans ce navigateur. Cliquez sur une ligne pour l'ouvrir.</p>
@@ -511,8 +571,21 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   <p class="aide">Montants par séjour. Le forfait de chaque étude est choisi selon le nombre de chambres du bien ; vous pouvez toujours le modifier dans l'étude.</p>
   <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
   <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
-  <h3>Commission de conciergerie par défaut</h3>
-  <div class="grille" style="max-width:320px"><div class="champ"><label for="p-commission">Commission (%)</label><input id="p-commission" type="number" step="0.5" min="0"></div></div>
+  <h3>Barème de commission</h3>
+  <p class="aide">Appliqué chaque mois sur les revenus locatifs du propriétaire, hors frais de plateformes et hors ménage.</p>
+  <div class="grille trois" style="max-width:560px">
+    <div class="champ"><label for="p-s1">Jusqu'à (€/mois)</label><input id="p-s1" type="number" min="0" data-bareme="s1" aria-label="Premier palier"></div>
+    <div class="champ"><label for="p-t1">Taux</label><input id="p-t1" type="number" step="0.5" data-bareme="t1"></div><div></div>
+    <div class="champ"><label for="p-s2">Jusqu'à (€/mois)</label><input id="p-s2" type="number" min="0" data-bareme="s2"></div>
+    <div class="champ"><label for="p-t2">Taux</label><input id="p-t2" type="number" step="0.5" data-bareme="t2"></div><div></div>
+    <div class="champ"><label>Au-delà</label><input type="text" value="—" disabled aria-label="Au-delà du deuxième palier"></div>
+    <div class="champ"><label for="p-t3">Taux</label><input id="p-t3" type="number" step="0.5" data-bareme="t3"></div><div></div>
+  </div>
+  <div class="cases" style="margin-top:8px">
+    <label><input type="radio" name="p-mode" value="tranches" data-bareme="mode"> Par tranches (chaque tranche à son taux)</label>
+    <label><input type="radio" name="p-mode" value="palier" data-bareme="mode"> Taux unique selon le palier atteint</label>
+  </div>
+  <p class="aide" id="p-exemple" style="margin-top:6px"></p>
   <h3>Données du marché (AirDNA, PriceLabs)</h3>
   <p class="aide">AirDNA et PriceLabs ne proposent pas d'accès automatique avec un compte gratuit. Le marché de chaque étude est donc rempli à partir des données publiques intégrées à l'outil. Avec un compte payant, collez l'export mensuel dans « Réglages avancés › Marché courte durée ».</p>
   <h3>Sauvegarde</h3>
@@ -608,6 +681,12 @@ const SCENARIOS = { prudent: { occ: 0.85, adr: 0.95, nom: "Prudent" }, realiste:
 /* Indice de prix par typologie, base 1 = T2 (1 chambre) */
 const ADR_APPART = [0.86, 1, 1.32, 1.64, 1.92];
 const ADR_MAISON = [1.11, 1.32, 1.64, 2.01, 2.5, 3.05];
+/* Atouts : majoration du prix par nuit */
+const ATOUTS = {
+  bordMer: { adr: 1.18, nom: "bord de mer" }, vueMer: { adr: 1.12, nom: "vue mer" }, plage: { adr: 1.06, nom: "plage à pied" },
+  piscine: { adr: 1.15, nom: "piscine" }, jacuzzi: { adr: 1.10, nom: "jacuzzi" }, exterieur: { adr: 1.04, nom: "extérieur" },
+  cheminee: { adr: 1.03, nom: "cheminée" }, parking: { adr: 1.02, nom: "parking" }
+};
 const ETAT = { a_rafraichir: { adr: 0.92, ld: 0.95, nom: "À rafraîchir" }, bon: { adr: 1, ld: 1, nom: "Bon état" }, renove: { adr: 1.06, ld: 1.03, nom: "Rénové" }, premium: { adr: 1.15, ld: 1.06, nom: "Haut de gamme" } };
 const AGENCES = ["Optimo", "Orpi", "Century 21", "Laforêt", "Square Habitat", "Guy Hoquet", "Stéphane Plaza", "Nestenn", "iad", "Safti", "Capifrance", "Foncia", "Citya", "Le Tuc", "ERA", "Agence du Goëlo", "Cabinet Sainte-Anne", "Bretagne Sud Immobilier", "Kermarrec", "Immo de France", "Notaire"];
 const PLAFOND_NONCLASSE = 15000, PLAFOND_CLASSE = 83600, PLAFOND_FONCIER = 15000, PLAFOND_MICROBIC_LD = 83600;
@@ -630,7 +709,7 @@ function etatVide() {
   return {
     id: "e" + Date.now().toString(36), annonce: "", lien: "",
     options: { taxeFonciere: false, cfe: false, entretien: false, comptable: false },
-    bien: { type: "appartement", commune: "plouezec", communeNom: "", secteur: "littoral", pieces: "", chambres: "", surface: "", capacite: "", prix: "", terrain: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, titre: "", reference: "", photo: "" },
+    bien: { type: "appartement", commune: "plouezec", communeNom: "", secteur: "littoral", pieces: "", chambres: "", surface: "", capacite: "", prix: "", terrain: "", annee: "", etat: "bon", dpe: "", chargesCopro: "", taxeFonciere: "", vueMer: false, plage: false, exterieur: false, parking: false, piscine: false, bordMer: false, jacuzzi: false, cheminee: false, titre: "", reference: "", photo: "" },
     marche: { adrBase: "", scenario: "realiste", dms: "", fraisMenage: "", saisonMode: "auto", mois: [], source: "" },
     cd: { plateformes: "", conciergerie: "", energie: "", internet: "", assurance: "", cfe: "", entretienPct: "", ameublement: "", regime: "reel" },
     ld: { mode: "meublee", loyer: "", vacance: "", gestion: "", gli: "", assurance: "", entretien: "", recup: "", regime: "auto" },
@@ -677,7 +756,10 @@ function autos(s) {
 
   const base = c.t2 * (maison ? ADR_MAISON[Math.min(ch, 5)] : ADR_APPART[Math.min(ch, 4)]);
   let f = ETAT[b.etat || "bon"].adr;
-  if (b.vueMer) f *= 1.15; if (b.plage) f *= 1.06; if (b.exterieur) f *= 1.04; if (b.parking) f *= 1.02; if (b.piscine) f *= 1.15;
+  for (const [k, coef] of Object.entries(ATOUTS)) if (b[k]) f *= coef.adr;
+  f = Math.min(f, 1.7);
+  const capRef = A["bien.capacite"], cap = num(b.capacite) || capRef;
+  f *= Math.max(0.85, Math.min(1.25, 1 + 0.06 * (cap - capRef) / 2));
   A["marche.adrBase"] = Math.round(base * f);
   A["marche.dms"] = Math.round(c.profil.dms * (maison ? 1.25 : 1) * 10) / 10;
   const lm = ligneMenage(ch);
@@ -685,7 +767,7 @@ function autos(s) {
   A.ligneMenage = lm;
 
   A["cd.plateformes"] = 15;
-  A["cd.conciergerie"] = num(PARAM.commission) || 20;
+
   A["cd.energie"] = arrondi(400 + surf * 17, 10);
   A["cd.internet"] = 360;
   A["cd.assurance"] = arrondi(150 + surf * 1.5, 10);
@@ -761,7 +843,18 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
     const sejours = nuits ? Math.max(1, Math.round(nuits / (dms * (i === 6 || i === 7 ? ete : 1)))) : 0;
     return { i, occ: nuits / JOURS[i], adr, nuits, sejours, caNuits: nuits * adr, caMenage: sejours * fraisMen };
   });
+  const pPlat = g("cd.plateformes") / 100, tauxFixe = num(s.cd.conciergerie);
+  for (const m of mois) {
+    m.plateformes = (m.caNuits + m.caMenage) * pPlat;
+    m.base = m.caNuits * (1 - pPlat);
+    m.commission = isNaN(tauxFixe) ? commissionBareme(m.base) : m.base * tauxFixe / 100;
+    m.proprio = m.caNuits + m.caMenage - m.plateformes - m.caMenage - m.commission;
+  }
   const T = mois.reduce((a, m) => ({ nuits: a.nuits + m.nuits, sejours: a.sejours + m.sejours, caNuits: a.caNuits + m.caNuits, caMenage: a.caMenage + m.caMenage }), { nuits: 0, sejours: 0, caNuits: 0, caMenage: 0 });
+  T.commission = mois.reduce((a, m) => a + m.commission, 0);
+  T.base = mois.reduce((a, m) => a + m.base, 0);
+  T.proprio = mois.reduce((a, m) => a + m.proprio, 0);
+  T.tauxMoyen = T.base ? T.commission / T.base * 100 : 0;
   T.occ = T.nuits / 365; T.adr = T.nuits ? T.caNuits / T.nuits : 0;
 
   const copro = g("bien.chargesCopro");
@@ -776,7 +869,7 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
   cd.recettes = T.caNuits + T.caMenage;
   cd.lignes = [
     ["Commission plateformes (Airbnb, Booking…)", cd.recettes * g("cd.plateformes") / 100],
-    ["Conciergerie Les Domaines de Tri Hent", T.caNuits * (1 - g("cd.plateformes") / 100) * g("cd.conciergerie") / 100],
+    ["Conciergerie Les Domaines de Tri Hent", T.commission],
     ["Forfait ménage", T.caMenage],
     ["Énergie & eau", g("cd.energie")],
     ["Internet & TV", g("cd.internet")],
@@ -1043,7 +1136,7 @@ function rendre() {
   const pages = [];
   const TOTAL = 7;
   const scs = [["Prudent", P], ["Réaliste", r.sc.nom === "Réaliste" ? r : calculer(S, "realiste")], ["Optimiste", O]];
-  const atouts = [b.vueMer && "vue mer", b.plage && "plage à pied", b.exterieur && "extérieur", b.parking && "parking", b.piscine && "piscine"].filter(Boolean);
+  const atouts = Object.entries(ATOUTS).filter(([k]) => b[k]).map(([, a]) => a.nom);
   const regimeNom = { reel: "LMNP au réel", classe: "Micro-BIC classé", nonclasse: "Micro-BIC non classé", microfoncier: "Micro-foncier", foncierreel: "Foncier au réel", microbic: "Micro-BIC meublé" };
 
   /* Résumé dans la colonne de saisie */
@@ -1250,7 +1343,7 @@ function rendre() {
       <div><h4>Entretien du bien</h4><p>Suivi régulier, petites interventions, réseau d'artisans locaux de confiance.</p></div>
       <div><h4>Démarches</h4><p>Déclaration en mairie, dossier de classement, taxe de séjour : nous vous guidons à chaque étape.</p></div>
     </div>
-    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. La commission retenue dans cette étude est de ${nf1.format(r.g("cd.conciergerie"))} %.</p></div>
+    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Barème appliqué chaque mois sur les revenus locatifs hors plateformes et ménage : ${baremeTexte()}, soit ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année pour ce bien.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
     <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO(null)}</div></div>
     <h3>Méthode et sources</h3>
     <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
@@ -1279,8 +1372,24 @@ const GRILLE_DEFAUT = [
   { type: "T5", chambres: 4, lits: 4, menage: 120, conso: 18, linge: 40 },
   { type: "T6 et plus", chambres: 5, lits: 5, menage: 150, conso: 22, linge: 50 }
 ];
-let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), commission: 20 };
+let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23, mode: "tranches" } };
 try { const p = JSON.parse(localStorage.getItem(CLE_PARAM) || "null"); if (p) PARAM = { ...PARAM, ...p }; } catch (e) {}
+if (!PARAM.bareme || typeof PARAM.bareme !== "object") PARAM.bareme = { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23, mode: "tranches" };
+/* Commission mensuelle selon le barème progressif (base : revenus locatifs hors plateformes et ménage) */
+function commissionBareme(base) {
+  const B = PARAM.bareme;
+  if (base <= 0) return 0;
+  if (B.mode === "palier") return base * (base <= B.s1 ? B.t1 : base <= B.s2 ? B.t2 : B.t3) / 100;
+  return (Math.min(base, B.s1) * B.t1 + Math.max(0, Math.min(base, B.s2) - B.s1) * B.t2 + Math.max(0, base - B.s2) * B.t3) / 100;
+}
+function baremeTexte() {
+  const B = PARAM.bareme;
+  return `${nf0.format(B.t1)} % jusqu'à ${nf0.format(B.s1)} € par mois, ${nf0.format(B.t2)} % jusqu'à ${nf0.format(B.s2)} €, ${nf0.format(B.t3)} % au-delà${B.mode === "palier" ? " (taux unique selon le palier atteint)" : " (par tranches)"}`;
+}
+function exempleBareme() {
+  const ex = 2000, c = commissionBareme(ex);
+  $("#p-exemple").textContent = `Exemple : pour ${eur(ex)} de revenus locatifs dans le mois, la commission est de ${eur(c)}, soit ${nf1.format(c / ex * 100)} %.`;
+}
 function sauverParam() { try { localStorage.setItem(CLE_PARAM, JSON.stringify(PARAM)); } catch (e) {} }
 const totalLigne = (l) => (num(l.menage) || 0) + (num(l.conso) || 0) + (num(l.linge) || 0);
 function ligneMenage(chambres) {
@@ -1301,7 +1410,10 @@ function dessinerGrille() {
       <td><input id="g-n-${i}" type="number" min="0" data-grille="${i}" data-k="linge" value="${esc(l.linge)}" aria-label="Linge"></td>
       <td class="total" id="g-tot-${i}">${eur(totalLigne(l))}</td>
       <td><button class="btn btn-discret btn-mini" type="button" data-suppr-grille="${i}">Retirer</button></td></tr>`).join("") + `</tbody>`;
-  $("#p-commission").value = PARAM.commission;
+  const B = PARAM.bareme;
+  for (const k of ["s1", "s2", "t1", "t2", "t3"]) $("#p-" + k).value = B[k];
+  document.querySelectorAll('input[name="p-mode"]').forEach(r => r.checked = r.value === B.mode);
+  exempleBareme();
 }
 
 /* ---------- Sauvegarde locale : chaque étude est enregistrée automatiquement ---------- */
@@ -1311,7 +1423,7 @@ function ecrireSauvegardes(l) { try { localStorage.setItem(CLE, JSON.stringify(l
 let minuteurAuto;
 function enregistrerCourante() {
   try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {}
-  if (!S.lien && !S.annonce && !num(S.bien.prix)) return;
+  if (!S.lien && !S.annonce && !num(S.bien.prix) && S.bien.chambres === "") return;
   const r = calculer(S);
   const l = lireSauvegardes().filter(x => x.id !== S.id);
   l.unshift({ id: S.id, nom: titreBien(r), agence: S.dossier.agence, date: S.dossier.date, gain: r.cd.net - r.ld.net, data: S });
@@ -1468,7 +1580,10 @@ document.addEventListener("input", (e) => {
   else if (el.dataset.grille !== undefined) {
     const l = PARAM.grille[+el.dataset.grille]; l[el.dataset.k] = el.dataset.k === "type" ? el.value : el.value;
     $("#g-tot-" + el.dataset.grille).textContent = eur(totalLigne(l)); sauverParam(); maj();
-  } else if (el.id === "p-commission") { PARAM.commission = num(el.value) || 0; sauverParam(); maj(); }
+  } else if (el.dataset.bareme) {
+    PARAM.bareme[el.dataset.bareme] = el.dataset.bareme === "mode" ? el.value : (num(el.value) || 0);
+    sauverParam(); exempleBareme(); maj(); if (window.majExpress) majExpress();
+  }
 });
 document.addEventListener("change", (e) => { if (e.target.dataset.path && e.target.tagName === "SELECT") { ecrire(S, e.target.dataset.path, e.target.value); maj(); } });
 document.addEventListener("click", (e) => {
@@ -1584,6 +1699,99 @@ $("#import-json").addEventListener("change", (e) => {
   e.target.value = "";
 });
 window.addEventListener("resize", ajusterZoom);
+
+/* ---------- Estimation express (pendant un appel) ---------- */
+const CLE_EXPRESS = "trihent.express.v1";
+const expressVide = () => ({ type: "appartement", commune: "paimpol", communeNom: "", secteur: "littoral", chambres: "", capacite: "", surface: "", etat: "bon", menage: "", atouts: {} });
+let E = expressVide();
+try { const x = JSON.parse(localStorage.getItem(CLE_EXPRESS) || "null"); if (x) E = { ...E, ...x }; } catch (e) {}
+function etudeDepuisExpress() {
+  const st = etatVide();
+  const ch = num(E.chambres);
+  Object.assign(st.bien, {
+    type: E.type, commune: E.commune, communeNom: E.communeNom, secteur: E.secteur, etat: E.etat,
+    chambres: isNaN(ch) ? "" : ch, pieces: isNaN(ch) ? "" : ch + 1, capacite: E.capacite, surface: E.surface
+  });
+  for (const k of Object.keys(ATOUTS)) st.bien[k] = !!E.atouts[k];
+  st.marche.fraisMenage = E.menage;
+  return st;
+}
+function preparerExpress() {
+  $("#x-commune").innerHTML = $("#b-commune").innerHTML;
+  $("#x-secteur").innerHTML = $("#b-secteur").innerHTML;
+  $("#x-atouts").innerHTML = Object.entries(ATOUTS).map(([k, a]) => `<label><input type="checkbox" data-x-atout="${k}"> ${esc(a.nom.charAt(0).toUpperCase() + a.nom.slice(1))}</label>`).join("");
+  document.querySelectorAll("[data-x]").forEach(el => { el.value = E[el.dataset.x] ?? ""; });
+  document.querySelectorAll("[data-x-atout]").forEach(el => { el.checked = !!E.atouts[el.dataset.xAtout]; });
+}
+function graphExpress(r) {
+  const W = 560, H = 150, gl = 6, gr = 6, gt = 18, gb = 20, w = W - gl - gr, h = H - gt - gb;
+  const vals = r.mois.map(m => m.proprio), max = Math.max(...vals, 1) * 1.08, bw = w / 12;
+  let svg = `<svg class="express-mois" viewBox="0 0 ${W} ${H}" role="img" aria-label="Revenu propriétaire mois par mois">`;
+  vals.forEach((v, i) => {
+    const bh = Math.max(0, v) / max * h, x = gl + i * bw + bw * 0.14;
+    svg += `<rect x="${x}" y="${gt + h - bh}" width="${bw * 0.72}" height="${bh}" fill="${i === 6 || i === 7 ? "#C9A96E" : "rgba(250,246,239,.55)"}"/>`;
+    svg += `<text x="${x + bw * 0.36}" y="${gt + h - bh - 4}" font-size="9.5" text-anchor="middle" fill="#FAF6EF">${nf0.format(Math.round(v / 10) * 10)}</text>`;
+    svg += `<text x="${gl + i * bw + bw / 2}" y="${H - 5}" font-size="10" text-anchor="middle" fill="#C9A96E">${MOIS_C[i]}</text>`;
+  });
+  return svg + `</svg>`;
+}
+function majExpress() {
+  try { localStorage.setItem(CLE_EXPRESS, JSON.stringify(E)); } catch (e) {}
+  document.querySelectorAll("[data-x-autre]").forEach(el => el.hidden = E.commune !== "autre");
+  const st = etudeDepuisExpress();
+  const P = calculer(st, "prudent"), R = calculer(st, "realiste"), O = calculer(st, "optimiste");
+  const lm = R.A.ligneMenage, saisi = !isNaN(num(E.menage));
+  $("#x-menage").placeholder = "≈ " + R.g("marche.fraisMenage");
+  $("#x-capacite").placeholder = "≈ " + R.A["bien.capacite"];
+  $("#x-chambres").placeholder = "≈ " + R.A["bien.chambres"];
+  $("#x-aide-menage").textContent = saisi ? "Forfait saisi." : `À saisir. En attendant : grille ${lm ? lm.type : ""} (${eur(R.g("marche.fraisMenage"))}).`;
+  const c = communeDe(st.bien);
+  const ete = (R.mois[6].proprio + R.mois[7].proprio) / 2, hiver = (R.mois[0].proprio + R.mois[1].proprio + R.mois[10].proprio + R.mois[11].proprio) / 4;
+  const ligne = (lbl, x, cls = "") => `<tr class="${cls}"><td>${lbl}</td><td>${x(P)}</td><td>${x(R)}</td><td>${x(O)}</td></tr>`;
+  $("#x-resultat").innerHTML = `
+    <p class="etiq">Revenu propriétaire estimé · ${esc(c.nom)}</p>
+    <p class="fourchette">${eurArr(P.T.proprio / 12, 10)} à ${eurArr(O.T.proprio / 12, 10)} <small>par mois en moyenne</small></p>
+    <p class="annee">${eurArr(P.T.proprio)} à ${eurArr(O.T.proprio)} par an</p>
+    <p class="mi">Scénario réaliste : ${eurArr(R.T.proprio / 12, 10)} par mois, ${eurArr(R.T.proprio)} par an${c.profil.ete > 1.25 ? ` · environ ${eurArr(ete, 10)} par mois en juillet-août, ${eurArr(hiver, 10)} en hiver` : ""}.</p>
+    <div class="express-cles">
+      <div><span>Prix moyen / nuit</span><b>${eur(R.T.adr)}</b></div>
+      <div><span>Occupation</span><b>${Math.round(R.T.occ * 100)} %</b></div>
+      <div><span>Nuits louées / an</span><b>${nf0.format(R.T.nuits)}</b></div>
+      <div><span>Séjours / an</span><b>${nf0.format(R.T.sejours)}</b></div>
+    </div>
+    <div style="overflow-x:auto"><table class="express-detail">
+      <thead><tr><th>Par an</th><th>Prudent</th><th>Réaliste</th><th>Optimiste</th></tr></thead>
+      <tbody>
+        ${ligne("Nuitées payées par les voyageurs", x => eur(x.T.caNuits))}
+        ${ligne("Forfaits ménage facturés", x => eur(x.T.caMenage))}
+        ${ligne("Frais de plateformes", x => moins(x.mois.reduce((a, m) => a + m.plateformes, 0)))}
+        ${ligne("Ménage reversé au prestataire", x => moins(x.T.caMenage))}
+        ${ligne(`Commission Tri Hent`, x => moins(x.T.commission) + ` <small style="opacity:.7">${nf1.format(x.T.tauxMoyen)} %</small>`)}
+        ${ligne("Revenu propriétaire", x => eur(x.T.proprio), "fin")}
+        ${ligne("Soit par mois", x => eur(x.T.proprio / 12))}
+      </tbody>
+    </table></div>
+    ${graphExpress(R)}
+    <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, calculée chaque mois.</p>`;
+}
+window.majExpress = majExpress;
+document.addEventListener("input", (e) => {
+  const el = e.target;
+  if (el.dataset.x) { E[el.dataset.x] = el.value; majExpress(); }
+  else if (el.dataset.xAtout) { E.atouts[el.dataset.xAtout] = el.checked; majExpress(); }
+});
+document.addEventListener("change", (e) => { const el = e.target; if (el.dataset.x && el.tagName === "SELECT") { E[el.dataset.x] = el.value; majExpress(); } });
+$("#form-express").addEventListener("submit", (e) => e.preventDefault());
+$("#btn-express").addEventListener("click", () => { preparerExpress(); majExpress(); $("#dlg-express").showModal(); setTimeout(() => $("#x-chambres").focus(), 50); });
+$("#btn-x-reset").addEventListener("click", () => { E = expressVide(); preparerExpress(); majExpress(); });
+$("#btn-x-etude").addEventListener("click", () => {
+  enregistrerCourante();
+  S = etudeDepuisExpress(); S.dossier.message = motExemple();
+  $("#detecte").innerHTML = ""; $("#liste-comparables").innerHTML = "";
+  versFormulaire(); rendre(); try { localStorage.setItem(CLE_COURANTE, JSON.stringify(S)); } catch (e) {}
+  $("#dlg-express").close();
+  toast("Étude créée à partir de l'estimation : ajoutez le prix et le lien de l'annonce si besoin");
+});
 
 /* ---------- Démarrage ---------- */
 remplirSelectCommunes();
