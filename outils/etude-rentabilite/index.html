@@ -572,7 +572,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
   <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
   <h3>Barème de commission</h3>
-  <p class="aide">Chaque mois, un seul taux s'applique à tous les revenus locatifs du propriétaire (hors frais de plateformes et hors ménage), selon le palier atteint ce mois-là.</p>
+  <p class="aide">Chaque mois, un seul taux s'applique à tous les revenus locatifs du propriétaire (hors frais de plateformes, forfaits ménage compris), selon le palier atteint ce mois-là. Les forfaits ménage sont ensuite reversés au prestataire.</p>
   <div class="grille trois" style="max-width:560px">
     <div class="champ"><label for="p-s1">Jusqu'à (€/mois)</label><input id="p-s1" type="number" min="0" data-bareme="s1" aria-label="Premier palier"></div>
     <div class="champ"><label for="p-t1">Taux</label><input id="p-t1" type="number" step="0.5" data-bareme="t1"></div><div></div>
@@ -842,7 +842,7 @@ function calculer(s, scenarioKey, facteurOcc = 1) {
   const pPlat = g("cd.plateformes") / 100, tauxFixe = num(s.cd.conciergerie);
   for (const m of mois) {
     m.plateformes = (m.caNuits + m.caMenage) * pPlat;
-    m.base = m.caNuits * (1 - pPlat);
+    m.base = (m.caNuits + m.caMenage) * (1 - pPlat); // revenu locatif hors plateformes, forfaits ménage compris
     m.commission = isNaN(tauxFixe) ? commissionBareme(m.base) : m.base * tauxFixe / 100;
     m.proprio = m.caNuits + m.caMenage - m.plateformes - m.caMenage - m.commission;
   }
@@ -1339,7 +1339,7 @@ function rendre() {
       <div><h4>Entretien du bien</h4><p>Suivi régulier, petites interventions, réseau d'artisans locaux de confiance.</p></div>
       <div><h4>Démarches</h4><p>Déclaration en mairie, dossier de classement, taxe de séjour : nous vous guidons à chaque étape.</p></div>
     </div>
-    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Le taux est fixé chaque mois selon les revenus locatifs du mois, hors plateformes et ménage : ${baremeTexte()}. Pour ce bien, cela représente ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année pour ce bien.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
+    <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Le taux est fixé chaque mois selon les revenus locatifs du mois, hors plateformes et forfaits ménage compris : ${baremeTexte()}. Pour ce bien, cela représente ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année. La commission porte aussi sur le ménage, car nous recrutons et encadrons les prestataires, contrôlons chaque ménage et fournissons les consommables.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
     <div class="encadre vert" style="margin-top:5mm"><div class="contact-bloc"><div><h3 style="margin:0 0 2mm">Parlons de ce projet</h3><p class="tel">06 66 99 11 28</p><p>domaines.trihent@gmail.com · domaines-trihent.com<br>Paimpol — Côtes-d'Armor</p></div>${MONO(null)}</div></div>
     <h3>Méthode et sources</h3>
     <p class="petit">Données de marché publiques consultées en octobre 2026 : AirDNA, AirROI, GuestFavorites, Airbtics, BnbCalc, Likibu, HomeToGo ; loyers : agence.immo, RealAdvisor, LocService, annonces locales ; fiscalité : loi n° 2024-1039 du 19 novembre 2024 (dite Le Meur) et loi de finances 2026. Montants en dollars convertis à 0,86 €. Le prix par nuit est estimé à partir de la typologie, de la commune, de l'état et des atouts du bien, puis modulé selon une saisonnalité de type « ${esc(c.profil.nom.toLowerCase())} »${S.marche.saisonMode === "manuel" ? " (saisonnalité ajustée manuellement" + (S.marche.source ? " : " + esc(S.marche.source) : "") + ")" : ""}. Loyer à l'année estimé à partir des loyers de marché au m² du secteur.</p>
@@ -1371,7 +1371,7 @@ const GRILLE_DEFAUT = [
 let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 } };
 try { const p = JSON.parse(localStorage.getItem(CLE_PARAM) || "null"); if (p) PARAM = { ...PARAM, ...p }; } catch (e) {}
 if (!PARAM.bareme || typeof PARAM.bareme !== "object") PARAM.bareme = { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 };
-/* Commission mensuelle selon le barème progressif (base : revenus locatifs hors plateformes et ménage) */
+/* Commission mensuelle selon le barème progressif (base : revenus locatifs hors plateformes, forfaits ménage compris) */
 /* Taux unique du mois selon le palier atteint */
 function tauxBareme(base) { const B = PARAM.bareme; return base <= B.s1 ? B.t1 : base <= B.s2 ? B.t2 : B.t3; }
 function commissionBareme(base) {
@@ -1768,7 +1768,7 @@ function majExpress() {
       </tbody>
     </table></div>
     ${graphExpress(R)}
-    <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, le taux du mois s'appliquant à tous ses revenus.</p>`;
+    <p class="note-x">Revenu versé au propriétaire, scénario réaliste mois par mois. Avant les charges du logement (énergie, internet, assurance, copropriété) et avant impôts. Commission : ${esc(baremeTexte())}, le taux du mois s'appliquant à tous ses revenus locatifs, forfaits ménage compris.</p>`;
 }
 window.majExpress = majExpress;
 document.addEventListener("input", (e) => {
