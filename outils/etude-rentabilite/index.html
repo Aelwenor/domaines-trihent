@@ -546,6 +546,9 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
         <div class="champ"><label for="x-capacite">Capacité (voyageurs)</label><input id="x-capacite" type="number" min="1" inputmode="numeric" data-x="capacite"></div>
         <div class="champ"><label for="x-surface">Surface (m², facultatif)</label><input id="x-surface" type="number" min="5" inputmode="numeric" data-x="surface"></div>
         <div class="champ"><label for="x-etat">État</label><select id="x-etat" data-x="etat"><option value="a_rafraichir">À rafraîchir</option><option value="bon">Bon état</option><option value="renove">Rénové</option><option value="premium">Haut de gamme</option></select></div>
+        <div class="champ"><label for="x-canal">Plateformes</label>
+          <select id="x-canal"><option value="15.5">Airbnb (15,5 %)</option><option value="18">Booking (18 %)</option><option value="17">Airbnb + Booking (17 %)</option><option value="">Autre taux</option></select></div>
+        <div class="champ"><label for="x-plateformes">Frais de plateformes (%)</label><input id="x-plateformes" type="number" min="0" step="0.5" inputmode="decimal" data-x="plateformes"></div>
         <div class="champ plein"><label for="x-menage">Forfait ménage par séjour (€)</label><input id="x-menage" type="number" min="0" inputmode="numeric" data-x="menage"><span class="aide" id="x-aide-menage"></span></div>
         <div class="champ plein"><label>Les plus du bien</label>
           <div class="cases" id="x-atouts"></div></div>
@@ -571,6 +574,9 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   <p class="aide">Montants par séjour. Le forfait de chaque étude est choisi selon le nombre de chambres du bien ; vous pouvez toujours le modifier dans l'étude.</p>
   <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
   <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
+  <h3>Frais de plateformes par défaut</h3>
+  <p class="aide">Commission prélevée par Airbnb, Booking ou Abritel sur ce que paie le voyageur (nuitées et ménage). Exemples : Airbnb 15,5 %, Booking 18 %.</p>
+  <div class="grille" style="max-width:320px"><div class="champ"><label for="p-plateformes">Frais de plateformes (%)</label><input id="p-plateformes" type="number" step="0.5" min="0"></div></div>
   <h3>Barème de commission</h3>
   <p class="aide">Chaque mois, un seul taux s'applique à tous les revenus locatifs du propriétaire (hors frais de plateformes, forfaits ménage compris), selon le palier atteint ce mois-là. Les forfaits ménage sont ensuite reversés au prestataire.</p>
   <div class="grille trois" style="max-width:560px">
@@ -762,7 +768,7 @@ function autos(s) {
   A["marche.fraisMenage"] = lm ? totalLigne(lm) : (surf < 40 ? 30 : surf < 70 ? 45 : surf < 110 ? 65 : 90);
   A.ligneMenage = lm;
 
-  A["cd.plateformes"] = 15;
+  A["cd.plateformes"] = num(PARAM.plateformes) || 15.5;
 
   A["cd.energie"] = arrondi(400 + surf * 17, 10);
   A["cd.internet"] = 360;
@@ -1368,7 +1374,7 @@ const GRILLE_DEFAUT = [
   { type: "T5", chambres: 4, lits: 4, menage: 120, conso: 18, linge: 40 },
   { type: "T6 et plus", chambres: 5, lits: 5, menage: 150, conso: 22, linge: 50 }
 ];
-let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 } };
+let PARAM = { grille: GRILLE_DEFAUT.map(x => ({ ...x })), plateformes: 15.5, bareme: { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 } };
 try { const p = JSON.parse(localStorage.getItem(CLE_PARAM) || "null"); if (p) PARAM = { ...PARAM, ...p }; } catch (e) {}
 if (!PARAM.bareme || typeof PARAM.bareme !== "object") PARAM.bareme = { s1: 600, s2: 1300, t1: 14, t2: 18, t3: 23 };
 /* Commission mensuelle selon le barème progressif (base : revenus locatifs hors plateformes, forfaits ménage compris) */
@@ -1409,6 +1415,7 @@ function dessinerGrille() {
       <td><button class="btn btn-discret btn-mini" type="button" data-suppr-grille="${i}">Retirer</button></td></tr>`).join("") + `</tbody>`;
   const B = PARAM.bareme;
   for (const k of ["s1", "s2", "t1", "t2", "t3"]) $("#p-" + k).value = B[k];
+  $("#p-plateformes").value = PARAM.plateformes ?? 15.5;
   exempleBareme();
 }
 
@@ -1576,6 +1583,8 @@ document.addEventListener("input", (e) => {
   else if (el.dataset.grille !== undefined) {
     const l = PARAM.grille[+el.dataset.grille]; l[el.dataset.k] = el.dataset.k === "type" ? el.value : el.value;
     $("#g-tot-" + el.dataset.grille).textContent = eur(totalLigne(l)); sauverParam(); maj();
+  } else if (el.id === "p-plateformes") {
+    PARAM.plateformes = num(el.value) || 0; sauverParam(); maj(); if (window.majExpress) majExpress();
   } else if (el.dataset.bareme) {
     PARAM.bareme[el.dataset.bareme] = num(el.value) || 0;
     sauverParam(); exempleBareme(); maj(); if (window.majExpress) majExpress();
@@ -1698,7 +1707,7 @@ window.addEventListener("resize", ajusterZoom);
 
 /* ---------- Estimation express (pendant un appel) ---------- */
 const CLE_EXPRESS = "trihent.express.v1";
-const expressVide = () => ({ type: "appartement", commune: "paimpol", communeNom: "", secteur: "littoral", chambres: "", capacite: "", surface: "", etat: "bon", menage: "", atouts: {} });
+const expressVide = () => ({ type: "appartement", commune: "paimpol", communeNom: "", secteur: "littoral", chambres: "", capacite: "", surface: "", etat: "bon", menage: "", plateformes: "", atouts: {} });
 let E = expressVide();
 try { const x = JSON.parse(localStorage.getItem(CLE_EXPRESS) || "null"); if (x) E = { ...E, ...x }; } catch (e) {}
 function etudeDepuisExpress() {
@@ -1710,6 +1719,7 @@ function etudeDepuisExpress() {
   });
   for (const k of Object.keys(ATOUTS)) st.bien[k] = !!E.atouts[k];
   st.marche.fraisMenage = E.menage;
+  st.cd.plateformes = E.plateformes;
   return st;
 }
 function preparerExpress() {
@@ -1739,6 +1749,9 @@ function majExpress() {
   const lm = R.A.ligneMenage, saisi = !isNaN(num(E.menage));
   $("#x-menage").placeholder = "≈ " + R.g("marche.fraisMenage");
   $("#x-capacite").placeholder = "≈ " + R.A["bien.capacite"];
+  $("#x-plateformes").placeholder = "≈ " + String(R.A["cd.plateformes"]).replace(".", ",");
+  const tp = String(isNaN(num(E.plateformes)) ? R.A["cd.plateformes"] : num(E.plateformes)); const opt = [...$("#x-canal").options].find(o => o.value === tp);
+  $("#x-canal").value = opt ? tp : "";
   $("#x-chambres").placeholder = "≈ " + R.A["bien.chambres"];
   $("#x-aide-menage").textContent = saisi ? "Forfait saisi." : `À saisir. En attendant : grille ${lm ? lm.type : ""} (${eur(R.g("marche.fraisMenage"))}).`;
   const c = communeDe(st.bien);
@@ -1760,7 +1773,7 @@ function majExpress() {
       <tbody>
         ${ligne("Nuitées payées par les voyageurs", x => eur(x.T.caNuits))}
         ${ligne("Forfaits ménage facturés", x => eur(x.T.caMenage))}
-        ${ligne("Frais de plateformes", x => moins(x.mois.reduce((a, m) => a + m.plateformes, 0)))}
+        ${ligne(`Frais de plateformes (${nf1.format(R.g("cd.plateformes"))} %)`, x => moins(x.mois.reduce((a, m) => a + m.plateformes, 0)))}
         ${ligne("Ménage reversé au prestataire", x => moins(x.T.caMenage))}
         ${ligne(`Commission Tri Hent`, x => moins(x.T.commission) + ` <small style="opacity:.7">${nf1.format(x.T.tauxMoyen)} %</small>`)}
         ${ligne("Revenu propriétaire", x => eur(x.T.proprio), "fin")}
@@ -1778,6 +1791,7 @@ document.addEventListener("input", (e) => {
 });
 document.addEventListener("change", (e) => { const el = e.target; if (el.dataset.x && el.tagName === "SELECT") { E[el.dataset.x] = el.value; majExpress(); } });
 $("#form-express").addEventListener("submit", (e) => e.preventDefault());
+$("#x-canal").addEventListener("change", (e) => { if (e.target.value) { E.plateformes = e.target.value; $("#x-plateformes").value = e.target.value; majExpress(); } else $("#x-plateformes").focus(); });
 $("#btn-express").addEventListener("click", () => { preparerExpress(); majExpress(); $("#dlg-express").showModal(); setTimeout(() => $("#x-chambres").focus(), 50); });
 $("#btn-x-reset").addEventListener("click", () => { E = expressVide(); preparerExpress(); majExpress(); });
 $("#btn-x-etude").addEventListener("click", () => {
