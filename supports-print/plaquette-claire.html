@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Plaquette â€” Les Domaines de Tri Hent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --creme:#FAF6EF; --creme-2:#F3EDE2; --blanc:#FFFFFF;
+    --vert:#1E3A2B; --vert-fonce:#16291F;
+    --or:#B08D4A; --or-clair:#C9A96E;
+    --encre:#2C2A25; --gris:#6E6A60;
+    --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost','Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);font-weight:300;color:var(--encre);background:#d9d5cc;line-height:1.6}
+
+  /* Bandeau d'aide (invisible Ã  l'impression) */
+  .aide{max-width:960px;margin:26px auto 6px;padding:0 20px;text-align:center}
+  .aide h1{font-family:var(--serif);font-weight:500;font-size:24px;color:var(--vert)}
+  .aide p{font-size:13.5px;color:#5c6154;margin-top:6px}
+  .aide b{color:var(--vert)}
+
+  /* Une page = un feuillet A4 paysage */
+  .page{
+    width:297mm;height:210mm;margin:22px auto;position:relative;overflow:hidden;
+    background:var(--creme);box-shadow:0 16px 40px rgba(22,41,31,.22);
+  }
+  .pad{position:absolute;inset:0;padding:20mm 22mm;display:flex;flex-direction:column}
+
+  /* Ã‰lÃ©ments de charte */
+  .kicker{display:inline-flex;align-items:center;gap:12px;font-weight:400;
+          letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--or)}
+  .kicker::before{content:"";width:36px;height:1px;background:var(--or)}
+  .kicker.c::before{background:var(--or-clair)}
+  .kicker.c{color:var(--or-clair)}
+  h2.titre{font-family:var(--serif);font-weight:600;color:var(--vert);line-height:1.08;
+           font-size:52px;margin:12px 0 6px}
+  .titre em{font-style:italic;color:var(--or)}
+  .foot{position:absolute;left:22mm;right:22mm;bottom:12mm;display:flex;justify-content:space-between;
+        align-items:center;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gris)}
+  .foot .g{color:var(--or)}
+  .num{font-family:var(--serif);color:var(--or-clair);font-size:15px}
+
+  /* IcÃ´ne ronde dorÃ©e */
+  .ico{width:52px;height:52px;border-radius:50%;background:var(--vert);flex-shrink:0;
+       display:flex;align-items:center;justify-content:center}
+  .ico svg{width:24px;height:24px;stroke:var(--or-clair);fill:none;stroke-width:1.3;
+           stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- COUVERTURE (p.1) ---------- */
+  .cover{background:linear-gradient(rgba(18,32,24,.62),rgba(18,32,24,.72)),
+         url('https://images.unsplash.com/photo-1622231397772-0da2db355a66?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;}
+  .cover .pad{align-items:center;justify-content:center;text-align:center}
+  .cover .kicker{color:var(--or-clair)} .cover .kicker::before,.cover .kicker::after{background:var(--or-clair)}
+  .cover .kicker::after{content:"";width:36px;height:1px}
+  .cover h1{font-family:var(--serif);color:#fff;font-weight:500;font-size:78px;line-height:1.02;margin:26px 0 4px}
+  .cover h1 em{display:block;font-style:italic;color:var(--or-clair)}
+  .cover .st{font-family:var(--serif);font-style:italic;font-size:26px;color:rgba(255,255,255,.92);margin-top:10px}
+  .cover .zone{margin-top:30px;font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+  .cover .plaq{position:absolute;bottom:14mm;left:0;right:0;text-align:center;font-size:10px;
+               letter-spacing:.42em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+
+  /* ---------- SOMMAIRE (p.2) ---------- */
+  .somm-liste{margin-top:30px;max-width:640px}
+  .somm-liste a,.somm-row{display:flex;align-items:baseline;gap:20px;padding:17px 0;
+       border-bottom:1px solid var(--creme-2);color:var(--encre)}
+  .somm-row .n{font-family:var(--serif);font-size:26px;color:var(--or);width:52px}
+  .somm-row .t{font-family:var(--serif);font-size:26px;color:var(--vert);flex:1}
+  .somm-row .p{font-size:12px;letter-spacing:.14em;color:var(--gris)}
+  .somm-visuel{position:absolute;top:0;right:0;bottom:0;width:34%;
+       background:linear-gradient(rgba(22,41,31,.15),rgba(22,41,31,.35)),
+       url('https://images.unsplash.com/photo-1603108374191-94b23ff97833?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;}
+
+  /* ---------- INTRO (p.3) ---------- */
+  .intro-grille{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;flex:1;align-items:center}
+  .intro-txt p{color:var(--gris);font-size:16px;margin-top:16px;max-width:560px}
+  .intro-txt p.lead{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--vert);line-height:1.4}
+  .intro-vals{display:flex;gap:14px;margin-top:30px}
+  .intro-vals .v{flex:1;background:var(--blanc);border:1px solid var(--creme-2);padding:20px 18px}
+  .intro-vals .v .vt{font-family:var(--serif);font-weight:600;color:var(--vert);font-size:19px;margin-top:8px}
+  .intro-vals .v .vp{font-size:12.5px;color:var(--gris);margin-top:4px}
+  .intro-photo{align-self:stretch;background:linear-gradient(rgba(22,41,31,.12),rgba(22,41,31,.3)),
+       url('https://images.unsplash.com/photo-1664005943902-a432460a68a6?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;}
+
+  /* ---------- PILIERS (p.4) ---------- */
+  .piliers{display:grid;grid-template-columns:1fr 1fr;gap:26px;flex:1;margin-top:24px}
+  .pilier{border:1px solid var(--creme-2);background:var(--blanc);padding:34px 32px;display:flex;flex-direction:column}
+  .pilier.vert{background:var(--vert);border-color:var(--vert)}
+  .pilier .pk{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--or)}
+  .pilier.vert .pk{color:var(--or-clair)}
+  .pilier h3{font-family:var(--serif);font-weight:600;font-size:38px;color:var(--vert);margin:6px 0 4px}
+  .pilier.vert h3{color:#fff}
+  .pilier .pd{font-size:14px;color:var(--gris);margin-bottom:20px}
+  .pilier.vert .pd{color:rgba(250,246,239,.8)}
+  .pilier ul{list-style:none;margin-top:auto}
+  .pilier li{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:15px;color:var(--encre);
+             border-top:1px solid var(--creme-2)}
+  .pilier.vert li{color:var(--creme);border-top-color:rgba(250,246,239,.15)}
+  .pilier li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--or);flex-shrink:0}
+
+  /* ---------- LISTE SERVICES (p.5) ---------- */
+  .serv-liste{margin-top:8px;flex:1;display:flex;flex-direction:column;justify-content:center}
+  .serv{display:flex;align-items:flex-start;gap:22px;padding:16px 0;border-bottom:1px solid var(--creme-2)}
+  .serv:last-child{border-bottom:none}
+  .serv .st{font-family:var(--serif);font-weight:600;font-size:23px;color:var(--vert)}
+  .serv .sd{font-size:14px;color:var(--gris);margin-top:2px;max-width:760px}
+
+  /* ---------- CARTES (p.6) ---------- */
+  .cartes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;flex:1;margin-top:24px}
+  .carte{background:var(--blanc);border:1px solid var(--creme-2);padding:30px 26px;display:flex;flex-direction:column}
+  .carte .ico{margin-bottom:18px}
+  .carte h3{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--vert);margin-bottom:8px}
+  .carte p{font-size:14px;color:var(--gris)}
+
+  /* ---------- TARIF (p.7) ---------- */
+  .tarif{background:var(--vert)}
+  .tarif .pad{align-items:center;justify-content:center;text-align:center}
+  .tarif .kicker{color:var(--or-clair)} .tarif .kicker::before{background:var(--or-clair)}
+  .tarif .grand{font-family:var(--serif);font-weight:500;color:var(--or-clair);font-size:96px;line-height:1;margin:14px 0 4px}
+  .tarif .lbl{font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:#fff}
+  .tarif .cit{font-family:var(--serif);font-style:italic;font-size:24px;color:rgba(250,246,239,.92);
+              max-width:820px;line-height:1.5;margin:34px auto 0}
+  .tarif .cit em{color:var(--or-clair)}
+  .tarif .note{margin-top:28px;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(250,246,239,.7)}
+
+  /* ---------- DÃ‰MARRAGE (p.8) ---------- */
+  .etapes{margin-top:20px;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;align-content:center}
+  .etape{display:flex;gap:20px;align-items:flex-start;padding:14px 0}
+  .etape .e-n{font-family:var(--serif);font-weight:600;font-size:44px;color:var(--or-clair);line-height:1;width:64px}
+  .etape .e-t{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--vert)}
+  .etape .e-d{font-size:13.5px;color:var(--gris);margin-top:3px}
+
+  /* ---------- CLÃ”TURE (p.9) ---------- */
+  .fin{background:linear-gradient(rgba(18,32,24,.78),rgba(18,32,24,.85)),
+       url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;}
+  .fin .pad{align-items:center;justify-content:center;text-align:center}
+  .fin .kicker{color:var(--or-clair)}.fin .kicker::before,.fin .kicker::after{content:"";width:36px;height:1px;background:var(--or-clair)}
+  .fin h2{font-family:var(--serif);color:#fff;font-weight:500;font-size:62px;line-height:1.05;margin:20px 0 8px}
+  .fin h2 em{font-style:italic;color:var(--or-clair)}
+  .fin .ft{font-family:var(--serif);font-style:italic;font-size:22px;color:rgba(255,255,255,.9);max-width:640px;margin:0 auto}
+  .fin .coord{display:flex;gap:40px;align-items:center;justify-content:center;margin-top:40px;color:var(--creme)}
+  .fin .coord .c-tel{font-family:var(--serif);font-size:30px;color:var(--or-clair)}
+  .fin .coord .c-txt{text-align:left;font-size:15px;line-height:1.9}
+  .fin .coord .c-txt .site{color:var(--or-clair)}
+  .fin .qr{background:var(--creme);padding:9px;border-radius:6px}
+  .fin .qr img{width:31mm;height:31mm;display:block}
+  .fin .estim{margin-top:34px;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:rgba(250,246,239,.7)}
+
+  /* ---------- Impression ---------- */
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    body{background:#fff}
+    .aide{display:none}
+    .page{margin:0;box-shadow:none;page-break-after:always}
+    .page:last-child{page-break-after:auto}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="aide">
+  <h1>Plaquette de prÃ©sentation â€” version claire</h1>
+  <p>9 pages, format A4 paysage. Pour un PDF : <b>Ctrl + P â†’ Â« Enregistrer au format PDF Â» â†’ mise en page Â« Paysage Â» â†’ marges Â« Aucune Â»</b>. Chaque section sort sur sa propre page.</p>
+</div>
+
+<!-- ============ PAGE 1 : COUVERTURE ============ -->
+<section class="page cover">
+  <div class="pad">
+    <span class="kicker">Conciergerie Â· Bretagne</span>
+    <h1>Les Domaines<em>de Tri Hent</em></h1>
+    <div class="st">Conciergerie de location courte durÃ©e</div>
+    <div class="zone">Paimpol Â· CÃ´tes-d'Armor</div>
+  </div>
+  <div class="plaq">Plaquette de prÃ©sentation</div>
+</section>
+
+<!-- ============ PAGE 2 : SOMMAIRE ============ -->
+<section class="page">
+  <div class="somm-visuel"></div>
+  <div class="pad" style="padding-right:40%">
+    <span class="kicker">Plaquette</span>
+    <h2 class="titre">Sommaire</h2>
+    <div class="somm-liste">
+      <div class="somm-row"><span class="n">01</span><span class="t">La conciergerie</span><span class="p">p.3</span></div>
+      <div class="somm-row"><span class="n">02</span><span class="t">Nos deux piliers</span><span class="p">p.4</span></div>
+      <div class="somm-row"><span class="n">03</span><span class="t">SÃ©rÃ©nitÃ©</span><span class="p">p.5</span></div>
+      <div class="somm-row"><span class="n">04</span><span class="t">RentabilitÃ©</span><span class="p">p.6</span></div>
+      <div class="somm-row"><span class="n">05</span><span class="t">Notre engagement tarifaire</span><span class="p">p.7</span></div>
+      <div class="somm-row"><span class="n">06</span><span class="t">Le dÃ©marrage</span><span class="p">p.8</span></div>
+      <div class="somm-row"><span class="n">07</span><span class="t">Confiez-nous votre bien</span><span class="p">p.9</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 3 : LA CONCIERGERIE ============ -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">01 â€” La conciergerie</span>
+    <h2 class="titre">Les domaines de Bretagne,<br><em>entre de bonnes mains</em></h2>
+    <div class="intro-grille">
+      <div class="intro-txt">
+        <p class="lead">Une conciergerie dÃ©diÃ©e aux biens de caractÃ¨re, nÃ©e d'un amour du patrimoine breton et du sens de l'accueil.</p>
+        <p>Nous accompagnons les propriÃ©taires de Paimpol, des CÃ´tes-d'Armor et de leurs alentours qui souhaitent valoriser leur bien en location courte durÃ©e â€” sans en supporter les contraintes du quotidien.</p>
+        <p>De la mise en valeur de votre demeure Ã  l'accueil des voyageurs, nous prenons soin de chaque dÃ©tail : pour que votre bien vive, rayonne et rapporte, en toute sÃ©rÃ©nitÃ©.</p>
+        <div class="intro-vals">
+          <div class="v"><span class="kicker">Exigence</span><div class="vt">Standards hÃ´teliers</div><div class="vp">MÃ©nage, linge et accueil au plus haut niveau.</div></div>
+          <div class="v"><span class="kicker">Ancrage</span><div class="vt">Une maison locale</div><div class="vp">Une Ã©quipe et des artisans de confiance en Bretagne.</div></div>
+          <div class="v"><span class="kicker">Alignement</span><div class="vt">Nos intÃ©rÃªts liÃ©s</div><div class="vp">Nous ne gagnons que si vous gagnez.</div></div>
+        </div>
+      </div>
+      <div class="intro-photo"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 4 : NOS DEUX PILIERS ============ -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">02 â€” Notre approche</span>
+    <h2 class="titre">Deux piliers,<em> une mÃªme exigence</em></h2>
+    <div class="piliers">
+      <div class="pilier">
+        <span class="pk">Pilier 1</span>
+        <h3>SÃ©rÃ©nitÃ©</h3>
+        <p class="pd">Nous nous occupons de tout, de la mise en valeur de votre bien Ã  l'accueil des voyageurs.</p>
+        <ul>
+          <li>Valorisation &amp; mise en lumiÃ¨re</li>
+          <li>RÃ©servations multi-plateformes</li>
+          <li>Accueil des voyageurs</li>
+          <li>MÃ©nage hÃ´telier &amp; linge premium</li>
+          <li>Suivi &amp; maintenance</li>
+        </ul>
+      </div>
+      <div class="pilier vert">
+        <span class="pk">Pilier 2</span>
+        <h3>RentabilitÃ©</h3>
+        <p class="pd">Nous optimisons vos revenus, avec une commission alignÃ©e sur votre rÃ©ussite.</p>
+        <ul>
+          <li>Tarification dynamique</li>
+          <li>Optimisation du rÃ©fÃ©rencement</li>
+          <li>BarÃ¨me progressif Ã  partir de 14 %</li>
+          <li>Estimation de revenus offerte</li>
+          <li>Un interlocuteur unique</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 5 : SÃ‰RÃ‰NITÃ‰ ============ -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">03 â€” Pilier SÃ©rÃ©nitÃ©</span>
+    <h2 class="titre">Nous nous <em>occupons de tout</em></h2>
+    <div class="serv-liste">
+      <div class="serv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6"/></svg></div>
+        <div><div class="st">Valorisation &amp; mise en lumiÃ¨re</div><div class="sd">Photographies professionnelles, annonces soignÃ©es et tarification dynamique : votre bien rÃ©vÃ¨le tout son potentiel et se distingue sur le marchÃ©.</div></div></div>
+      <div class="serv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
+        <div><div class="st">RÃ©servations multi-plateformes</div><div class="sd">Diffusion et synchronisation de vos annonces sur Airbnb, Booking et les principales plateformes. Calendriers, messages et voyageurs suivis au quotidien.</div></div></div>
+      <div class="serv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div>
+        <div><div class="st">Accueil des voyageurs</div><div class="sd">Chaque voyageur est reÃ§u comme un hÃ´te de marque, avec une attention constante et un suivi tout au long du sÃ©jour.</div></div></div>
+      <div class="serv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 21v-6h16v6M6 15V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8M9 5V3h6v2"/></svg></div>
+        <div><div class="st">MÃ©nage hÃ´telier &amp; linge premium</div><div class="sd">MÃ©nage aux standards hÃ´teliers, linge de maison haut de gamme et contrÃ´le qualitÃ© systÃ©matique avant chaque arrivÃ©e.</div></div></div>
+      <div class="serv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 1 3 6.8l-7.2 7.2-3.5-3.5 7.2-7.2M6 3l1 2.2L9.2 6 7 7 6 9.2 5 7 2.8 6 5 5z"/></svg></div>
+        <div><div class="st">Suivi &amp; maintenance</div><div class="sd">Visites rÃ©guliÃ¨res, petites rÃ©parations et coordination d'artisans locaux de confiance : votre propriÃ©tÃ© reste impeccable, saison aprÃ¨s saison.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 6 : RENTABILITÃ‰ ============ -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">04 â€” Pilier RentabilitÃ©</span>
+    <h2 class="titre">Maximiser <em>vos revenus</em></h2>
+    <div class="cartes">
+      <div class="carte">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 16l4-5 3 3 5-7"/></svg></div>
+        <h3>Tarification dynamique</h3>
+        <p>Nous ajustons vos tarifs selon la saison, la demande et les Ã©vÃ©nements locaux, pour maximiser votre taux de remplissage et vos revenus tout au long de l'annÃ©e.</p>
+      </div>
+      <div class="carte">
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+        <h3>Optimisation du rÃ©fÃ©rencement</h3>
+        <p>Annonces optimisÃ©es et relations privilÃ©giÃ©es avec les plateformes : votre bien gagne en visibilitÃ© et se distingue de la concurrence.</p>
+      </div>
+      <div class="carte">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8h7a3 3 0 0 1 0 6H8"/></svg></div>
+        <h3>BarÃ¨me progressif</h3>
+        <p>Notre commission Ã©volue avec vos revenus. Nos intÃ©rÃªts sont alignÃ©s : nous ne gagnons que si vous gagnez.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 7 : ENGAGEMENT TARIFAIRE ============ -->
+<section class="page tarif">
+  <div class="pad">
+    <span class="kicker">05 â€” Notre engagement</span>
+    <div class="grand">Ã  partir de 14&nbsp;%</div>
+    <div class="lbl">BarÃ¨me progressif â€” Ã  la commission</div>
+    <p class="cit">Â« Notre commission Ã©volue avec les revenus que vous percevez, grÃ¢ce Ã  un barÃ¨me progressif. Nos intÃ©rÃªts sont donc <em>alignÃ©s</em> : maximiser votre rentabilitÃ©, en garantissant un service de haute qualitÃ©. Â»</p>
+    <div class="note">Estimation de vos revenus offerte Â· sans engagement</div>
+  </div>
+</section>
+
+<!-- ============ PAGE 8 : LE DÃ‰MARRAGE ============ -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">06 â€” Comment Ã§a se passe</span>
+    <h2 class="titre">Le dÃ©marrage,<em> en cinq Ã©tapes</em></h2>
+    <div class="etapes">
+      <div class="etape"><span class="e-n">01</span><div><div class="e-t">Estimation offerte</div><div class="e-d">Nous Ã©tudions votre bien et estimons gratuitement vos revenus potentiels, sans engagement.</div></div></div>
+      <div class="etape"><span class="e-n">02</span><div><div class="e-t">Mise en valeur</div><div class="e-d">Photographies professionnelles et rÃ©daction d'annonces soignÃ©es, Ã  l'image de votre demeure.</div></div></div>
+      <div class="etape"><span class="e-n">03</span><div><div class="e-t">Mise en ligne</div><div class="e-d">Diffusion et synchronisation sur Airbnb, Booking et les principales plateformes.</div></div></div>
+      <div class="etape"><span class="e-n">04</span><div><div class="e-t">Accueil des voyageurs</div><div class="e-d">Nous assurons les arrivÃ©es, les dÃ©parts et l'assistance durant chaque sÃ©jour.</div></div></div>
+      <div class="etape"><span class="e-n">05</span><div><div class="e-t">Suivi &amp; entretien</div><div class="e-d">MÃ©nage hÃ´telier, maintenance et suivi attentif, saison aprÃ¨s saison.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAGE 9 : CLÃ”TURE ============ -->
+<section class="page fin">
+  <div class="pad">
+    <span class="kicker">Bienvenue</span>
+    <h2>Bienvenue dans<em>l'aventure</em></h2>
+    <p class="ft">Confiez-nous votre bien, percevez-en les revenus â€” nous nous occupons du reste.</p>
+    <div class="coord">
+      <div class="c-tel">06 66 99 11 28</div>
+      <div class="c-txt">
+        domaines.trihent@gmail.com<br>
+        <span class="site">domaines-trihent.com</span><br>
+        Paimpol Â· CÃ´tes-d'Armor
+      </div>
+      <div class="qr"><img src="data:image/png;base64,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" alt="QR code vers domaines-trihent.com"></div>
+    </div>
+    <div class="estim">Estimation de vos revenus offerte Â· sans engagement</div>
+  </div>
+</section>
+
+</body>
+</html>

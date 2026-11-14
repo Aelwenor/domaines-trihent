@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Plaquette détaillée — Les Domaines de Tri Hent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --creme:#FAF6EF; --creme-2:#F3EDE2; --blanc:#FFFFFF;
+    --vert:#1E3A2B; --vert-fonce:#16291F;
+    --or:#B08D4A; --or-clair:#C9A96E;
+    --encre:#2C2A25; --gris:#6E6A60;
+    --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost','Segoe UI',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);font-weight:300;color:var(--encre);background:#d9d5cc;line-height:1.6}
+
+  .aide{max-width:960px;margin:26px auto 6px;padding:0 20px;text-align:center}
+  .aide h1{font-family:var(--serif);font-weight:500;font-size:24px;color:var(--vert)}
+  .aide p{font-size:13.5px;color:#5c6154;margin-top:6px}
+  .aide b{color:var(--vert)}
+
+  .page{width:297mm;height:210mm;margin:22px auto;position:relative;overflow:hidden;
+        background:var(--creme);box-shadow:0 16px 40px rgba(22,41,31,.22)}
+  .pad{position:absolute;inset:0;padding:18mm 20mm;display:flex;flex-direction:column}
+
+  .kicker{display:inline-flex;align-items:center;gap:12px;font-weight:400;
+          letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--or)}
+  .kicker::before{content:"";width:36px;height:1px;background:var(--or)}
+  h2.titre{font-family:var(--serif);font-weight:600;color:var(--vert);line-height:1.08;
+           font-size:46px;margin:12px 0 6px}
+  .titre em{font-style:italic;color:var(--or)}
+  .lead{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--vert);line-height:1.4;max-width:820px;margin-top:6px}
+
+  .foot{position:absolute;left:20mm;right:20mm;bottom:11mm;display:flex;justify-content:space-between;
+        align-items:center;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gris)}
+  .num{font-family:var(--serif);color:var(--or-clair);font-size:15px;letter-spacing:.1em}
+
+  .ico{width:52px;height:52px;border-radius:50%;background:var(--vert);flex-shrink:0;
+       display:flex;align-items:center;justify-content:center}
+  .ico.lg{width:76px;height:76px}
+  .ico svg{width:24px;height:24px;stroke:var(--or-clair);fill:none;stroke-width:1.3;
+           stroke-linecap:round;stroke-linejoin:round}
+  .ico.lg svg{width:34px;height:34px;stroke-width:1.15}
+
+  /* ---------- COUVERTURE ---------- */
+  .cover{background:linear-gradient(rgba(18,32,24,.55),rgba(18,32,24,.72)),
+         url('brittany-3594180_1280.jpg') center/cover no-repeat}
+  .cover .pad{align-items:center;justify-content:center;text-align:center}
+  .cover .kicker{color:var(--or-clair)} .cover .kicker::before,.cover .kicker::after{content:"";width:36px;height:1px;background:var(--or-clair)}
+  .cover h1{font-family:var(--serif);color:#fff;font-weight:500;font-size:76px;line-height:1.02;margin:26px 0 4px}
+  .cover h1 em{display:block;font-style:italic;color:var(--or-clair)}
+  .cover .st{font-family:var(--serif);font-style:italic;font-size:25px;color:rgba(255,255,255,.92);margin-top:10px}
+  .cover .zone{margin-top:26px;font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.82)}
+  .cover .plaq{position:absolute;bottom:13mm;left:0;right:0;text-align:center;font-size:10px;
+               letter-spacing:.42em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+
+  /* ---------- DEUX POLES ---------- */
+  .poles{display:grid;grid-template-columns:1fr 1fr;gap:30px;flex:1;margin-top:26px}
+  .pole{border:1px solid var(--creme-2);background:var(--blanc);padding:34px 34px;display:flex;flex-direction:column}
+  .pole.v{background:var(--vert);border-color:var(--vert)}
+  .pole .pk{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--or)}
+  .pole.v .pk{color:var(--or-clair)}
+  .pole h3{font-family:var(--serif);font-weight:600;font-size:40px;color:var(--vert);margin:4px 0 6px}
+  .pole.v h3{color:#fff}
+  .pole .pd{font-size:13.5px;color:var(--gris);margin-bottom:22px}
+  .pole.v .pd{color:rgba(250,246,239,.8)}
+  .pole .rows{margin-top:auto;display:flex;flex-direction:column;gap:16px}
+  .prow{display:flex;align-items:center;gap:16px}
+  .prow .ico{width:44px;height:44px}.prow .ico svg{width:20px;height:20px}
+  .prow .pt{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--vert)}
+  .pole.v .prow .pt{color:#fff}
+  .prow .pp{font-size:12.5px;color:var(--gris)}
+  .pole.v .prow .pp{color:rgba(250,246,239,.7)}
+
+  /* ---------- TRIO (sections détaillées) ---------- */
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;flex:1;align-content:center;margin-top:10px}
+  .titem{display:flex;flex-direction:column;align-items:flex-start}
+  .titem .ico{margin-bottom:20px}
+  .titem h3{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--vert);margin-bottom:10px;line-height:1.12}
+  .titem p{font-size:14px;color:var(--gris);max-width:290px}
+  .trio.two{grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto;flex:none;gap:40px;padding-top:10px}
+
+  /* ---------- CHARTE (bandeau valeurs) ---------- */
+  .charte{margin-top:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--creme-2);border:1px solid var(--creme-2)}
+  .cval{background:var(--blanc);padding:20px 22px}
+  .cval .cl{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--vert)}
+  .cval .cp{font-size:12px;color:var(--gris);margin-top:3px}
+
+  /* ---------- TARIFS / BAREME ---------- */
+  .tarif-wrap{flex:1;display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center;margin-top:14px}
+  .tarif-hero{text-align:center}
+  .tarif-hero .from{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gris)}
+  .tarif-hero .grand{font-family:var(--serif);font-weight:500;color:var(--or);font-size:118px;line-height:1;margin:4px 0}
+  .tarif-hero .from2{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--vert)}
+  .tarif-hero .vs{margin-top:22px;font-size:14px;color:var(--gris)}
+  .tarif-hero .vs b{color:var(--encre);font-weight:400}
+  .bareme{width:100%;border-collapse:collapse;background:var(--blanc);border:1px solid var(--creme-2)}
+  .bareme th{background:var(--vert);color:var(--creme);font-family:var(--sans);font-weight:400;
+             font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:16px 20px;text-align:left}
+  .bareme td{padding:18px 20px;border-top:1px solid var(--creme-2);font-size:15.5px;color:var(--encre)}
+  .bareme td.pct{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--or);text-align:right;width:120px}
+  .bareme tr:nth-child(even) td{background:var(--creme)}
+  .cit{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--vert);text-align:center;margin-top:22px}
+  .cit em{color:var(--or)}
+
+  /* ---------- TRANSPARENCE / EXEMPLE ---------- */
+  .trans{display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-items:center;margin-top:12px}
+  .trans-txt p{font-size:15px;color:var(--gris);margin-top:14px;max-width:520px}
+  .trans-txt p b{color:var(--vert);font-weight:400}
+  .exemple{background:var(--blanc);border:1px solid var(--creme-2);padding:32px 34px}
+  .exemple .eh{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--or);margin-bottom:14px}
+  .exemple .line{display:flex;justify-content:space-between;gap:16px;padding:9px 0;font-size:14.5px;color:var(--encre);border-bottom:1px solid var(--creme-2)}
+  .exemple .line .v{font-family:var(--serif);font-weight:600;color:var(--vert)}
+  .exemple .cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+  .exemple .cc{padding:16px 18px;text-align:center}
+  .exemple .cc.trad{background:var(--creme);border:1px solid var(--creme-2)}
+  .exemple .cc.moi{background:var(--vert);color:var(--creme)}
+  .exemple .cc .cl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+  .exemple .cc.moi .cl{color:var(--or-clair)}
+  .exemple .cc .cv{font-family:var(--serif);font-weight:600;font-size:26px;margin-top:6px;color:var(--encre)}
+  .exemple .cc.moi .cv{color:#fff}
+
+  /* ---------- DEMARRAGE ---------- */
+  .etapes{margin-top:14px;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px 46px;align-content:center}
+  .etape{display:flex;gap:20px;align-items:flex-start;padding:12px 0}
+  .etape .e-n{font-family:var(--serif);font-weight:600;font-size:42px;color:var(--or-clair);line-height:1;width:60px;flex-shrink:0}
+  .etape .e-t{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--vert)}
+  .etape .e-d{font-size:13px;color:var(--gris);margin-top:3px;max-width:430px}
+
+  /* ---------- CLOTURE ---------- */
+  .fin{background:linear-gradient(rgba(18,32,24,.78),rgba(18,32,24,.85)),
+       url('brittany-3594180_1280.jpg') center/cover no-repeat}
+  .fin .pad{align-items:center;justify-content:center;text-align:center}
+  .fin .kicker{color:var(--or-clair)}.fin .kicker::before,.fin .kicker::after{content:"";width:36px;height:1px;background:var(--or-clair)}
+  .fin h2{font-family:var(--serif);color:#fff;font-weight:500;font-size:58px;line-height:1.05;margin:20px 0 8px}
+  .fin h2 em{font-style:italic;color:var(--or-clair)}
+  .fin .ft{font-family:var(--serif);font-style:italic;font-size:21px;color:rgba(255,255,255,.9);max-width:640px;margin:0 auto}
+  .fin .coord{display:flex;gap:40px;align-items:center;justify-content:center;margin-top:38px;color:var(--creme)}
+  .fin .coord .c-tel{font-family:var(--serif);font-size:29px;color:var(--or-clair)}
+  .fin .coord .c-txt{text-align:left;font-size:15px;line-height:1.9}
+  .fin .coord .c-txt .site{color:var(--or-clair)}
+  .fin .qr{background:var(--creme);padding:9px;border-radius:6px}
+  .fin .qr img{width:30mm;height:30mm;display:block}
+  .fin .estim{margin-top:30px;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:rgba(250,246,239,.7)}
+
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    body{background:#fff}
+    .aide{display:none}
+    .page{margin:0;box-shadow:none;page-break-after:always}
+    .page:last-child{page-break-after:auto}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="aide">
+  <h1>Plaquette détaillée — présentation des services</h1>
+  <p>10 pages, format A4 paysage. Pour un PDF : <b>Ctrl + P → « Enregistrer au format PDF » → mise en page « Paysage » → marges « Aucune »</b>.</p>
+</div>
+
+<!-- ========== P1 : COUVERTURE ========== -->
+<section class="page cover">
+  <div class="pad">
+    <span class="kicker">Conciergerie · Bretagne</span>
+    <h1>Les Domaines<em>de Tri Hent</em></h1>
+    <div class="st">Conciergerie de location courte durée</div>
+    <div class="zone">Paimpol · Côtes-d'Armor</div>
+  </div>
+  <div class="plaq">Nos services en détail</div>
+</section>
+
+<!-- ========== P2 : DEUX POLES ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">Notre approche</span>
+    <h2 class="titre">Deux pôles, <em>une même exigence</em></h2>
+    <p class="lead">Nous prenons soin de votre bien au quotidien, et travaillons chaque levier pour en tirer le meilleur revenu.</p>
+    <div class="poles">
+      <div class="pole">
+        <span class="pk">Pôle 1</span>
+        <h3>Sérénité</h3>
+        <div class="pd">Le quotidien de votre bien, entièrement pris en charge.</div>
+        <div class="rows">
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg></span><div><div class="pt">Optimisation</div><div class="pp">Annonces, photos, home-staging</div></div></div>
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span><div><div class="pt">Automatisation</div><div class="pp">Mise en ligne, agenda synchronisé, entrée autonome</div></div></div>
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5a3.5 3.5 0 0 1 0 7"/><path d="M18.5 20a6 6 0 0 0-3-5"/></svg></span><div><div class="pt">Prestataires</div><div class="pp">Sélection, charte, contrôle qualité</div></div></div>
+        </div>
+      </div>
+      <div class="pole v">
+        <span class="pk">Pôle 2</span>
+        <h3>Rentabilité</h3>
+        <div class="pd">Chaque levier activé pour maximiser vos revenus.</div>
+        <div class="rows">
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16l3-4 3 2 5-6"/></svg></span><div><div class="pt">Référencement</div><div class="pp">Une visibilité accrue sur les plateformes</div></div></div>
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><path d="M17 6a7 7 0 1 0 0 12"/><line x1="4" y1="10" x2="13" y2="10"/><line x1="4" y1="14" x2="12" y2="14"/></svg></span><div><div class="pt">Tarification dynamique</div><div class="pp">Le meilleur taux de remplissage, toute l'année</div></div></div>
+          <div class="prow"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><line x1="15" y1="12" x2="9" y2="18"/><circle cx="10" cy="13" r="1.1"/><circle cx="14" cy="17" r="1.1"/></svg></span><div><div class="pt">Accompagnement fiscalité</div><div class="pp">Optimiser vos impôts en toute légalité</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 02 —</span></div>
+</section>
+
+<!-- ========== P3 : SERENITE · OPTIMISATION ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">01 — Sérénité · Optimisation</span>
+    <h2 class="titre">Votre bien, <em>sous son meilleur jour</em></h2>
+    <div class="trio">
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/></svg></span>
+        <h3>Annonces optimisées</h3>
+        <p>Vos annonces sont optimisées selon le secteur, le profil des voyageurs de votre région et les spécificités de chaque plateforme.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M3 8h4l2-2h6l2 2h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+        <h3>Photos professionnelles</h3>
+        <p>Les photos sont le premier argument de location. Notre équipe met votre bien en valeur grâce à des prises de vue professionnelles.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><path d="M2 13a2 2 0 0 1 2-2 2 2 0 0 1 2 2v3h12v-3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v5"/><path d="M4 19v2"/><path d="M20 19v2"/></svg></span>
+        <h3>Home-staging &amp; équipement</h3>
+        <p>Notre décoratrice vous propose des options de valorisation simples pour maximiser les réservations, au moindre coût.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 03 —</span></div>
+</section>
+
+<!-- ========== P4 : SERENITE · AUTOMATISATION ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">01 — Sérénité · Automatisation</span>
+    <h2 class="titre">La technologie <em>au service de votre tranquillité</em></h2>
+    <div class="trio">
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 20h16"/></svg></span>
+        <h3>Mise en ligne des annonces</h3>
+        <p>Nous paramétrons et publions vos annonces sur les différentes plateformes, Airbnb et Booking.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/><path d="M9 14l2 2 4-4"/></svg></span>
+        <h3>Agenda synchronisé</h3>
+        <p>Grâce à un channel manager, tous vos calendriers sont synchronisés en temps réel : plus aucun conflit de dates entre plateformes.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="4"/><path d="M11 11l9 9"/><path d="M18 18l2-2"/><path d="M15 15l2-2"/></svg></span>
+        <h3>Entrée autonome</h3>
+        <p>Arrivées et départs se font en autonomie via une boîte à clés sécurisée : plus de souplesse pour les voyageurs, aucune contrainte pour vous.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 04 —</span></div>
+</section>
+
+<!-- ========== P5 : SERENITE · PRESTATAIRES & CHARTE ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">01 — Sérénité · Nos prestataires</span>
+    <h2 class="titre">Une équipe de confiance, <em>triée sur le volet</em></h2>
+    <div class="trio" style="flex:none;margin-top:6px">
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><circle cx="12" cy="8" r="1.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+        <h3>Recrutement ciblé</h3>
+        <p>Nos prestataires de ménage sont recrutés selon des critères stricts et évalués par des tests avant toute mission.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <h3>Charte d'engagement</h3>
+        <p>Chaque prestataire signe notre charte : loyauté, engagement, transparence et adaptabilité envers vous.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19l1-5.8L3.5 9.2l5.9-.9z"/></svg></span>
+        <h3>Tests en conditions réelles</h3>
+        <p>Avant le démarrage, chaque intervenant est mis en situation réelle pour valider sa rigueur et son sérieux.</p>
+      </div>
+    </div>
+    <div style="margin-top:24px">
+      <span class="kicker">Notre charte — garantie satisfaction</span>
+      <div class="charte" style="margin-top:12px">
+        <div class="cval"><div class="cl">Loyauté</div><div class="cp">Envers vos intérêts et nos partenaires.</div></div>
+        <div class="cval"><div class="cl">Engagement</div><div class="cp">Envers l'excellence et votre satisfaction.</div></div>
+        <div class="cval"><div class="cl">Transparence</div><div class="cp">Dans nos actions et nos échanges.</div></div>
+        <div class="cval"><div class="cl">Adaptabilité</div><div class="cp">Pour répondre à chaque besoin.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 05 —</span></div>
+</section>
+
+<!-- ========== P6 : RENTABILITE ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">02 — Rentabilité</span>
+    <h2 class="titre">Maximiser vos revenus, <em>durablement</em></h2>
+    <div class="trio">
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16l3-4 3 2 5-6"/><path d="M18 8h3v3"/></svg></span>
+        <h3>Optimisation du référencement</h3>
+        <p>Nos techniques éprouvées et nos relations avec Airbnb et Booking assurent à votre bien une visibilité accrue, face à la concurrence.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M17 6a7 7 0 1 0 0 12"/><line x1="4" y1="10" x2="13" y2="10"/><line x1="4" y1="14" x2="12" y2="14"/></svg></span>
+        <h3>Tarification dynamique</h3>
+        <p>Nous ajustons vos tarifs en continu pour maximiser le taux de remplissage et vos revenus, tout au long de l'année.</p>
+      </div>
+      <div class="titem">
+        <span class="ico lg"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><line x1="15" y1="12" x2="9" y2="18"/><circle cx="10" cy="13" r="1.1"/><circle cx="14" cy="17" r="1.1"/></svg></span>
+        <h3>Accompagnement fiscalité</h3>
+        <p>Nos spécialistes vous orientent vers la meilleure stratégie fiscale pour votre bien, afin d'optimiser vos impôts.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 06 —</span></div>
+</section>
+
+<!-- ========== P7 : NOS TARIFS ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">Notre engagement tarifaire</span>
+    <h2 class="titre">Un barème progressif <em>&amp; transparent</em></h2>
+    <div class="tarif-wrap">
+      <div class="tarif-hero">
+        <div class="from">À partir de</div>
+        <div class="grand">14<span style="font-size:.5em">%</span></div>
+        <div class="from2">de commission</div>
+        <div class="vs">contre <b>20 %</b> en moyenne<br>dans une conciergerie traditionnelle</div>
+      </div>
+      <div>
+        <table class="bareme">
+          <tr><th>Revenus mensuels (hors frais de plateforme)</th><th style="text-align:right">Commission</th></tr>
+          <tr><td>Moins de 600 €/mois</td><td class="pct">14 %</td></tr>
+          <tr><td>De 600 € à 1 300 €/mois</td><td class="pct">18 %</td></tr>
+          <tr><td>Plus de 1 300 €/mois</td><td class="pct">23 %</td></tr>
+        </table>
+        <div class="cit">« Plus votre bien rapporte, <em>plus nous nous investissons</em> :<br>une collaboration gagnant-gagnant. »</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 07 —</span></div>
+</section>
+
+<!-- ========== P8 : TRANSPARENCE + EXEMPLE ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">Transparence</span>
+    <h2 class="titre">Une commission <em>sur vos vrais revenus</em></h2>
+    <div class="trans">
+      <div class="trans-txt">
+        <p>Contrairement à beaucoup de conciergeries, vous restez <b>propriétaire de votre annonce</b> et encaissez l'intégralité de vos revenus, directement depuis la plateforme.</p>
+        <p>Nous prélevons notre commission <b>uniquement sur nos services</b> (la location et le ménage), calculée <b>hors frais de plateforme et hors taxe de séjour</b>.</p>
+        <p>Une rémunération basée sur ce que vous percevez réellement : plus juste, plus lisible, plus avantageuse.</p>
+      </div>
+      <div class="exemple">
+        <div class="eh">Exemple de calcul</div>
+        <div class="line"><span>Nuitées du mois</span><span class="v">1 000 €</span></div>
+        <div class="line"><span>Frais de ménage</span><span class="v">200 €</span></div>
+        <div class="line"><span>Frais de plateforme (18 %)</span><span class="v">− 216 €</span></div>
+        <div class="line" style="border-bottom:none"><span>Base de calcul de la commission</span><span class="v">984 €</span></div>
+        <div class="cmp">
+          <div class="cc trad"><div class="cl">Conciergerie traditionnelle</div><div class="cv">240 €</div><div class="cl" style="margin-top:4px">1 200 € × 20 %</div></div>
+          <div class="cc moi"><div class="cl">Les Domaines de Tri Hent</div><div class="cv">177,12 €</div><div class="cl" style="margin-top:4px">984 € × 18 %</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 08 —</span></div>
+</section>
+
+<!-- ========== P9 : LE DEMARRAGE ========== -->
+<section class="page">
+  <div class="pad">
+    <span class="kicker">La mise en place</span>
+    <h2 class="titre">Le démarrage, <em>étape par étape</em></h2>
+    <div class="etapes">
+      <div class="etape"><div class="e-n">01</div><div><div class="e-t">Boîte à clés sécurisée</div><div class="e-d">Elle automatise arrivées et départs, sans prestataire à chaque entrée — et offre plus de souplesse à vos voyageurs.</div></div></div>
+      <div class="etape"><div class="e-n">02</div><div><div class="e-t">Optimisation des annonces</div><div class="e-d">Nous appliquons nos stratégies éprouvées pour maximiser le taux de clic et de réservation sur les plateformes.</div></div></div>
+      <div class="etape"><div class="e-n">03</div><div><div class="e-t">Photos professionnelles</div><div class="e-d">Des photos grand-angle et lumineuses font ressortir votre annonce dans les recherches.</div></div></div>
+      <div class="etape"><div class="e-n">04</div><div><div class="e-t">Home-staging</div><div class="e-d">Notre décoratrice propose des options simples pour sublimer votre bien dans les annonces.</div></div></div>
+      <div class="etape"><div class="e-n">05</div><div><div class="e-t">Équipement &amp; déco</div><div class="e-d">Une petite liste d'aménagements (généralement 300 à 400 € maximum) qui permet de louer plus cher et d'augmenter votre rentabilité.</div></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>Les Domaines de Tri Hent — Conciergerie · Bretagne</span><span class="num">— 09 —</span></div>
+</section>
+
+<!-- ========== P10 : CONTACT ========== -->
+<section class="page fin">
+  <div class="pad">
+    <span class="kicker">Confiez-nous votre bien</span>
+    <h2>Parlons de <em>votre demeure</em></h2>
+    <p class="ft">Estimation de vos revenus, visite conseil, mise en place : le premier échange est sans engagement.</p>
+    <div class="coord">
+      <div class="c-tel">06 66 99 11 28</div>
+      <div class="c-txt">
+        domaines.trihent@gmail.com<br>
+        <span class="site">domaines-trihent.com</span><br>
+        Paimpol · Côtes-d'Armor
+      </div>
+      <div class="qr"><img src="qr-code-domaines-trihent.png" alt="QR vers domaines-trihent.com"></div>
+    </div>
+    <div class="estim">Estimation de vos revenus — offerte</div>
+  </div>
+</section>
+
+</body>
+</html>
