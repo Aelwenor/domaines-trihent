@@ -635,7 +635,7 @@ table.t th.cd, table.t td.cd { background: rgba(30,58,43,.045); }
   <div class="tableau-defile"><table class="grille-menage" id="grille-menage"></table></div>
   <div class="ligne-btn" style="margin-top:8px"><button class="btn btn-discret btn-mini" type="button" id="btn-ajout-ligne">Ajouter une ligne</button></div>
   <h3>Frais de plateformes par défaut</h3>
-  <p class="aide">Commission prélevée par Airbnb, Booking ou Abritel sur ce que paie le voyageur (nuitées et ménage). Exemples : Airbnb 15,5 %, Booking 18 %.</p>
+  <p class="aide">Commission prélevée par Airbnb ou Booking sur ce que paie le voyageur (nuitées et ménage). Exemples : Airbnb 15,5 %, Booking 18 %.</p>
   <div class="grille" style="max-width:320px"><div class="champ"><label for="p-plateformes">Frais de plateformes (%)</label><input id="p-plateformes" type="number" step="0.5" min="0"></div></div>
   <h3>Barème de commission</h3>
   <p class="aide">Chaque mois, un seul taux s'applique à tous les revenus locatifs du propriétaire (hors frais de plateformes, forfaits ménage compris), selon le palier atteint ce mois-là. Les forfaits ménage sont ensuite reversés au prestataire.</p>
@@ -1510,11 +1510,11 @@ function rendre() {
     <h2 class="titre">Votre bien mérite une attention d'exception</h2>
     <p class="intro">Conciergerie de location courte durée ancrée à Paimpol, nous prenons soin de chaque bien comme s'il était le nôtre. L'investisseur garde la main ; nous nous occupons du reste.</p>
     <div class="services">
-      <div><h4>Mise en valeur</h4><p>Photos, rédaction de l'annonce, diffusion et synchronisation sur Airbnb, Booking et Abritel.</p></div>
+      <div><h4>Mise en valeur</h4><p>Photos, rédaction de l'annonce, diffusion et synchronisation sur Airbnb et Booking.</p></div>
       <div><h4>Tarification dynamique</h4><p>Prix ajustés chaque jour selon la saison, les événements et la demande, pour remplir sans brader.</p></div>
-      <div><h4>Accueil des voyageurs</h4><p>Messages, arrivées et départs, assistance pendant le séjour, sept jours sur sept.</p></div>
-      <div><h4>Ménage hôtelier & linge</h4><p>Ménage aux standards hôteliers, linge haut de gamme blanchi par nos soins, contrôle qualité avant chaque arrivée.</p></div>
-      <div><h4>Entretien du bien</h4><p>Suivi régulier, petites interventions, réseau d'artisans locaux de confiance.</p></div>
+      <div><h4>Arrivées autonomes</h4><p>Boîte à clés et instructions claires : le voyageur arrive à l'heure qui lui convient. Nous restons joignables pendant tout le séjour.</p></div>
+      <div><h4>Ménage hôtelier & linge</h4><p>Ménage aux standards hôteliers, rotation du linge organisée avec vous, contrôle qualité avant chaque arrivée.</p></div>
+      <div><h4>Entretien du bien</h4><p>Visites régulières, y compris en basse saison, petites interventions, réseau local d'artisans de confiance.</p></div>
       <div><h4>Démarches</h4><p>Déclaration en mairie, dossier de classement, taxe de séjour : nous vous guidons à chaque étape.</p></div>
     </div>
     <div class="encadre" style="margin-top:6mm"><p><b style="color:var(--vert);font-weight:500">Une commission transparente.</b> Notre rémunération suit un barème progressif à partir de 14 % des revenus locatifs : nous ne gagnons que si vous gagnez. ${isNaN(num(S.cd.conciergerie)) ? `Le taux est fixé chaque mois selon les revenus locatifs du mois, hors plateformes et forfaits ménage compris : ${baremeTexte()}. Pour ce bien, cela représente ${nf1.format(r.T.tauxMoyen)} % en moyenne sur l'année. La commission porte aussi sur le ménage, car nous recrutons et encadrons les prestataires, contrôlons chaque ménage et fournissons les consommables.` : `La commission retenue dans cette étude est de ${nf1.format(num(S.cd.conciergerie))} %.`}</p></div>
