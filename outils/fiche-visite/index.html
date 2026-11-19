@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Fiche de visite — Tri Hent</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Tablette : sommaire des rubriques à gauche, questions à droite. Charte domaines-trihent.com */
+:root {
+  --creme: #FAF6EF; --creme-2: #F3EDE2; --blanc: #FFFFFF;
+  --vert: #1E3A2B; --vert-fonce: #16291F; --or: #B08D4A; --or-clair: #C9A96E;
+  --encre: #2C2A25; --gris: #6E6A60; --filet: rgba(30,58,43,.14);
+  --serif: 'Cormorant Garamond', Georgia, serif; --sans: 'Jost', 'Segoe UI', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { font-family: var(--sans); font-weight: 300; color: var(--encre); background: var(--creme); font-size: 16px; line-height: 1.5; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; color: var(--vert); line-height: 1.15; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+
+.barre { position: sticky; top: 0; z-index: 20; background: var(--vert); color: var(--creme); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); }
+.barre .marque { display: flex; align-items: center; gap: 10px; margin-right: auto; min-width: 0; }
+.barre svg { width: 34px; height: 34px; flex-shrink: 0; }
+.barre b { font-family: var(--serif); font-size: 20px; font-weight: 600; display: block; line-height: 1.1; }
+.barre .sous { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--or-clair); }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; font-size: 12px; padding: 11px 16px; border: 1px solid transparent; cursor: pointer; background: none; min-height: 44px; }
+.btn-or { background: var(--or); color: var(--blanc); }
+.btn-ligne { border-color: rgba(250,246,239,.55); color: var(--creme); }
+.btn-vert { background: var(--vert); color: var(--creme); }
+.btn-discret { border-color: var(--filet); color: var(--vert); background: var(--blanc); }
+
+.app { display: grid; grid-template-columns: 290px 1fr; min-height: calc(100% - 64px); }
+.sommaire { background: var(--creme-2); border-right: 1px solid var(--filet); padding: 14px 0 40px; position: sticky; top: 64px; height: calc(100vh - 64px); overflow-y: auto; }
+.sommaire .fiche-nom { padding: 4px 18px 12px; }
+.sommaire .fiche-nom span { display: block; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--or); }
+.sommaire .fiche-nom b { font-family: var(--serif); font-size: 19px; color: var(--vert); font-weight: 600; line-height: 1.2; display: block; }
+.sommaire .total { margin: 0 18px 12px; height: 6px; background: rgba(30,58,43,.1); }
+.sommaire .total i { display: block; height: 100%; background: var(--or); }
+.sommaire button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 11px 18px; border: 0; background: none; cursor: pointer; font-size: 15px; color: var(--encre); min-height: 46px; }
+.sommaire button .ic { width: 22px; text-align: center; font-size: 16px; }
+.sommaire button .lbl { flex: 1; }
+.sommaire button .pc { font-size: 11px; color: var(--gris); font-variant-numeric: tabular-nums; }
+.sommaire button.fait .pc { color: var(--vert); font-weight: 500; }
+.sommaire button.actif { background: var(--vert); color: var(--creme); }
+.sommaire button.actif .pc { color: var(--or-clair); }
+.contenu { padding: 22px max(20px, env(safe-area-inset-right, 0px)) 120px 28px; max-width: 900px; }
+.contenu .kicker { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--or); display: flex; align-items: center; gap: 10px; }
+.contenu .kicker::before { content: ""; width: 30px; height: 1px; background: var(--or); }
+.contenu h2 { font-size: 34px; margin: 4px 0 4px; }
+.contenu .intro { color: var(--gris); font-size: 14.5px; margin-bottom: 18px; max-width: 680px; }
+.mobile-nav { display: none; }
+
+.q { background: var(--blanc); border: 1px solid var(--filet); padding: 14px 16px; margin-bottom: 10px; }
+.q > label, .q > .ql { display: block; font-weight: 400; color: var(--vert); font-size: 15.5px; margin-bottom: 8px; }
+.q .aide { font-size: 12.5px; color: var(--gris); margin-top: 6px; }
+.q.rempli { border-left: 3px solid var(--or); }
+.q input[type=text], .q input[type=tel], .q input[type=email], .q input[type=number], .q input[type=date], .q input[type=time], .q input[type=url], .q textarea {
+  width: 100%; border: 1px solid var(--filet); background: var(--creme); padding: 11px 12px; font-size: 16px; border-radius: 0; min-height: 46px; }
+.q textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+.q input:focus, .q textarea:focus { outline: none; border-color: var(--or); background: var(--blanc); }
+.grille2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grille2 .q { margin-bottom: 0; }
+.bloc-grille { margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--filet); background: var(--creme); padding: 10px 14px; min-height: 44px; cursor: pointer; font-size: 14.5px; color: var(--encre); }
+.chip.on { background: var(--vert); border-color: var(--vert); color: var(--creme); }
+.chip.on.non { background: #8A4B2A; border-color: #8A4B2A; }
+.chip.on.av { background: var(--or); border-color: var(--or); }
+.unite { display: flex; align-items: center; gap: 8px; } .unite span { color: var(--gris); font-size: 14px; }
+.compteurs { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.compteur { display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1px solid var(--filet); background: var(--creme); padding: 6px 6px 6px 12px; }
+.compteur span { font-size: 14px; flex: 1; }
+.compteur .pm { display: flex; align-items: center; gap: 2px; }
+.compteur button { width: 40px; height: 40px; border: 0; background: var(--blanc); font-size: 20px; cursor: pointer; color: var(--vert); }
+.compteur b { min-width: 30px; text-align: center; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--vert); }
+.notes .ligne { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--filet); }
+.notes .ligne:last-child { border-bottom: 0; }
+.notes .etoiles { display: flex; gap: 4px; }
+.notes .etoiles button { width: 40px; height: 40px; border: 1px solid var(--filet); background: var(--creme); cursor: pointer; font-weight: 500; color: var(--gris); }
+.notes .etoiles button.on { background: var(--vert); color: var(--creme); border-color: var(--vert); }
+.score { display: flex; justify-content: space-between; align-items: baseline; background: var(--vert); color: var(--creme); padding: 12px 16px; margin-top: 10px; }
+.score b { font-family: var(--serif); font-size: 28px; color: var(--or-clair); }
+.repeat-item { border: 1px solid var(--or-clair); background: #FFFDF9; padding: 12px; margin-bottom: 12px; }
+.repeat-item h3 { font-size: 22px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.repeat-item .q { margin-bottom: 8px; }
+.photos { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.photo { position: relative; width: 110px; }
+.photo img { width: 110px; height: 82px; object-fit: cover; display: block; border: 1px solid var(--filet); }
+.photo button { position: absolute; top: 3px; right: 3px; width: 28px; height: 28px; border: 0; background: rgba(22,41,31,.8); color: #fff; cursor: pointer; font-size: 14px; }
+.photo-ajout { width: 110px; height: 82px; border: 1px dashed var(--or); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; color: var(--or); cursor: pointer; background: var(--creme); padding: 4px; }
+.section-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.encart { background: var(--creme-2); border-left: 3px solid var(--or); padding: 12px 14px; font-size: 14px; color: var(--encre); margin-bottom: 14px; }
+.encart b { color: var(--vert); font-weight: 500; }
+.toast { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); background: var(--vert); color: var(--creme); padding: 12px 18px; font-size: 14px; z-index: 50; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 90vw; }
+.toast.visible { opacity: 1; }
+
+dialog.fenetre { margin: auto; border: 0; padding: 22px; width: min(760px, calc(100vw - 24px)); max-height: calc(100vh - 40px); background: var(--creme); box-shadow: 0 20px 60px rgba(22,41,31,.35); }
+dialog.fenetre::backdrop { background: rgba(22,41,31,.45); }
+.fenetre h2 { font-size: 28px; margin-bottom: 8px; }
+.liste-fiches { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 14.5px; }
+.liste-fiches td { padding: 10px 8px; border-bottom: 1px solid var(--filet); }
+.liste-fiches tr[data-id] { cursor: pointer; }
+.liste-fiches tr.courante td { background: rgba(176,141,74,.14); }
+.liste-fiches .meta { color: var(--gris); font-size: 12.5px; }
+
+@media (max-width: 820px) {
+  .app { grid-template-columns: 1fr; }
+  .sommaire { display: none; }
+  .mobile-nav { display: flex; gap: 8px; padding: 10px 16px; background: var(--creme-2); border-bottom: 1px solid var(--filet); position: sticky; top: 64px; z-index: 10; }
+  .mobile-nav select { flex: 1; min-height: 44px; border: 1px solid var(--filet); background: var(--blanc); padding: 8px; font-size: 15px; }
+  .contenu { padding: 18px 16px 100px; }
+  .grille2 { grid-template-columns: 1fr; }
+  .contenu h2 { font-size: 28px; }
+}
+
+/* ======== Impression : la fiche remplie, à la charte ======== */
+#impression { display: none; }
+@media print {
+  @page { size: A4; margin: 14mm 13mm 16mm; }
+  body { background: #fff; font-size: 9.5pt; }
+  .barre, .app, .mobile-nav, .toast, dialog { display: none !important; }
+  #impression { display: block; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+.imp-tete { display: flex; justify-content: space-between; align-items: flex-start; gap: 10mm; border-bottom: 1.5px solid var(--or); padding-bottom: 5mm; margin-bottom: 5mm; }
+.imp-tete .m { display: flex; gap: 4mm; align-items: center; }
+.imp-tete svg { width: 15mm; height: 15mm; }
+.imp-tete .m b { font-family: var(--serif); font-size: 16pt; color: var(--vert); display: block; font-weight: 600; }
+.imp-tete .m span { font-size: 6.5pt; letter-spacing: .35em; text-transform: uppercase; color: var(--or); }
+.imp-tete .d { text-align: right; font-size: 8.5pt; color: var(--gris); }
+.imp-tete .d h1 { font-size: 18pt; }
+.imp-sec { break-inside: auto; margin-bottom: 5mm; }
+.imp-sec > h2 { font-size: 14pt; padding: 1.5mm 0 1.5mm 3mm; border-left: 2px solid var(--or); margin-bottom: 2mm; break-after: avoid; }
+.imp-sec table { width: 100%; border-collapse: collapse; }
+.imp-sec td { padding: 1.2mm 2mm; border-bottom: 1px solid var(--filet); vertical-align: top; font-size: 9pt; }
+.imp-sec td:first-child { width: 42%; color: var(--gris); }
+.imp-sec td:last-child { color: var(--encre); font-weight: 400; }
+.imp-sec h3 { font-size: 11pt; margin: 2.5mm 0 1mm; color: var(--or); font-family: var(--sans); font-weight: 500; letter-spacing: .06em; }
+.imp-photos { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: 2mm; }
+.imp-photos img { width: 42mm; height: 31mm; object-fit: cover; border: 1px solid var(--filet); }
+.imp-com { background: var(--creme-2); padding: 2mm 3mm; margin-top: 1.5mm; font-size: 9pt; white-space: pre-wrap; }
+.imp-pied { margin-top: 8mm; font-size: 7.5pt; color: var(--gris); border-top: 1px solid var(--filet); padding-top: 2mm; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header class="barre">
+  <div class="marque">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27.5" fill="none" stroke="#B08D4A" stroke-width="1.5"/><text x="32" y="41.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="29" fill="#C9A96E">TH</text></svg>
+    <div><b>Fiche de visite</b><span class="sous">Les Domaines de Tri Hent</span></div>
+  </div>
+  <button class="btn btn-ligne" type="button" id="btn-fiches">Mes fiches</button>
+  <button class="btn btn-ligne" type="button" id="btn-nouvelle">Nouvelle fiche</button>
+  <button class="btn btn-or" type="button" id="btn-pdf">Imprimer / PDF</button>
+</header>
+
+<nav class="mobile-nav" aria-label="Rubriques"><select id="nav-mobile" aria-label="Choisir une rubrique"></select></nav>
+
+<div class="app">
+  <aside class="sommaire" id="sommaire" aria-label="Rubriques"></aside>
+  <main class="contenu" id="contenu"></main>
+</div>
+
+<div id="impression"></div>
+<div class="toast" id="toast" role="status"></div>
+<input type="file" id="input-photo" accept="image/*" capture="environment" multiple hidden>
+
+<dialog class="fenetre" id="dlg-fiches">
+  <h2>Mes fiches de visite</h2>
+  <p style="font-size:13.5px;color:var(--gris)">Enregistrées automatiquement sur cette tablette. Touchez une fiche pour l'ouvrir.</p>
+  <table class="liste-fiches" id="liste-fiches"></table>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-discret" type="button" id="btn-export">Sauvegarder la fiche (.json)</button>
+    <label class="btn btn-discret" for="input-import">Importer une fiche</label>
+    <input type="file" id="input-import" accept="application/json" hidden>
+    <button class="btn btn-vert" type="button" data-fermer style="margin-left:auto">Fermer</button>
+  </div>
+</dialog>
+
+<script>
+/* =========================================================
+   Questionnaire : rubriques et questions
+   Types : text, tel, email, url, date, time, num, area, one, yn, multi, counts, notes, repeat
+   show : condition d'affichage (selon les réponses de la fiche ou de l'élément répété)
+   ========================================================= */
+const OUI_NON = ["Oui", "Non", "À vérifier"];
+const SECTIONS = [
+  { id: "rdv", ic: "📅", titre: "Le rendez-vous", intro: "Les informations de la visite.", q: [
+    { t: "date", id: "rdv_date", q: "Date de la visite" },
+    { t: "time", id: "rdv_heure", q: "Heure" },
+    { t: "text", id: "rdv_presents", q: "Personnes présentes", ph: "Propriétaire, conjoint, agent immobilier…" },
+    { t: "one", id: "rdv_origine", q: "Comment le propriétaire nous a-t-il connus ?", o: ["Bouche-à-oreille", "Site internet", "Instagram", "Facebook", "Agence immobilière", "Google", "Autre"] }
+  ]},
+  { id: "proprio", ic: "👤", titre: "Le propriétaire", intro: "Coordonnées et situation du propriétaire.", q: [
+    { g: [ { t: "text", id: "p_prenom", q: "Prénom" }, { t: "text", id: "p_nom", q: "Nom" } ] },
+    { g: [ { t: "tel", id: "p_tel", q: "Téléphone" }, { t: "email", id: "p_email", q: "E-mail" } ] },
+    { t: "text", id: "p_adresse", q: "Adresse postale du propriétaire", ph: "Rue, code postal, ville" },
+    { t: "one", id: "p_contact", q: "Comment préfère-t-il être contacté ?", o: ["Téléphone", "SMS", "E-mail", "WhatsApp"] },
+    { t: "one", id: "p_statut", q: "Le bien est détenu…", o: ["En nom propre", "En SCI", "En société", "En indivision"] },
+    { t: "one", id: "p_residence", q: "Pour le propriétaire, ce logement est…", o: ["Résidence secondaire", "Résidence principale", "Investissement locatif"] },
+    { t: "yn", id: "p_proche", q: "Habite-t-il à proximité du logement ?" }
+  ]},
+  { id: "logement", ic: "🏡", titre: "Le logement", intro: "La description générale du bien.", q: [
+    { t: "text", id: "l_adresse", q: "Adresse du logement", ph: "Rue, code postal, ville" },
+    { t: "one", id: "l_type", q: "Type de logement", o: ["Maison", "Appartement", "Studio", "Longère / penty", "Villa", "Gîte", "Autre"] },
+    { g: [ { t: "num", id: "l_surface", q: "Surface", u: "m²" }, { t: "num", id: "l_terrain", q: "Terrain", u: "m²" } ] },
+    { g: [ { t: "num", id: "l_chambres", q: "Nombre de chambres" }, { t: "num", id: "l_sdb", q: "Salles de bain / d'eau" } ] },
+    { g: [ { t: "num", id: "l_wc", q: "Nombre de WC" }, { t: "num", id: "l_capacite", q: "Capacité d'accueil", u: "voyageurs" } ] },
+    { g: [ { t: "num", id: "l_niveaux", q: "Nombre de niveaux" }, { t: "num", id: "l_annee", q: "Année de construction" } ] },
+    { t: "one", id: "l_dpe", q: "Classe DPE", o: ["A", "B", "C", "D", "E", "F", "G", "Pas de DPE"] },
+    { t: "num", id: "l_etage", q: "À quel étage ?", show: d => d.l_type === "Appartement" || d.l_type === "Studio" },
+    { t: "yn", id: "l_ascenseur", q: "Y a-t-il un ascenseur ?", show: d => d.l_type === "Appartement" || d.l_type === "Studio" },
+    { t: "yn", id: "l_copro", q: "Le règlement de copropriété autorise-t-il la location courte durée ?", show: d => d.l_type === "Appartement" || d.l_type === "Studio", aide: "Demander le règlement si possible : la clause d'habitation bourgeoise peut l'interdire." },
+    { t: "yn", id: "l_pmr", q: "Le logement est-il accessible de plain-pied ?" },
+    { t: "area", id: "l_description", q: "Description en quelques mots", ph: "Ce qui fait le charme du lieu, son histoire, l'ambiance…" }
+  ]},
+  { id: "projet", ic: "🎯", titre: "Son projet", intro: "Ce que le propriétaire attend, et ce qu'il souhaite garder pour lui.", q: [
+    { t: "multi", id: "pr_objectif", q: "Quel est son objectif principal ?", o: ["Rentabiliser une résidence secondaire", "Revenu complémentaire", "Rentabiliser un investissement", "Entretenir le bien", "Ne plus s'en occuper"] },
+    { t: "yn", id: "pr_deja", q: "Le logement est-il déjà loué en courte durée ?" },
+    { t: "multi", id: "pr_plateformes", q: "Sur quelles plateformes ?", o: ["Airbnb", "Booking", "Abritel", "Gîtes de France", "En direct", "Autre"], show: d => d.pr_deja === "Oui" },
+    { g: [ { t: "num", id: "pr_revenus", q: "Revenus de l'an dernier", u: "€", show: d => d.pr_deja === "Oui" }, { t: "text", id: "pr_note", q: "Note moyenne et nombre d'avis", show: d => d.pr_deja === "Oui" } ] },
+    { t: "area", id: "pr_difficultes", q: "Qu'est-ce qui lui pèse aujourd'hui ?", show: d => d.pr_deja === "Oui", ph: "Messages, ménage, prix, imprévus…" },
+    { t: "date", id: "pr_demarrage", q: "Date de démarrage souhaitée" },
+    { t: "area", id: "pr_perso", q: "Périodes qu'il souhaite garder pour lui", ph: "Ex. 2 semaines en août, Noël, week-ends de mai…" },
+    { t: "one", id: "pr_duree_min", q: "Durée minimum de séjour souhaitée", o: ["1 nuit", "2 nuits", "3 nuits", "1 semaine l'été", "À définir ensemble"] },
+    { t: "num", id: "pr_prix_min", q: "Prix plancher par nuit souhaité", u: "€" },
+    { t: "one", id: "pr_animaux", q: "Animaux acceptés ?", o: ["Oui", "Non", "Petits animaux seulement", "À discuter"] },
+    { t: "multi", id: "pr_regles", q: "Règles de la maison", o: ["Non-fumeur", "Pas de fêtes", "Enfants bienvenus", "Pas de visiteurs extérieurs", "Calme après 22 h"] },
+    { t: "area", id: "pr_attentes", q: "Ses attentes et ses inquiétudes", ph: "Ce qui compte le plus pour lui, ce qui l'inquiète…" }
+  ]},
+  { id: "eval", ic: "⭐", titre: "Évaluation", intro: "Votre appréciation de l'état du logement, de 1 (mauvais) à 5 (excellent).", q: [
+    { t: "notes", id: "ev", items: ["Propreté générale", "Sols (parquet, carrelage…)", "Murs et plafonds", "Cuisine (équipements et surfaces)", "Salles de bain et WC", "Équipements (chauffage, électricité…)", "Menuiseries (portes, fenêtres)", "Odeurs", "Impression générale"] },
+    { t: "one", id: "ev_standing", q: "Niveau de standing", o: ["Basique", "Correct", "Soigné", "Haut de gamme"] },
+    { t: "area", id: "ev_travaux", q: "Petits travaux ou achats à prévoir avant la mise en ligne", ph: "Ampoules, rideaux occultants, linge, vaisselle, peinture…" }
+  ]},
+  { id: "environnement", ic: "🌊", titre: "Environnement & atouts", intro: "Ce qui va plaire aux voyageurs.", q: [
+    { t: "multi", id: "e_quartier", q: "Où se situe le logement ?", o: ["Centre-bourg", "Centre historique", "Port", "Bord de mer", "Quartier résidentiel", "Campagne", "Hameau isolé"] },
+    { t: "one", id: "e_calme", q: "Environnement sonore", o: ["Très calme", "Calme", "Un peu de passage", "Bruyant"] },
+    { t: "one", id: "e_visavis", q: "Vis-à-vis", o: ["Aucun", "Partiel", "Important"] },
+    { t: "multi", id: "e_vue", q: "Vue depuis le logement", o: ["Mer", "Port", "Jardin", "Campagne", "Rue", "Aucune vue particulière"] },
+    { g: [ { t: "text", id: "e_plage", q: "Distance de la plage", ph: "Ex. 400 m, 5 min à pied" }, { t: "text", id: "e_commerces", q: "Distance des commerces", ph: "Boulangerie, supermarché…" } ] },
+    { t: "multi", id: "e_atouts", q: "Atouts du logement", o: ["Lumineux", "Charme de l'ancien", "Moderne", "Vue mer", "Plage à pied", "Jardin", "Terrasse", "Cheminée / poêle", "Jacuzzi / spa", "Piscine", "Parking", "Proche GR 34", "Au calme", "Cocooning"] },
+    { t: "multi", id: "e_voyageurs", q: "Pour quels voyageurs ?", o: ["Couples", "Familles", "Groupes d'amis", "Télétravailleurs", "Randonneurs", "Seniors", "Professionnels", "Avec animaux"] },
+    { t: "area", id: "e_alentours", q: "À faire autour (conseils du propriétaire)", ph: "Restaurants, balades, marchés, plages préférées…" }
+  ]},
+  { id: "acces", ic: "🔑", titre: "Accès & clés", intro: "Nous privilégions les arrivées autonomes : le voyageur arrive à l'heure qui lui convient, sans stress.", q: [
+    { t: "multi", id: "a_mode", q: "Mode d'arrivée envisagé", o: ["Boîte à clés à code", "Serrure connectée", "Remise en main propre (exception)", "À équiper"] },
+    { t: "text", id: "a_boite", q: "Emplacement de la boîte à clés", ph: "Ex. à droite de la porte d'entrée, derrière le portail…" },
+    { t: "yn", id: "a_achat", q: "Faut-il acheter et poser une boîte à clés ?" },
+    { t: "counts", id: "a_cles", q: "Jeux de clés disponibles", items: ["Voyageurs", "Ménage", "Conciergerie", "Propriétaire"] },
+    { t: "multi", id: "a_portail", q: "Accès au terrain ou à l'immeuble", o: ["Portail", "Portail motorisé", "Digicode", "Interphone", "Accès libre"] },
+    { t: "text", id: "a_codes", q: "Codes d'accès", aide: "À noter seulement si nécessaire : ils apparaîtront sur la fiche imprimée." },
+    { t: "area", id: "a_instructions", q: "Instructions d'arrivée", ph: "Où se garer, quelle porte, particularités…" }
+  ]},
+  { id: "plateformes", ic: "💻", titre: "Annonces & démarches", intro: "Le propriétaire garde l'accès à ses comptes : nous travaillons en co-hôte. Ne notez aucun mot de passe ici.", q: [
+    { t: "yn", id: "pf_airbnb", q: "A-t-il déjà une annonce Airbnb ?" },
+    { t: "url", id: "pf_airbnb_lien", q: "Lien de l'annonce Airbnb", show: d => d.pf_airbnb === "Oui" },
+    { t: "yn", id: "pf_airbnb_cohote", q: "Invitation co-hôte Airbnb envoyée ?", show: d => d.pf_airbnb === "Oui" },
+    { t: "yn", id: "pf_booking", q: "A-t-il déjà une annonce Booking ?" },
+    { t: "url", id: "pf_booking_lien", q: "Lien de l'annonce Booking", show: d => d.pf_booking === "Oui" },
+    { t: "yn", id: "pf_booking_acces", q: "Accès utilisateur Booking créé pour la conciergerie ?", show: d => d.pf_booking === "Oui" },
+    { t: "yn", id: "pf_declaration", q: "Le meublé est-il déclaré en mairie (numéro d'enregistrement) ?" },
+    { t: "text", id: "pf_numero", q: "Numéro d'enregistrement", show: d => d.pf_declaration === "Oui" },
+    { t: "one", id: "pf_classement", q: "Meublé de tourisme classé ?", o: ["Non classé", "1 étoile", "2 étoiles", "3 étoiles", "4 étoiles", "5 étoiles", "Classement à demander"] },
+    { t: "yn", id: "pf_taxe", q: "Taxe de séjour : collectée par les plateformes ?" }
+  ]},
+  { id: "documents", ic: "📄", titre: "Documents", intro: "À récupérer pour signer le contrat et mettre en ligne.", q: [
+    { t: "multi", id: "d_recus", q: "Documents reçus", o: ["Pièce d'identité", "RIB", "Justificatif de propriété (acte ou taxe foncière)", "Assurance propriétaire non occupant", "Attestation de responsabilité civile", "Déclaration en mairie / numéro", "DPE", "Règlement de copropriété", "Contrat signé"] },
+    { t: "area", id: "d_attente", q: "Documents en attente, à relancer" }
+  ]},
+  { id: "technique", ic: "⚙️", titre: "Équipements techniques", intro: "Ce qu'il faut savoir en cas d'imprévu. Pensez aux photos.", q: [
+    { t: "text", id: "t_disjoncteur", q: "Où est le tableau électrique ?" },
+    { t: "text", id: "t_eau", q: "Où est la vanne d'arrivée d'eau ?" },
+    { t: "one", id: "t_ecs", q: "Eau chaude", o: ["Ballon électrique", "Chaudière gaz", "Chaudière fioul", "Pompe à chaleur", "Thermodynamique"] },
+    { t: "text", id: "t_ecs_lieu", q: "Où se trouve le ballon ou la chaudière ?" },
+    { t: "multi", id: "t_chauffage", q: "Chauffage", o: ["Radiateurs électriques", "Chauffage central gaz", "Fioul", "Pompe à chaleur", "Poêle à bois / granulés", "Cheminée", "Climatisation"] },
+    { t: "area", id: "t_chauffage_instr", q: "Mode d'emploi du chauffage", ph: "Thermostat, programmation, bois fourni…" },
+    { t: "one", id: "t_wifi", q: "Internet", o: ["Fibre", "ADSL", "Box 4G / 5G", "Pas d'internet"] },
+    { g: [ { t: "text", id: "t_wifi_nom", q: "Nom du réseau wifi" }, { t: "text", id: "t_wifi_mdp", q: "Mot de passe wifi" } ] },
+    { t: "text", id: "t_debit", q: "Débit mesuré (speedtest)", ph: "Ex. 150 Mb/s en réception" },
+    { t: "multi", id: "t_tv", q: "Télévision", o: ["TV classique", "Smart TV", "Netflix / plateformes", "Chromecast", "Pas de TV"] },
+    { t: "one", id: "t_parking", q: "Stationnement", o: ["Parking privé", "Garage", "Rue gratuite", "Parking public payant", "Difficile"] },
+    { t: "text", id: "t_poubelles", q: "Poubelles : emplacement et jours de collecte", ph: "Ex. bac jaune le mardi, bac noir le vendredi" }
+  ]},
+  { id: "menage", ic: "🧺", titre: "Ménage & linge", intro: "Le linge est convenu avec le propriétaire ; nous assurons ensuite la rotation.", q: [
+    { t: "one", id: "m_linge", q: "Le linge de maison", o: ["Fourni par le propriétaire", "À acheter", "Location de linge", "À définir"] },
+    { t: "counts", id: "m_inv_lit", q: "Linge de lit disponible", items: ["Couettes", "Oreillers", "Draps-housses 90", "Draps-housses 140", "Draps-housses 160", "Draps-housses 180", "Housses de couette", "Taies d'oreiller", "Protège-matelas", "Protège-oreillers"] },
+    { t: "counts", id: "m_inv_bain", q: "Linge de toilette et de maison", items: ["Draps de bain", "Serviettes", "Tapis de bain", "Torchons", "Plaids", "Nappes"] },
+    { t: "one", id: "m_etat_linge", q: "État du linge", o: ["Neuf", "Bon état", "À renouveler en partie", "À renouveler"] },
+    { t: "text", id: "m_stockage", q: "Où le linge est-il rangé ?", ph: "Placard fermé, malle avec cadenas…" },
+    { t: "multi", id: "m_materiel", q: "Matériel de ménage sur place", o: ["Aspirateur", "Serpillière / balai", "Fer à repasser", "Étendoir", "Lave-linge", "Sèche-linge", "Produits ménagers"] },
+    { t: "one", id: "m_panier", q: "Premier panier de consommables fourni par", o: ["Le propriétaire", "La conciergerie"] },
+    { t: "one", id: "m_prestataire", q: "Le ménage sera assuré par", o: ["Moi-même", "Un prestataire", "À définir"] },
+    { t: "num", id: "m_forfait", q: "Forfait ménage convenu", u: "€ / séjour" },
+    { t: "area", id: "m_consignes", q: "Consignes particulières", ph: "Produits à éviter, sols fragiles, plantes à arroser…" }
+  ]},
+  { id: "sejour", ic: "🛋️", titre: "Séjour & salle à manger", intro: "Les pièces de vie.", q: [
+    { t: "multi", id: "s_equip", q: "Équipements", o: ["Canapé", "Canapé convertible", "Fauteuils", "Table basse", "Table à manger", "TV", "Livres / jeux de société", "Chauffage", "Volets / rideaux", "Cheminée / poêle"] },
+    { t: "num", id: "s_places", q: "Nombre de places à table" },
+    { t: "yn", id: "s_abime", q: "Éléments abîmés ?" },
+    { t: "area", id: "s_com", q: "Commentaires", show: d => d.s_abime === "Oui", ph: "Ce qui est abîmé, à réparer ou à remplacer" }
+  ]},
+  { id: "chambres", ic: "🛏️", titre: "Chambres", intro: "Une fiche par chambre.", q: [
+    { t: "repeat", id: "ch", label: "Chambre", fields: [
+      { t: "text", id: "nom", q: "Nom ou emplacement", ph: "Ex. chambre parentale, étage, côté jardin" },
+      { t: "counts", id: "lits", q: "Couchages", items: ["Lit 90", "Lit 140", "Lit 160", "Lit 180", "Lits superposés", "Canapé-lit", "Lit bébé"] },
+      { t: "multi", id: "equip", q: "Équipements", o: ["Rangements", "Cintres", "Volets / rideaux occultants", "Chauffage", "Table de chevet", "TV", "Bureau", "Salle d'eau privative"] },
+      { t: "yn", id: "abime", q: "Éléments abîmés ?" },
+      { t: "area", id: "com", q: "Commentaires" }
+    ]}
+  ]},
+  { id: "sdb", ic: "🛁", titre: "Salles de bain", intro: "Une fiche par salle de bain ou salle d'eau.", q: [
+    { t: "repeat", id: "sb", label: "Salle de bain", fields: [
+      { t: "text", id: "nom", q: "Nom ou emplacement" },
+      { t: "multi", id: "equip", q: "Équipements", o: ["Douche", "Baignoire", "WC", "Double vasque", "Sèche-cheveux", "Sèche-serviettes", "Chauffage", "Lave-linge", "Fenêtre / VMC"] },
+      { t: "yn", id: "abime", q: "Éléments abîmés ?" },
+      { t: "area", id: "com", q: "Commentaires" }
+    ]},
+    { t: "yn", id: "sb_wc_separe", q: "Y a-t-il des WC séparés ?" }
+  ]},
+  { id: "cuisine", ic: "🍳", titre: "Cuisine", intro: "Électroménager, vaisselle et ustensiles.", q: [
+    { t: "multi", id: "c_electro", q: "Électroménager", o: ["Réfrigérateur", "Congélateur", "Four", "Micro-ondes", "Lave-vaisselle", "Bouilloire", "Grille-pain", "Mixeur / robot", "Appareil à raclette", "Barbecue / plancha"] },
+    { t: "one", id: "c_plaque", q: "Plaque de cuisson", o: ["Induction", "Vitrocéramique", "Gaz", "Électrique"] },
+    { t: "one", id: "c_cafe", q: "Cafetière", o: ["Filtre", "Nespresso", "Senseo", "Dolce Gusto", "Italienne", "Expresso broyeur", "Aucune"] },
+    { t: "one", id: "c_vaisselle", q: "La vaisselle suffit-elle pour la capacité d'accueil ?", o: ["Oui", "Non", "À compléter"] },
+    { t: "counts", id: "c_inv", q: "Inventaire de la vaisselle (si besoin)", items: ["Assiettes plates", "Assiettes creuses", "Assiettes à dessert", "Bols", "Verres à eau", "Verres à vin", "Tasses / mugs", "Couteaux", "Fourchettes", "Cuillères", "Petites cuillères", "Poêles", "Casseroles", "Faitout"] },
+    { t: "multi", id: "c_ustensiles", q: "Ustensiles présents", o: ["Couteaux de cuisine", "Planche à découper", "Spatules / louche", "Passoire", "Saladier", "Plats à four", "Ouvre-boîte", "Tire-bouchon", "Râpe", "Éplucheur", "Ciseaux", "Maniques"] },
+    { t: "yn", id: "c_teste", q: "Casseroles et poêles testées sur la plaque ?" },
+    { t: "yn", id: "c_abime", q: "Éléments abîmés ?" },
+    { t: "area", id: "c_com", q: "Commentaires" }
+  ]},
+  { id: "exterieur", ic: "🌿", titre: "Extérieur & bien-être", intro: "Jardin, terrasse et équipements particuliers.", q: [
+    { t: "multi", id: "x_exterieur", q: "Extérieurs", o: ["Jardin", "Terrasse", "Balcon", "Cour", "Salon de jardin", "Transats", "Barbecue / plancha", "Jeux pour enfants", "Garage", "Local vélos", "Buanderie"] },
+    { t: "yn", id: "x_jardin_entretien", q: "Qui entretient le jardin ? Prévu par le propriétaire ?", show: d => (d.x_exterieur || []).includes("Jardin") },
+    { t: "multi", id: "x_bienetre", q: "Équipements de bien-être", o: ["Piscine", "Jacuzzi / spa", "Sauna", "Hammam", "Salle de jeux", "Salle de sport"] },
+    { t: "text", id: "x_piscine", q: "Piscine : chauffée ? saison d'ouverture ? sécurité aux normes ?", show: d => (d.x_bienetre || []).includes("Piscine") },
+    { t: "text", id: "x_spa", q: "Jacuzzi : entretien et produits, qui s'en occupe ?", show: d => (d.x_bienetre || []).includes("Jacuzzi / spa") },
+    { t: "yn", id: "x_abime", q: "Éléments abîmés ?" },
+    { t: "area", id: "x_com", q: "Commentaires" }
+  ]},
+  { id: "confort", ic: "👶", titre: "Famille & télétravail", intro: "Ce qui fait la différence pour certains voyageurs.", q: [
+    { t: "multi", id: "f_bebe", q: "Équipements bébé et enfants", o: ["Lit parapluie", "Chaise haute", "Baignoire bébé", "Barrière d'escalier", "Jouets / livres enfants"] },
+    { t: "multi", id: "f_teletravail", q: "Télétravail", o: ["Bureau dédié", "Chaise de bureau", "Prise Ethernet", "Bon débit internet"] }
+  ]},
+  { id: "securite", ic: "🛡️", titre: "Sécurité", intro: "Obligatoire ou fortement recommandé.", q: [
+    { t: "multi", id: "sec_equip", q: "Équipements de sécurité", o: ["Détecteur de fumée", "Détecteur de monoxyde de carbone", "Extincteur", "Couverture anti-feu", "Trousse de secours"] },
+    { t: "multi", id: "sec_risques", q: "Points de vigilance", o: ["Escalier raide", "Mezzanine sans garde-corps", "Accès à l'eau (bassin, falaise…)", "Piscine non sécurisée", "Aucun"] },
+    { t: "area", id: "sec_com", q: "Commentaires" }
+  ]},
+  { id: "suite", ic: "✅", titre: "Prochaines étapes", intro: "Avant de partir : ce qui a été convenu.", q: [
+    { t: "multi", id: "n_actions", q: "Ce qui est convenu", o: ["Envoyer l'estimation de revenus", "Envoyer le contrat", "Planifier les photos", "Commander la boîte à clés", "Acheter le linge manquant", "Déclarer le meublé en mairie", "Demander le classement", "Créer ou reprendre les annonces"] },
+    { g: [ { t: "date", id: "n_photos", q: "Date du shooting photo" }, { t: "date", id: "n_enligne", q: "Mise en ligne prévue" } ] },
+    { t: "date", id: "n_relance", q: "Date de relance" },
+    { t: "area", id: "n_com", q: "Notes générales", ph: "Impression générale, points à retenir, prochain rendez-vous…" }
+  ]}
+];
+
+/* ---------- Utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const toast = (m) => { const t = $("#toast"); t.textContent = m; t.classList.add("visible"); clearTimeout(t._m); t._m = setTimeout(() => t.classList.remove("visible"), 2600); };
+const aujourdhui = () => new Date().toISOString().slice(0, 10);
+const dateFr = (d) => { try { return new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return d; } };
+const MONO = `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27.5" fill="none" stroke="#B08D4A" stroke-width="1.5"/><text x="32" y="41.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="29" fill="#C9A96E">TH</text></svg>`;
+
+/* ---------- Stockage : fiches (localStorage) et photos (IndexedDB) ---------- */
+const CLE = "trihent.fiches-visite.v1", CLE_COURANTE = "trihent.fiche-visite.courante.v1";
+const lireFiches = () => { try { return JSON.parse(localStorage.getItem(CLE) || "[]"); } catch (e) { return []; } };
+const ecrireFiches = (l) => { try { localStorage.setItem(CLE, JSON.stringify(l)); } catch (e) { toast("Stockage plein : sauvegardez puis supprimez d'anciennes fiches."); } };
+let dbP = null;
+function db() {
+  if (!dbP) dbP = new Promise((ok, ko) => { const r = indexedDB.open("trihent-fiches", 1); r.onupgradeneeded = () => r.result.createObjectStore("photos", { keyPath: "id" }); r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); });
+  return dbP;
+}
+async function photoMettre(p) { const d = await db(); return new Promise((ok, ko) => { const tx = d.transaction("photos", "readwrite"); tx.objectStore("photos").put(p); tx.oncomplete = ok; tx.onerror = () => ko(tx.error); }); }
+async function photoLire(id) { const d = await db(); return new Promise((ok) => { const r = d.transaction("photos").objectStore("photos").get(id); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }); }
+async function photoSupprimer(id) { const d = await db(); return new Promise((ok) => { const tx = d.transaction("photos", "readwrite"); tx.objectStore("photos").delete(id); tx.oncomplete = ok; }); }
+
+function ficheVide() {
+  return { id: "f" + Date.now().toString(36), cree: aujourdhui(), v: { rdv_date: aujourdhui(), ch: [{}], sb: [{}] }, photos: {} };
+}
+let F = ficheVide();
+let secCourante = "rdv";
+function sauver() {
+  try { localStorage.setItem(CLE_COURANTE, F.id); } catch (e) {}
+  const l = lireFiches().filter(x => x.id !== F.id);
+  F.maj = new Date().toISOString();
+  l.unshift(F); ecrireFiches(l);
+}
+let minuteur;
+const sauverBientot = () => { clearTimeout(minuteur); minuteur = setTimeout(sauver, 300); };
+
+/* ---------- Valeurs ---------- */
+const vide = (x) => x === undefined || x === null || x === "" || (Array.isArray(x) && !x.length) || (typeof x === "object" && !Array.isArray(x) && !Object.values(x).some(v => !vide(v) && v !== 0));
+const titreFiche = () => { const v = F.v; const nom = [v.p_prenom, v.p_nom].filter(Boolean).join(" "); const lieu = v.l_adresse || ""; return [v.l_type, lieu].filter(Boolean).join(" · ") || nom || "Nouvelle fiche"; };
+function aplatir(qs) { const out = []; for (const q of qs) { if (q.g) out.push(...q.g); else out.push(q); } return out; }
+function progression(sec) {
+  const qs = aplatir(sec.q).filter(q => !q.show || q.show(F.v));
+  let n = 0, ok = 0;
+  for (const q of qs) {
+    if (q.t === "repeat") { const arr = F.v[q.id] || []; for (const it of arr) for (const f of q.fields) { n++; if (!vide(it[f.id])) ok++; } }
+    else if (q.t === "notes") { n++; if (q.items.every((_, i) => (F.v[q.id] || {})[i])) ok++; }
+    else { n++; if (!vide(F.v[q.id])) ok++; }
+  }
+  return n ? Math.round(ok / n * 100) : 0;
+}
+
+/* ---------- Rendu d'une question ---------- */
+function champ(q, val, chemin, d) {
+  if (q.show && !q.show(d)) return "";
+  const rempli = !vide(val) ? " rempli" : "";
+  const idHtml = "c-" + chemin.replace(/[^a-z0-9]/gi, "-");
+  const aide = q.aide ? `<p class="aide">${esc(q.aide)}</p>` : "";
+  switch (q.t) {
+    case "text": case "tel": case "email": case "url": case "date": case "time":
+      return `<div class="q${rempli}"><label for="${idHtml}">${esc(q.q)}</label><input id="${idHtml}" type="${q.t}" data-chemin="${chemin}" value="${esc(val)}" placeholder="${esc(q.ph || "")}" ${q.t === "tel" ? 'inputmode="tel"' : ""}>${aide}</div>`;
+    case "num":
+      return `<div class="q${rempli}"><label for="${idHtml}">${esc(q.q)}</label><div class="unite"><input id="${idHtml}" type="number" inputmode="decimal" data-chemin="${chemin}" value="${esc(val)}" placeholder="${esc(q.ph || "")}">${q.u ? `<span>${esc(q.u)}</span>` : ""}</div>${aide}</div>`;
+    case "area":
+      return `<div class="q${rempli}"><label for="${idHtml}">${esc(q.q)}</label><textarea id="${idHtml}" data-chemin="${chemin}" placeholder="${esc(q.ph || "")}">${esc(val)}</textarea>${aide}</div>`;
+    case "one": case "yn": {
+      const o = q.t === "yn" ? OUI_NON : q.o;
+      return `<div class="q${rempli}"><span class="ql">${esc(q.q)}</span><div class="chips" role="group" aria-label="${esc(q.q)}">${o.map(x => `<button type="button" class="chip${val === x ? " on" : ""}${x === "Non" ? " non" : x === "À vérifier" ? " av" : ""}" data-un="${chemin}" data-val="${esc(x)}" aria-pressed="${val === x}">${esc(x)}</button>`).join("")}</div>${aide}</div>`;
+    }
+    case "multi": {
+      const arr = Array.isArray(val) ? val : [];
+      return `<div class="q${rempli}"><span class="ql">${esc(q.q)}</span><div class="chips" role="group" aria-label="${esc(q.q)}">${q.o.map(x => `<button type="button" class="chip${arr.includes(x) ? " on" : ""}" data-multi="${chemin}" data-val="${esc(x)}" aria-pressed="${arr.includes(x)}">${esc(x)}</button>`).join("")}</div>${aide}</div>`;
+    }
+    case "counts": {
+      const o = val && typeof val === "object" ? val : {};
+      return `<div class="q${rempli}"><span class="ql">${esc(q.q)}</span><div class="compteurs">${q.items.map(x => `<div class="compteur"><span>${esc(x)}</span><div class="pm"><button type="button" data-cpt="${chemin}" data-item="${esc(x)}" data-pas="-1" aria-label="Retirer ${esc(x)}">−</button><b>${o[x] || 0}</b><button type="button" data-cpt="${chemin}" data-item="${esc(x)}" data-pas="1" aria-label="Ajouter ${esc(x)}">+</button></div></div>`).join("")}</div>${aide}</div>`;
+    }
+    case "notes": {
+      const o = val || {};
+      const total = q.items.reduce((a, _, i) => a + (o[i] || 0), 0), nb = q.items.filter((_, i) => o[i]).length;
+      return `<div class="q${rempli} notes">${q.items.map((x, i) => `<div class="ligne"><span>${esc(x)}</span><div class="etoiles">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="${o[i] === n ? "on" : ""}" data-note="${chemin}" data-i="${i}" data-n="${n}" aria-label="${esc(x)} : ${n} sur 5">${n}</button>`).join("")}</div></div>`).join("")}
+        <div class="score"><span>${nb ? etatGlobal(total / nb) : "Score"}</span><b>${total} / ${q.items.length * 5}</b></div></div>`;
+    }
+    default: return "";
+  }
+}
+const etatGlobal = (m) => m >= 4.5 ? "Excellent état" : m >= 3.5 ? "Bon état" : m >= 2.5 ? "État moyen" : "À rénover";
+
+function rendreSection() {
+  const sec = SECTIONS.find(s => s.id === secCourante);
+  const idx = SECTIONS.indexOf(sec);
+  let h = `<p class="kicker">${idx + 1} / ${SECTIONS.length}</p><h2>${sec.ic} ${esc(sec.titre)}</h2><p class="intro">${esc(sec.intro)}</p>`;
+  for (const q of sec.q) {
+    if (q.g) { const inner = q.g.map(x => champ(x, F.v[x.id], x.id, F.v)).filter(Boolean); if (inner.length) h += `<div class="grille2 bloc-grille">${inner.join("")}</div>`; continue; }
+    if (q.t === "repeat") {
+      const arr = F.v[q.id] || [];
+      arr.forEach((it, i) => {
+        h += `<div class="repeat-item"><h3>${esc(q.label)} ${i + 1}<button class="btn btn-discret" type="button" data-suppr-rep="${q.id}" data-i="${i}" style="min-height:36px;padding:6px 10px">Retirer</button></h3>`;
+        for (const f of q.fields) h += champ(f, it[f.id], `${q.id}.${i}.${f.id}`, it);
+        h += `</div>`;
+      });
+      h += `<button class="btn btn-vert" type="button" data-ajout-rep="${q.id}" style="margin-bottom:12px">+ Ajouter une ${esc(q.label.toLowerCase())}</button>`;
+      continue;
+    }
+    h += champ(q, F.v[q.id], q.id, F.v);
+  }
+  // Photos et commentaire de la rubrique
+  const ph = F.photos[sec.id] || [];
+  h += `<div class="q${ph.length ? " rempli" : ""}"><span class="ql">Photos de la rubrique</span><div class="photos" id="photos-${sec.id}">${ph.map(id => `<div class="photo" data-photo="${id}"><img alt="Photo" data-src="${id}"><button type="button" data-suppr-photo="${id}" aria-label="Supprimer la photo">✕</button></div>`).join("")}<button type="button" class="photo-ajout" data-ajout-photo="${sec.id}">+ Prendre / ajouter des photos</button></div></div>`;
+  const ck = "com_" + sec.id;
+  if (!sec.q.some(q => q.id === ck)) h += champ({ t: "area", id: ck, q: "Autres remarques sur cette rubrique" }, F.v[ck], ck, F.v);
+  h += `<div class="section-nav">${idx > 0 ? `<button class="btn btn-discret" type="button" data-aller="${SECTIONS[idx - 1].id}">← ${esc(SECTIONS[idx - 1].titre)}</button>` : "<span></span>"}${idx < SECTIONS.length - 1 ? `<button class="btn btn-vert" type="button" data-aller="${SECTIONS[idx + 1].id}">${esc(SECTIONS[idx + 1].titre)} →</button>` : `<button class="btn btn-or" type="button" data-imprimer>Imprimer / PDF</button>`}</div>`;
+  $("#contenu").innerHTML = h;
+  chargerVignettes(ph);
+  rendreSommaire();
+}
+async function chargerVignettes(ids) {
+  for (const id of ids) { const p = await photoLire(id); const img = document.querySelector(`img[data-src="${id}"]`); if (p && img) img.src = p.data; }
+}
+function rendreSommaire() {
+  const prog = SECTIONS.map(progression);
+  const moy = Math.round(prog.reduce((a, b) => a + b, 0) / prog.length);
+  $("#sommaire").innerHTML = `<div class="fiche-nom"><span>Fiche en cours</span><b>${esc(titreFiche())}</b></div><div class="total" title="Fiche remplie à ${moy} %"><i style="width:${moy}%"></i></div>` +
+    SECTIONS.map((s, i) => `<button type="button" class="${s.id === secCourante ? "actif" : ""}${prog[i] >= 80 ? " fait" : ""}" data-aller="${s.id}"><span class="ic">${s.ic}</span><span class="lbl">${esc(s.titre)}</span><span class="pc">${prog[i] ? prog[i] + " %" : ""}</span></button>`).join("");
+  $("#nav-mobile").innerHTML = SECTIONS.map((s, i) => `<option value="${s.id}"${s.id === secCourante ? " selected" : ""}>${i + 1}. ${esc(s.titre)}${prog[i] ? " · " + prog[i] + " %" : ""}</option>`).join("");
+}
+function aller(id) { secCourante = id; rendreSection(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+/* ---------- Écriture d'une valeur par chemin (a, ou ch.0.lits) ---------- */
+function lireChemin(ch) { const p = ch.split("."); let o = F.v; for (const k of p) { if (o == null) return undefined; o = o[k]; } return o; }
+function ecrireChemin(ch, val) {
+  const p = ch.split("."); let o = F.v;
+  for (let i = 0; i < p.length - 1; i++) { if (o[p[i]] == null) o[p[i]] = /^\d+$/.test(p[i + 1]) ? [] : {}; o = o[p[i]]; }
+  o[p[p.length - 1]] = val;
+}
+
+/* ---------- Événements ---------- */
+document.addEventListener("input", (e) => {
+  const el = e.target;
+  if (el.dataset.chemin) {
+    ecrireChemin(el.dataset.chemin, el.value);
+    el.closest(".q")?.classList.toggle("rempli", el.value !== "");
+    sauverBientot(); rendreSommaireBientot();
+  }
+});
+let minSom; const rendreSommaireBientot = () => { clearTimeout(minSom); minSom = setTimeout(rendreSommaire, 400); };
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("button, [data-aller]");
+  if (!b) return;
+  if (b.dataset.aller) { aller(b.dataset.aller); return; }
+  if (b.dataset.un) { const cur = lireChemin(b.dataset.un); ecrireChemin(b.dataset.un, cur === b.dataset.val ? "" : b.dataset.val); sauverBientot(); rendreSectionGarde(); return; }
+  if (b.dataset.multi) { const arr = [...(lireChemin(b.dataset.multi) || [])]; const i = arr.indexOf(b.dataset.val); if (i >= 0) arr.splice(i, 1); else arr.push(b.dataset.val); ecrireChemin(b.dataset.multi, arr); sauverBientot(); rendreSectionGarde(); return; }
+  if (b.dataset.cpt) { const o = { ...(lireChemin(b.dataset.cpt) || {}) }; o[b.dataset.item] = Math.max(0, (o[b.dataset.item] || 0) + (+b.dataset.pas)); ecrireChemin(b.dataset.cpt, o); sauverBientot(); rendreSectionGarde(); return; }
+  if (b.dataset.note) { const o = { ...(lireChemin(b.dataset.note) || {}) }; const n = +b.dataset.n; o[b.dataset.i] = o[b.dataset.i] === n ? 0 : n; ecrireChemin(b.dataset.note, o); sauverBientot(); rendreSectionGarde(); return; }
+  if (b.dataset.ajoutRep) { (F.v[b.dataset.ajoutRep] = F.v[b.dataset.ajoutRep] || []).push({}); sauverBientot(); rendreSectionGarde(); return; }
+  if (b.dataset.supprRep) {
+    if (!b.dataset.confirmer) { b.dataset.confirmer = "1"; b.textContent = "Confirmer"; setTimeout(() => { if (b.isConnected) { delete b.dataset.confirmer; b.textContent = "Retirer"; } }, 3000); return; }
+    F.v[b.dataset.supprRep].splice(+b.dataset.i, 1); sauverBientot(); rendreSectionGarde(); return;
+  }
+  if (b.dataset.ajoutPhoto) { photoCible = b.dataset.ajoutPhoto; $("#input-photo").click(); return; }
+  if (b.dataset.supprPhoto) {
+    if (!b.dataset.confirmer) { b.dataset.confirmer = "1"; b.textContent = "?"; setTimeout(() => { if (b.isConnected) { delete b.dataset.confirmer; b.textContent = "✕"; } }, 2500); return; }
+    const id = b.dataset.supprPhoto; for (const k in F.photos) F.photos[k] = F.photos[k].filter(x => x !== id); await photoSupprimer(id); sauver(); rendreSectionGarde(); return;
+  }
+  if (b.hasAttribute("data-imprimer")) { imprimer(); return; }
+  if (b.hasAttribute("data-fermer")) { b.closest("dialog").close(); return; }
+});
+function rendreSectionGarde() { const y = window.scrollY; rendreSection(); window.scrollTo(0, y); }
+$("#nav-mobile").addEventListener("change", (e) => aller(e.target.value));
+
+/* Photos : compression avant enregistrement */
+let photoCible = null;
+$("#input-photo").addEventListener("change", async (e) => {
+  const fichiers = [...e.target.files]; e.target.value = "";
+  if (!fichiers.length || !photoCible) return;
+  toast("Enregistrement de " + fichiers.length + " photo" + (fichiers.length > 1 ? "s" : "") + "…");
+  for (const f of fichiers) {
+    try {
+      const bmp = await createImageBitmap(f);
+      const k = Math.min(1, 1400 / Math.max(bmp.width, bmp.height));
+      const cv = document.createElement("canvas"); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+      cv.getContext("2d").drawImage(bmp, 0, 0, cv.width, cv.height);
+      const id = F.id + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      await photoMettre({ id, fiche: F.id, data: cv.toDataURL("image/jpeg", 0.75) });
+      (F.photos[photoCible] = F.photos[photoCible] || []).push(id);
+    } catch (err) { toast("Une photo n'a pas pu être lue."); }
+  }
+  sauver(); rendreSectionGarde(); toast("Photos enregistrées");
+});
+
+/* ---------- Mes fiches ---------- */
+function dessinerFiches() {
+  const l = lireFiches();
+  $("#liste-fiches").innerHTML = l.length ? l.map(x => {
+    const v = x.v || {};
+    const t = [v.l_type, v.l_adresse].filter(Boolean).join(" · ") || "Fiche sans adresse";
+    const p = [v.p_prenom, v.p_nom].filter(Boolean).join(" ");
+    return `<tr data-id="${esc(x.id)}" class="${x.id === F.id ? "courante" : ""}"><td><b style="font-weight:500;color:var(--vert)">${esc(t)}</b><div class="meta">${esc(p || "Propriétaire non renseigné")} · visite du ${esc(dateFr(v.rdv_date || x.cree))}</div></td><td style="text-align:right"><button class="btn btn-discret" type="button" data-suppr-fiche="${esc(x.id)}" style="min-height:36px;padding:6px 10px">Supprimer</button></td></tr>`;
+  }).join("") : `<tr><td>Aucune fiche pour l'instant.</td></tr>`;
+}
+$("#btn-fiches").addEventListener("click", () => { sauver(); dessinerFiches(); $("#dlg-fiches").showModal(); });
+$("#liste-fiches").addEventListener("click", async (e) => {
+  const sup = e.target.closest("[data-suppr-fiche]");
+  if (sup) {
+    e.stopPropagation();
+    if (!sup.dataset.confirmer) { sup.dataset.confirmer = "1"; sup.textContent = "Confirmer"; setTimeout(() => { if (sup.isConnected) { delete sup.dataset.confirmer; sup.textContent = "Supprimer"; } }, 3000); return; }
+    const x = lireFiches().find(f => f.id === sup.dataset.supprFiche);
+    if (x) for (const ids of Object.values(x.photos || {})) for (const id of ids) await photoSupprimer(id);
+    ecrireFiches(lireFiches().filter(f => f.id !== sup.dataset.supprFiche));
+    if (F.id === sup.dataset.supprFiche) { F = ficheVide(); secCourante = "rdv"; rendreSection(); }
+    dessinerFiches(); toast("Fiche supprimée"); return;
+  }
+  const tr = e.target.closest("tr[data-id]");
+  if (tr) { const x = lireFiches().find(f => f.id === tr.dataset.id); if (x) { F = x; secCourante = "rdv"; try { localStorage.setItem(CLE_COURANTE, F.id); } catch (er) {} rendreSection(); $("#dlg-fiches").close(); toast("Fiche ouverte"); } }
+});
+$("#btn-nouvelle").addEventListener("click", () => { sauver(); F = ficheVide(); secCourante = "rdv"; sauver(); rendreSection(); toast("Nouvelle fiche"); });
+$("#btn-export").addEventListener("click", async () => {
+  sauver();
+  const photos = {}; for (const ids of Object.values(F.photos)) for (const id of ids) { const p = await photoLire(id); if (p) photos[id] = p.data; }
+  const blob = new Blob([JSON.stringify({ format: "trihent-fiche-visite", fiche: F, photos })], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "fiche-visite-" + (F.v.l_adresse || F.id).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+});
+$("#input-import").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (d.format !== "trihent-fiche-visite") throw new Error();
+    for (const [id, data] of Object.entries(d.photos || {})) await photoMettre({ id, fiche: d.fiche.id, data });
+    F = d.fiche; sauver(); secCourante = "rdv"; rendreSection(); $("#dlg-fiches").close(); toast("Fiche importée");
+  } catch (er) { toast("Ce fichier n'est pas une fiche de visite."); }
+});
+
+/* ---------- Impression : la fiche remplie, à la charte ---------- */
+function valeurTexte(q, val) {
+  if (vide(val)) return "";
+  if (q.t === "multi") return val.join(", ");
+  if (q.t === "counts") return Object.entries(val).filter(([, n]) => n).map(([k, n]) => `${k} : ${n}`).join(" · ");
+  if (q.t === "num") return val + (q.u ? " " + q.u : "");
+  if (q.t === "date") return dateFr(val);
+  return String(val);
+}
+function lignes(qs, d) {
+  let h = "";
+  for (const q of aplatir(qs)) {
+    if (q.show && !q.show(d)) continue;
+    if (q.t === "repeat" || q.t === "notes") continue;
+    const t = valeurTexte(q, d[q.id]);
+    if (t) h += `<tr><td>${esc(q.q)}</td><td>${esc(t).replace(/\n/g, "<br>")}</td></tr>`;
+  }
+  return h;
+}
+async function imprimer() {
+  sauver();
+  const v = F.v;
+  let h = `<div class="imp-tete"><div class="m">${MONO}<div><b>Les Domaines de Tri Hent</b><span>Conciergerie · Bretagne</span></div></div>
+    <div class="d"><h1>Fiche de visite</h1>${esc([v.l_type, v.l_adresse].filter(Boolean).join(" · "))}<br>Visite du ${esc(dateFr(v.rdv_date || F.cree))}${v.rdv_heure ? " à " + esc(v.rdv_heure) : ""}</div></div>`;
+  for (const sec of SECTIONS) {
+    let corps = lignes(sec.q, v);
+    for (const q of sec.q) {
+      if (q.t === "notes") {
+        const o = v[q.id] || {}; const nb = q.items.filter((_, i) => o[i]).length;
+        if (nb) { const tot = q.items.reduce((a, _, i) => a + (o[i] || 0), 0); corps = q.items.map((x, i) => o[i] ? `<tr><td>${esc(x)}</td><td>${o[i]} / 5</td></tr>` : "").join("") + `<tr><td><b>Score</b></td><td><b>${tot} / ${q.items.length * 5} · ${etatGlobal(tot / nb)}</b></td></tr>` + corps; }
+      }
+      if (q.t === "repeat") {
+        (v[q.id] || []).forEach((it, i) => { const l = lignes(q.fields, it); if (l) corps += `</table><h3>${esc(q.label)} ${i + 1}${it.nom ? " · " + esc(it.nom) : ""}</h3><table>${l}`; });
+      }
+    }
+    const com = v["com_" + sec.id];
+    const ph = F.photos[sec.id] || [];
+    if (!corps && !com && !ph.length) continue;
+    let imgs = "";
+    for (const id of ph) { const p = await photoLire(id); if (p) imgs += `<img src="${p.data}" alt="">`; }
+    h += `<section class="imp-sec"><h2>${esc(sec.titre)}</h2>${corps ? `<table>${corps}</table>` : ""}${com ? `<div class="imp-com">${esc(com)}</div>` : ""}${imgs ? `<div class="imp-photos">${imgs}</div>` : ""}</section>`;
+  }
+  h += `<div class="imp-pied"><span>Les Domaines de Tri Hent · domaines-trihent.com · 06 66 99 11 28</span><span>Fiche établie le ${esc(dateFr(aujourdhui()))}</span></div>`;
+  $("#impression").innerHTML = h;
+  const imgs = [...document.querySelectorAll("#impression img")];
+  await Promise.all(imgs.map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; })));
+  const ancien = document.title;
+  document.title = "Fiche de visite - " + (v.l_adresse || dateFr(v.rdv_date));
+  window.print();
+  setTimeout(() => { document.title = ancien; }, 1000);
+}
+$("#btn-pdf").addEventListener("click", imprimer);
+
+/* ---------- Démarrage ---------- */
+(function () {
+  let id = null; try { id = localStorage.getItem(CLE_COURANTE); } catch (e) {}
+  const x = id && lireFiches().find(f => f.id === id);
+  if (x) F = x;
+  rendreSection();
+})();
+</script>
+</body>
+</html>
